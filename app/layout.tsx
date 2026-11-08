@@ -6,10 +6,10 @@ import ScrollToTop from '@/components/ScrollToTop';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Choroo - Modern Furniture Storefront',
-    template: '%s | Choroo'
+    default: 'aB Labs NG | Premium Website Templates & Web Agency',
+    template: '%s | aB Labs NG'
   },
-  description: 'Choroo is a modern furniture template for stylish brands, featuring elegant layouts, striking visuals, seamless online shopping, and easy customization.',
+  description: 'Production-ready Next.js website templates and bespoke web engineering built for ambitious Nigerian and African businesses. Paystack-ready, mobile-first, and ultra-fast.',
   icons: {
     icon: '/assets/6abc9a73889258d54f8515ca_Favicon%20(256x256).png',
     apple: '/assets/6abc9a733a9ac776108332dd_Favicon%20(256x256).png'
