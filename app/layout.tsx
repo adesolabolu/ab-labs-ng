@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import './globals.css';
 import ClientInitializer from '@/components/ClientInitializer';
+import ScrollToTop from '@/components/ScrollToTop';
 
 export const metadata: Metadata = {
   title: {
@@ -32,6 +33,7 @@ export default function RootLayout({
       </head>
       <body>
         {children}
+        <ScrollToTop />
         <ClientInitializer />
       </body>
     </html>
