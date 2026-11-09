@@ -6,7 +6,7 @@ import Script from 'next/script';
 
 declare global {
   interface Window {
-    initChoroo?: (force?: boolean) => void;
+    initABLabs?: (force?: boolean) => void;
     gsap?: any;
     ScrollTrigger?: any;
     SplitText?: any;
@@ -26,8 +26,8 @@ export default function ClientInitializer() {
     }
 
     const timer = setTimeout(() => {
-      if (typeof window !== 'undefined' && typeof window.initChoroo === 'function') {
-        window.initChoroo(true);
+      if (typeof window !== 'undefined' && typeof window.initABLabs === 'function') {
+        window.initABLabs(true);
         setTimeout(() => {
           if (window.ScrollTrigger) window.ScrollTrigger.refresh();
         }, 150);
@@ -64,7 +64,7 @@ export default function ClientInitializer() {
         strategy="beforeInteractive"
       />
       <Script
-        src="/assets/js/choroo.js"
+        src="/assets/js/ab-labs.js"
         strategy="afterInteractive"
       />
     </>

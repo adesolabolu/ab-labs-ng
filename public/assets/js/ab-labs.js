@@ -1,16 +1,16 @@
 /**
- * Choroo Studio — 100% Clean-Room Native JavaScript Interaction Engine
+ * aB Labs Studio — 100% Clean-Room Native JavaScript Interaction Engine
  * Zero Third-Party Builder Runtime • Pure Vanilla ES6, GSAP & Lenis
- * Matches Live choroo.webflow.io Interaction Physics with Single-Pixel Precision
+ * Matches Live ab-labs.cv Interaction Physics with Single-Pixel Precision
  */
 
-let hasInitializedChoroo = false;
+let hasInitializedABLabs = false;
 
-function initChoroo(force = false) {
-  if (hasInitializedChoroo && !force) {
+function initABLabs(force = false) {
+  if (hasInitializedABLabs && !force) {
     return;
   }
-  hasInitializedChoroo = true;
+  hasInitializedABLabs = true;
 
   if (force && typeof window !== 'undefined' && window.gsap) {
     if (window.ScrollTrigger) {
@@ -101,7 +101,7 @@ function initChoroo(force = false) {
       }
 
       // 2. Release visibility lock NOW (elements are pre-transformed and 0 opacity, so ZERO FOUC!)
-      document.documentElement.classList.add('choroo-ready');
+      document.documentElement.classList.add('ab-labs-ready', 'choroo-ready');
 
       // 3. Play entrance timeline
       const heroTl = gsap.timeline();
@@ -175,7 +175,7 @@ function initChoroo(force = false) {
       }
 
       // Release visibility lock
-      document.documentElement.classList.add('choroo-ready');
+      document.documentElement.classList.add('ab-labs-ready', 'choroo-ready');
 
       const aboutTl = gsap.timeline();
       if (abSub) {
@@ -328,7 +328,7 @@ function initChoroo(force = false) {
       }
 
       // Release visibility lock
-      document.documentElement.classList.add('choroo-ready');
+      document.documentElement.classList.add('ab-labs-ready', 'choroo-ready');
 
       const innerTl = gsap.timeline();
       if (innerSub) {
@@ -349,8 +349,8 @@ function initChoroo(force = false) {
       }
     }
 
-    // Safety fallback: ensure choroo-ready is added on all pages
-    document.documentElement.classList.add('choroo-ready');
+    // Safety fallback: ensure ab-labs-ready is added on all pages
+    document.documentElement.classList.add('ab-labs-ready', 'choroo-ready');
 
     // ScrollTrigger Character Split for Section Headings
     const sectionHeadings = document.querySelectorAll('.heading-style-h2:not(.story-title)');
@@ -1106,11 +1106,11 @@ function initChoroo(force = false) {
 }
 
 if (typeof window !== 'undefined') {
-  window.initChoroo = initChoroo;
+  window.initABLabs = initABLabs;
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => initChoroo());
+    document.addEventListener('DOMContentLoaded', () => initABLabs());
   } else {
-    initChoroo();
+    initABLabs();
   }
 }
 
@@ -1124,3 +1124,5 @@ if (typeof window !== 'undefined') {
     if (window.ScrollTrigger) ScrollTrigger.refresh();
   }, 300);
 }
+
+window.initChoroo = window.initABLabs;
