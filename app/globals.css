@@ -5666,16 +5666,7 @@ figcaption {
 }
 
 .fh-trust {
-  padding-top: var(--_spacing---grid-gap--gap-xl);
-  padding-bottom: var(--_spacing---grid-gap--gap-xl);
-  grid-column-gap: var(--_spacing---grid-gap--gap-l);
-  grid-row-gap: var(--_spacing---grid-gap--gap-l);
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 24px;
-  margin: 0 auto;
-  display: flex;
+  display: none !important;
 }
 
 .fh-trust-it {
