@@ -5,7 +5,7 @@ import ShopCatalog from '@/components/ShopCatalog';
 
 export const metadata = {
   title: 'Shop All Templates | aB Labs',
-  description: 'Explore production-ready Next.js website templates and web systems engineered for African and Nigerian businesses. Mobile-first, turnkey customization, and ultra-fast.',
+  description: 'Explore production-ready website designs and web systems engineered for African and Nigerian businesses. Mobile-first, turnkey customization, and ultra-fast.',
 };
 
 export default function ShopPage() {
@@ -27,7 +27,7 @@ export default function ShopPage() {
                 </div>
                 <div className="hero-summary-wrapper max-width-460px">
                   <p className="hero-summary">
-                    Handcrafted, ultra-fast Next.js templates engineered for Nigerian &amp; African commerce. Bespoke brand styling, responsive across all screen sizes, and optimized for sub-second Core Web Vitals.
+                    Handcrafted, ultra-fast website templates engineered for Nigerian &amp; African commerce. Bespoke brand styling, responsive across all screen sizes, and optimized for sub-second loading speeds and mobile perfection.
                   </p>
                 </div>
 
@@ -93,7 +93,7 @@ export default function ShopPage() {
 </svg></div><div>100% Clean Code &amp; Full Source Ownership</div></div><div className="fh-trust-it"><div className="footer-icon w-embed"><svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
           <rect x="3" y="11" width="18" height="11" rx="2"></rect>
           <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-        </svg></div><div>Google Search Console &amp; Technical SEO Ready</div></div></div><div className="fh-in"><div className="fh-main"><div className="fh-brand"><a href="/" aria-current="page" className="fh-logo w-inline-block w--current"><img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="footer-logo"/></a><p className="fh-statement">Production-ready Next.js website templates and bespoke web engineering built for ambitious Nigerian and African businesses.</p><div className="w-form"><form id="cta-forms" name="email-form" data-name="Email Form" method="get" data-turnstile-sitekey="0x4AAAAAAAQTptj2So4dx43e"><label htmlFor="name" aria-label="text" className="fh-nl-ey">Get New Template Drops &amp; Playbooks</label><div className="fh-nl-form"><input className="fh-nl-inp w-input" maxLength={256} name="email" data-name="email" aria-label="Email address" placeholder="Enter your business email" type="email" id="email" required={true}/><button type="submit" className="fh-nl-btn"><div className="arrow-icon w-embed"><svg fill="none" width="15" height="15" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+        </svg></div><div>Google Search Console &amp; Technical SEO Ready</div></div></div><div className="fh-in"><div className="fh-main"><div className="fh-brand"><a href="/" aria-current="page" className="fh-logo w-inline-block w--current"><img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="footer-logo"/></a><p className="fh-statement">Production-ready website designs and bespoke web engineering built for ambitious Nigerian and African businesses.</p><div className="w-form"><form id="cta-forms" name="email-form" data-name="Email Form" method="get" data-turnstile-sitekey="0x4AAAAAAAQTptj2So4dx43e"><label htmlFor="name" aria-label="text" className="fh-nl-ey">Get New Template Drops &amp; Playbooks</label><div className="fh-nl-form"><input className="fh-nl-inp w-input" maxLength={256} name="email" data-name="email" aria-label="Email address" placeholder="Enter your business email" type="email" id="email" required={true}/><button type="submit" className="fh-nl-btn"><div className="arrow-icon w-embed"><svg fill="none" width="15" height="15" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
                 <path d="M5 12h14M12 5l7 7-7 7"></path>
               </svg></div></button></div></form><div className="form_message-success w-form-done"><div>You&#x27;re on the list! Check your inbox for our next update.</div></div><div className="form_message-error w-form-fail"><div>We couldn&#x27;t subscribe you just now. Please check your email and try again.</div></div></div><div className="fh-soc"><a href="https://instagram.com" target="_blank" className="fh-si"><div className="arrow-icon w-embed"><svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
                 <rect x="2" y="2" width="20" height="20" rx="5"></rect>

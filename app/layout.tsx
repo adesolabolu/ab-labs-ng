@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     default: 'aB Labs | Premium Website Templates & Web Agency',
     template: '%s | aB Labs'
   },
-  description: 'Production-ready Next.js website templates and bespoke web engineering built for ambitious Nigerian and African businesses. Mobile-first, turnkey customization, and ultra-fast.',
+  description: 'Production-ready website designs and bespoke web engineering built for ambitious Nigerian and African businesses. Mobile-first, turnkey customization, and ultra-fast.',
   icons: {
     icon: '/assets/6abc9a73889258d54f8515ca_Favicon%20(256x256).png',
     apple: '/assets/6abc9a733a9ac776108332dd_Favicon%20(256x256).png'

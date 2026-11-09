@@ -369,7 +369,7 @@ export default function BlogPostView({ post }: BlogPostViewProps) {
                   <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="footer-logo" />
                 </Link>
                 <p className="fh-statement">
-                  Production-ready Next.js website templates and bespoke web engineering built for ambitious Nigerian and African businesses.
+                  Production-ready website designs and bespoke web engineering built for ambitious Nigerian and African businesses.
                 </p>
               </div>
               <div className="fh-col">

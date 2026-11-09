@@ -271,7 +271,7 @@ export default function CartView() {
                   flexWrap: 'wrap',
                   gap: '12px'
                 }}>
-                  <span>✓ Full Next.js 16 Source Code</span>
+                  <span>✓ Full modern web standards Source Code</span>
                   <span>✓ Lifetime License</span>
                   <span>✓ Paystack Integrated</span>
                   <span>✓ Step-by-Step Docs</span>
@@ -300,7 +300,7 @@ export default function CartView() {
                     />
                     <div>
                       <div style={{ fontSize: '13px', fontWeight: 600, color: '#1e293b' }}>
-                        Turnkey Vercel Deployment &amp; Domain Setup
+                        Turnkey Live Domain Launch &amp; Domain Setup
                       </div>
                       <div style={{ fontSize: '11px', color: '#64748b' }}>
                         Our engineers deploy and connect your custom domain within 24 hours.

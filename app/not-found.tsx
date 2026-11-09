@@ -4,7 +4,7 @@ import Navbar from '@/components/Navbar';
 
 export const metadata = {
   title: '404 - Page Not Found | aB Labs',
-  description: 'The requested template or page could not be found. Browse our catalog of production-ready Next.js website templates.',
+  description: 'The requested template or page could not be found. Browse our catalog of production-ready website designs.',
 };
 
 export default function NotFoundPage() {
@@ -120,7 +120,7 @@ export default function NotFoundPage() {
                     <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="footer-logo" />
                   </Link>
                   <p className="fh-statement">
-                    Production-ready Next.js website templates engineered for ambitious African businesses, agencies, and e-commerce leaders.
+                    Production-ready website designs engineered for ambitious African businesses, agencies, and e-commerce leaders.
                   </p>
                   <div className="w-form">
                     <form id="cta-forms-404" name="email-form" method="get">
@@ -170,7 +170,7 @@ export default function NotFoundPage() {
 
             <div className="fh-bot">
               <div className="fh-bot-in">
-                <p className="fh-copy">© 2026 aB Labs — Production-Ready Next.js Web Flagships</p>
+                <p className="fh-copy">© 2026 aB Labs — Production-Ready modern web architecture Web Flagships</p>
                 <a href="#top" className="fh-top-top w-inline-block">
                   <div>Back to top</div>
                   <div className="fh-toptop-span">
