@@ -7278,24 +7278,64 @@ figcaption {
 }
 
 .products-category-left-column {
-  grid-column-gap: var(--_spacing---grid-gap--grid-xxxl);
-  grid-row-gap: var(--_spacing---grid-gap--grid-xxxl);
+  grid-column-gap: 36px;
+  grid-row-gap: 36px;
   flex-flow: column;
   display: flex;
+  margin-top: 0;
 }
 
 .products-category-middle-column {
-  margin-top: var(--_spacing---grid-gap--grid-4xl);
+  margin-top: 0 !important;
   position: sticky;
-  top: 5vh;
+  top: 100px;
+  align-self: flex-start;
 }
 
 .products-category-right-column {
-  margin-top: var(--_spacing---grid-gap--gap-xl);
-  grid-column-gap: var(--_spacing---grid-gap--grid-xxxl);
-  grid-row-gap: var(--_spacing---grid-gap--grid-xxxl);
+  margin-top: 0 !important;
+  grid-column-gap: 36px;
+  grid-row-gap: 36px;
   flex-flow: column;
   display: flex;
+}
+
+/* Ensure all 4 outer category boxes (01, 04, 03, 05) have the EXACT same size */
+.products-category-left-column .category-image,
+.products-category-right-column .category-image {
+  height: 310px !important;
+  width: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  border-radius: var(--_spacing---grid-gap--gap-m);
+}
+
+/* Middle category box (02) showcase sizing */
+.products-category-middle-column .category-image {
+  height: 520px !important;
+  width: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  border-radius: var(--_spacing---grid-gap--gap-m);
+}
+
+.category-single-item-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.category-content-wrapper {
+  margin-top: var(--_spacing---grid-gap--gap-m);
+  min-height: 74px;
+}
+
+.category-content-inner-block {
+  width: 100%;
+}
+
+.category-lower-text {
+  min-height: 36px;
+  line-height: 1.45;
 }
 
 .blog-collection, .blog-featured-wrapper, .blog-featured-block {
@@ -9334,7 +9374,7 @@ figcaption {
   }
 
   .products-category-middle-column {
-    margin-top: 72px;
+    margin-top: 0;
   }
 
   .pdm-care {
