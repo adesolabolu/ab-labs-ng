@@ -1,59 +1,45 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
-import { TEMPLATES, Template } from '@/data/templates';
-import TemplateDetailView from '@/components/TemplateDetailView';
+import { itemsMap, itemSlugs } from './content';
 
-// Legacy slug mapping to ensure zero 404s from Webflow links
+// Mapping alias slugs (from homepage & shop catalog) to the rich individual product view items
 const SLUG_ALIASES: Record<string, string> = {
-  'arcus-two-seater': 'arcus-agency',
-  'highback-glide': 'solis-health',
-  'arc-floor-lamp': 'lumina-storefront',
-  'coastal-bed-frame': 'apex-real-estate',
-  'cozy-curve-sofa': 'lumina-storefront',
-  'globe-table-lamp': 'vertex-corporate',
-  'halo-side-table': 'pulse-saas',
-  'linea-sideboard': 'aura-hospitality',
-  'linen-headboard-bed': 'apex-real-estate',
-  'linen-loveseat': 'lumina-storefront',
-  'linnea-coffee-table': 'vertex-corporate',
-  'mesa-dining-table': 'aura-hospitality',
-  'nordic-lounge-chair': 'arcus-agency',
-  'oak-bookcase': 'vertex-corporate',
-  'retro-oak-lounge': 'zenith-fintech',
-  'soft-oak-remix': 'solis-health',
+  'lumina-storefront': 'cozy-curve-sofa',
+  'apex-real-estate': 'coastal-bed-frame',
+  'vertex-corporate': 'linnea-coffee-table',
+  'pulse-saas': 'halo-side-table',
+  'aura-hospitality': 'mesa-dining-table',
+  'arcus-agency': 'arcus-two-seater',
+  'zenith-fintech': 'retro-oak-lounge',
+  'solis-health': 'highback-glide',
 };
 
 export function generateStaticParams() {
-  const primarySlugs = TEMPLATES.map(t => ({ slug: t.slug }));
-  const aliasSlugs = Object.keys(SLUG_ALIASES).map(slug => ({ slug }));
-  return [...primarySlugs, ...aliasSlugs];
+  const allSlugs = Array.from(new Set([...itemSlugs, ...Object.keys(SLUG_ALIASES)]));
+  return allSlugs.map(slug => ({ slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const resolvedSlug = SLUG_ALIASES[slug] || slug;
-  const template = TEMPLATES.find(t => t.slug === resolvedSlug);
-
-  if (!template) {
-    return {
-      title: 'Template Not Found | aB Labs',
-    };
-  }
-
+  const resolved = SLUG_ALIASES[slug] || slug;
+  const title = resolved
+    .split('-')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
   return {
-    title: `${template.name} — Website Template | aB Labs`,
-    description: `${template.tagline}. Built with Next.js 16, Tailwind CSS, and Paystack for African commerce. Full source code included.`,
+    title: `${title} | aB Labs`,
+    description: 'Production-ready website template engineered with Next.js and Paystack.',
   };
 }
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const resolvedSlug = SLUG_ALIASES[slug] || slug;
-  const template = TEMPLATES.find(t => t.slug === resolvedSlug);
+  const resolved = SLUG_ALIASES[slug] || slug;
+  const Component = itemsMap[resolved] || itemsMap[slug];
 
-  if (!template) {
+  if (!Component) {
     return notFound();
   }
 
-  return <TemplateDetailView template={template} />;
+  return <Component />;
 }

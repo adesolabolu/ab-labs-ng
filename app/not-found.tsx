@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import NavbarCartButton from '@/components/NavbarCartButton';
+import Navbar from '@/components/Navbar';
 
 export const metadata = {
   title: '404 - Page Not Found | aB Labs',
@@ -11,122 +11,7 @@ export default function NotFoundPage() {
   return (
     <>
       <div className="page-wrapper">
-        <header id="top" className="header">
-          <div className="site-top">
-            <div className="header-wrapper">
-              <div data-animation="over-left" data-collapse="medium" data-duration="400" data-easing="ease" data-easing2="ease" role="banner" className="hdr w-nav">
-                <div className="hdr-in">
-                  <div className="w-layout-blockcontainer container-large w-container">
-                    <div className="navbar-wrapper">
-                      <Link href="/" className="hdr-logo w-inline-block">
-                        <img loading="lazy" src="/assets/ab-labs-logo.svg" alt="aB Labs logo" className="logo" />
-                      </Link>
-                      <nav role="navigation" className="nav-menu-wrapper w-nav-menu">
-                        <ul role="list" className="nav-menu w-list-unstyled">
-                          <li className="mobile-logo">
-                            <Link href="/" className="hdr-logo w-inline-block">
-                              <img loading="lazy" src="/assets/ab-labs-logo.svg" alt="aB Labs logo" className="logo" />
-                            </Link>
-                          </li>
-                          <li><Link href="/" className="hdr-nav-a">Home</Link></li>
-                          <li><Link href="/shop" className="hdr-nav-a">Templates</Link></li>
-                          <li><Link href="/about-us" className="hdr-nav-a">About</Link></li>
-                          <li><Link href="/blog" className="hdr-nav-a">Insights</Link></li>
-                          <li><Link href="/contact-us" className="hdr-nav-a">Contact</Link></li>
-                          <li className="mobile-button">
-                            <Link href="/shop" className="primary-button w-inline-block">
-                              <div className="button-text-wrapper">
-                                <div className="button-text-block">
-                                  <div className="link-text is-1">Explore Templates</div>
-                                  <div className="link-text is-2">Explore Templates</div>
-                                </div>
-                                <div className="button-arrow-block">
-                                  <div className="link-icon is-1 w-embed">
-                                    <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
-                                      <path d="M7 17 17 7M7 7h10v10"></path>
-                                    </svg>
-                                  </div>
-                                  <div className="link-icon is-2 w-embed">
-                                    <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
-                                      <path d="M7 17 17 7M7 7h10v10"></path>
-                                    </svg>
-                                  </div>
-                                </div>
-                              </div>
-                            </Link>
-                          </li>
-                        </ul>
-                      </nav>
-                      <div className="hdr-acts">
-                        <div className="search-button-wrapper">
-                          <div className="search-icon w-embed">
-                            <svg className="nav__search-ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" strokeWidth="2px" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                              <circle cx="11" cy="11" r="8" stroke="currentColor" fill="none" strokeWidth="2px"></circle>
-                              <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" fill="none" strokeWidth="2px"></line>
-                            </svg>
-                          </div>
-                        </div>
-                        <NavbarCartButton />
-                        <div className="cart-devider"></div>
-                        <Link href="/shop" className="primary-button w-inline-block">
-                          <div className="button-text-wrapper">
-                            <div className="button-text-block">
-                              <div className="link-text is-1">Explore Templates</div>
-                              <div className="link-text is-2">Explore Templates</div>
-                            </div>
-                            <div className="button-arrow-block">
-                              <div className="link-icon is-1 w-embed">
-                                <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
-                                  <path d="M7 17 17 7M7 7h10v10"></path>
-                                </svg>
-                              </div>
-                              <div className="link-icon is-2 w-embed">
-                                <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
-                                  <path d="M7 17 17 7M7 7h10v10"></path>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                        </Link>
-                      </div>
-                      <div className="menu-button w-nav-button"><div className="w-icon-nav-menu"></div></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="search-wrapper">
-              <div className="search-inner-block">
-                <div className="w-layout-blockcontainer container-large w-container">
-                  <div className="search-inner-wrapper">
-                    <div className="search-form w-form">
-                      <form id="not-found-search-form" name="not-found-search-form" method="get">
-                        <div className="search-field-wrapper">
-                          <input className="search-field w-input" maxLength={256} name="q" aria-label="Search website templates" placeholder="Search templates by industry or feature…" type="text" id="q" required={true} />
-                          <input type="submit" className="search-button-icon w-button" value="" />
-                        </div>
-                      </form>
-                      <div className="form_message-success w-form-done">
-                        <div>Search submitted. Browse our catalog for matching designs.</div>
-                      </div>
-                      <div className="form_message-error w-form-fail">
-                        <div>Search is currently unavailable. Please visit our shop catalog directly.</div>
-                      </div>
-                    </div>
-                    <div className="search-close-btn">
-                      <div className="close-button-icon w-embed">
-                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" strokeWidth="2px" strokeLinecap="round" aria-hidden="true">
-                          <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" fill="none" strokeWidth="2px"></line>
-                          <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" fill="none" strokeWidth="2px"></line>
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
+        <Navbar />
 
         <main className="main-wrapper">
           <section className="section-404">

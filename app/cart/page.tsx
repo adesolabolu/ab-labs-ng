@@ -1,4 +1,4 @@
-import NavbarCartButton from '@/components/NavbarCartButton';
+import Navbar from '@/components/Navbar';
 import React from 'react';
 import Link from 'next/link';
 import CartView from '@/components/CartView';
@@ -12,53 +12,7 @@ export default function CartPage() {
   return (
     <>
       <div className="page-wrapper">
-        <header id="top" className="header"><div className="site-top"><div className="header-wrapper"><div data-animation="over-left" data-collapse="medium" data-duration="400" data-easing="ease" data-easing2="ease" role="banner" className="hdr w-nav"><div className="hdr-in"><div className="w-layout-blockcontainer container-large w-container"><div className="navbar-wrapper"><a href="/" aria-current="page" className="hdr-logo w-inline-block w--current"><img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="logo"/></a><nav role="navigation" className="nav-menu-wrapper w-nav-menu"><ul role="list" className="nav-menu w-list-unstyled"><li className="mobile-logo"><a href="/" aria-current="page" className="hdr-logo w-inline-block w--current"><img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="logo"/></a></li><li><div data-delay="0" data-hover="false" className="nav-dropdown w-dropdown"><div className="dropdown w-dropdown-toggle"><div>Templates</div><div className="nav-dropdown-icon w-icon-dropdown-toggle"></div></div><nav className="nav-dropdown-list w-dropdown-list">
-  <div className="w-layout-blockcontainer container-large w-container">
-    <div className="nav-dropdown-flex">
-      <div className="nav-content-wrapper">
-        <div className="nav-category-text">Templates by Industry</div>
-        <div className="nav-content-block">
-          <div className="w-dyn-list">
-            <div role="list" className="nav-list-category w-dyn-items">
-              <div role="listitem" className="w-dyn-item"><a href="/shop" className="nav-link-block w-inline-block"><div>All Templates (8)</div></a></div>
-              <div role="listitem" className="w-dyn-item"><a href="/shop?category=ecommerce" className="nav-link-block w-inline-block"><div>E-Commerce &amp; Retail</div></a></div>
-              <div role="listitem" className="w-dyn-item"><a href="/shop?category=real-estate" className="nav-link-block w-inline-block"><div>Real Estate &amp; PropTech</div></a></div>
-              <div role="listitem" className="w-dyn-item"><a href="/shop?category=corporate" className="nav-link-block w-inline-block"><div>Corporate &amp; Agency</div></a></div>
-              <div role="listitem" className="w-dyn-item"><a href="/shop?category=saas" className="nav-link-block w-inline-block"><div>Tech Startups &amp; SaaS</div></a></div>
-              <div role="listitem" className="w-dyn-item"><a href="/shop?category=hospitality" className="nav-link-block w-inline-block"><div>Hospitality &amp; Dining</div></a></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="best-collection-flex">
-        <div className="best-collection-wrapper">
-          <a href="/shop" className="best-collection-link w-inline-block" style={{ textDecoration: 'none' }}>
-            <div style={{ padding: '24px', background: 'linear-gradient(135deg, #18181b 0%, #09090b 100%)', borderRadius: '14px', color: '#fff', display: 'flex', flexDirection: 'column', gap: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
-              <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#60A5FA' }}>2026 Collection</span>
-              <h4 style={{ margin: 0, fontSize: '17px', fontWeight: 700, color: '#fff' }}>Production-Ready Digital Flagships</h4>
-              <p style={{ margin: 0, fontSize: '12px', color: '#a1a1aa', lineHeight: '1.5' }}>Next.js 16, Tailwind CSS, and Paystack pre-wired for African commerce.</p>
-              <span style={{ fontSize: '12px', fontWeight: 600, color: '#38BDF8', marginTop: '6px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>Browse Catalog →</span>
-            </div>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</nav></div></li><li><a href="/#templates" className="hdr-nav-a">Templates</a></li><li><a href="/about-us" className="hdr-nav-a">About</a></li><li><a href="/blog" className="hdr-nav-a">Insights</a></li><li><a href="/contact-us" className="hdr-nav-a">Contact</a></li><li className="mobile-button"><a stagger-up-animate="" href="/shop" className="primary-button w-inline-block"><div className="button-text-wrapper"><div className="button-text-block"><div className="link-text is-1">Explore Templates</div><div className="link-text is-2">Explore Templates</div></div><div className="button-arrow-block"><div className="link-icon is-1 w-embed"><svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
-            <path d="M7 17 17 7M7 7h10v10"></path>
-          </svg></div><div className="link-icon is-2 w-embed"><svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
-            <path d="M7 17 17 7M7 7h10v10"></path>
-          </svg></div></div></div></a></li></ul></nav><div className="hdr-acts"><div className="search-button-wrapper"><div className="search-icon w-embed"><svg className="nav__search-ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" strokeWidth="2px" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
-          <circle cx="11" cy="11" r="8" stroke="currentColor" fill="none" strokeWidth="2px"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" fill="none" strokeWidth="2px"></line>
-        </svg></div></div><NavbarCartButton /><div className="cart-devider"></div><a stagger-up-animate="" href="/shop" className="primary-button w-inline-block"><div className="button-text-wrapper"><div className="button-text-block"><div className="link-text is-1">Explore Templates</div><div className="link-text is-2">Explore Templates</div></div><div className="button-arrow-block"><div className="link-icon is-1 w-embed"><svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
-            <path d="M7 17 17 7M7 7h10v10"></path>
-          </svg></div><div className="link-icon is-2 w-embed"><svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
-            <path d="M7 17 17 7M7 7h10v10"></path>
-          </svg></div></div></div></a></div><div className="offcanvas-button-wrapper"><NavbarCartButton /><div className="cart-devider"></div><div className="menu-button w-nav-button"><div className="w-icon-nav-menu"></div></div></div></div></div></div></div></div><div className="search-wrapper"><div className="search-inner-block"><div className="w-layout-blockcontainer container-large w-container"><div className="search-inner-wrapper"><div className="search-form w-form"><form id="email-form-2" name="email-form-2" data-name="Email Form 2" method="get" data-turnstile-sitekey="0x4AAAAAAAQTptj2So4dx43e"><div className="search-field-wrapper"><input className="search-field w-input" maxLength={256} name="name" data-name="Name" aria-label="Search products" placeholder="Search templates by industry or feature…" type="text" id="name" required={true}/><input type="submit" data-wait="" className="search-button-icon w-button" value=""/></div></form><div className="form_message-success w-form-done"><div>Search sent. Browse our template catalog for matching designs.</div></div><div className="form_message-error w-form-fail"><div>Search is unavailable right now. Please try again in a moment.</div></div></div><div className="search-close-btn"><div className="close-button-icon w-embed"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" strokeWidth="2px" strokeLinecap="round" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
-            <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" fill="none" strokeWidth="2px"></line>
-            <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" fill="none" strokeWidth="2px"></line>
-          </svg></div></div></div></div></div></div><div className="search-overlay"></div></div></header>
+        <Navbar />
         
         <div className="main-wrapper">
           <section className="section-breadcrumb">
