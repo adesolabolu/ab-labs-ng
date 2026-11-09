@@ -35,7 +35,7 @@ export const BLOG_CATEGORIES = [
   { id: 'conversion', label: 'Conversion & CRO' },
   { id: 'payments', label: 'Payments & Trust' },
   { id: 'local-seo', label: 'Local SEO' },
-  { id: 'engineering', label: 'Engineering' }
+  { id: 'engineering', label: 'Architecture' }
 ];
 
 export const BLOG_POSTS: BlogPost[] = [
@@ -205,9 +205,9 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     id: '5',
     slug: 'nextjs-16-turbopack-vs-wordpress-why-modern-brands-are-migrating',
-    title: 'Next.js 16 Turbopack vs WordPress: Why Modern Brands Are Migrating',
-    subtitle: 'Plugin bloat, SQL injection vulnerabilities, and monthly hosting surcharges compared to modern headless web engineering.',
-    category: 'Engineering',
+    title: 'Modern Web Engineering vs Legacy CMS: Why Fast-Growing Brands Are Migrating',
+    subtitle: 'Fragile plugin bloat, database vulnerabilities, and sluggish page speeds compared to modern custom web flagships.',
+    category: 'Architecture',
     categorySlug: 'engineering',
     date: 'Sep 21, 2026',
     readTime: '6 min read',
