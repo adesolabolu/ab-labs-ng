@@ -36,12 +36,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   if (!template) {
     return {
-      title: 'Template Not Found | aB Labs NG',
+      title: 'Template Not Found | aB Labs',
     };
   }
 
   return {
-    title: `${template.name} — Website Template | aB Labs NG`,
+    title: `${template.name} — Website Template | aB Labs`,
     description: `${template.tagline}. Built with Next.js 16, Tailwind CSS, and Paystack for African commerce. Full source code included.`,
   };
 }

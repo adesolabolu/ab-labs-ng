@@ -7,8 +7,8 @@ import { CartProvider } from '@/context/CartContext';
 
 export const metadata: Metadata = {
   title: {
-    default: 'aB Labs NG | Premium Website Templates & Web Agency',
-    template: '%s | aB Labs NG'
+    default: 'aB Labs | Premium Website Templates & Web Agency',
+    template: '%s | aB Labs'
   },
   description: 'Production-ready Next.js website templates and bespoke web engineering built for ambitious Nigerian and African businesses. Paystack-ready, mobile-first, and ultra-fast.',
   icons: {

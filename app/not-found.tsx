@@ -3,7 +3,7 @@ import Link from 'next/link';
 import NavbarCartButton from '@/components/NavbarCartButton';
 
 export const metadata = {
-  title: '404 - Page Not Found | aB Labs NG',
+  title: '404 - Page Not Found | aB Labs',
   description: 'The requested template or page could not be found. Browse our catalog of production-ready Next.js website templates.',
 };
 
@@ -19,13 +19,13 @@ export default function NotFoundPage() {
                   <div className="w-layout-blockcontainer container-large w-container">
                     <div className="navbar-wrapper">
                       <Link href="/" className="hdr-logo w-inline-block">
-                        <img loading="lazy" src="/assets/ab-labs-logo.svg" alt="aB Labs NG logo" className="logo" />
+                        <img loading="lazy" src="/assets/ab-labs-logo.svg" alt="aB Labs logo" className="logo" />
                       </Link>
                       <nav role="navigation" className="nav-menu-wrapper w-nav-menu">
                         <ul role="list" className="nav-menu w-list-unstyled">
                           <li className="mobile-logo">
                             <Link href="/" className="hdr-logo w-inline-block">
-                              <img loading="lazy" src="/assets/ab-labs-logo.svg" alt="aB Labs NG logo" className="logo" />
+                              <img loading="lazy" src="/assets/ab-labs-logo.svg" alt="aB Labs logo" className="logo" />
                             </Link>
                           </li>
                           <li><Link href="/" className="hdr-nav-a">Home</Link></li>
@@ -232,7 +232,7 @@ export default function NotFoundPage() {
               <div className="fh-main">
                 <div className="fh-brand">
                   <Link href="/" className="fh-logo w-inline-block">
-                    <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs NG logo" className="footer-logo" />
+                    <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="footer-logo" />
                   </Link>
                   <p className="fh-statement">
                     Production-ready Next.js website templates engineered for ambitious African businesses, agencies, and e-commerce leaders.
@@ -285,7 +285,7 @@ export default function NotFoundPage() {
 
             <div className="fh-bot">
               <div className="fh-bot-in">
-                <p className="fh-copy">© 2026 aB Labs NG — Production-Ready Next.js Web Flagships</p>
+                <p className="fh-copy">© 2026 aB Labs — Production-Ready Next.js Web Flagships</p>
                 <a href="#top" className="fh-top-top w-inline-block">
                   <div>Back to top</div>
                   <div className="fh-toptop-span">

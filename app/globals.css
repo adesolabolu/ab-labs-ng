@@ -5824,6 +5824,23 @@ figcaption {
   font-size: 27px;
   font-weight: 800;
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.logo {
+  height: 34px;
+  width: auto;
+  max-height: 40px;
+  display: block;
+}
+
+.footer-logo {
+  height: 38px;
+  width: auto;
+  max-height: 44px;
+  display: block;
+  filter: invert();
 }
 
 .a:hover {

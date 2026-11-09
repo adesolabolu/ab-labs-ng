@@ -30,12 +30,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   if (!post) {
     return {
-      title: 'Article Not Found | aB Labs NG',
+      title: 'Article Not Found | aB Labs',
     };
   }
 
   return {
-    title: `${post.title} | aB Labs NG Insights`,
+    title: `${post.title} | aB Labs Insights`,
     description: post.excerpt,
   };
 }

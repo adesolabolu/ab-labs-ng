@@ -4,7 +4,7 @@ import NavbarCartButton from '@/components/NavbarCartButton';
 
 export const metadata = {
   title: 'About aB Labs | High-Performance Next.js Website Templates & Digital Flagships',
-  description: 'Learn how aB Labs NG engineers production-grade Next.js website templates, custom digital storefronts, and conversion-optimized web applications for ambitious African brands.',
+  description: 'Learn how aB Labs engineers production-grade Next.js website templates, custom digital storefronts, and conversion-optimized web applications for ambitious African brands.',
 };
 
 export default function AboutUsPage() {
@@ -19,13 +19,13 @@ export default function AboutUsPage() {
                   <div className="w-layout-blockcontainer container-large w-container">
                     <div className="navbar-wrapper">
                       <Link href="/" className="hdr-logo w-inline-block">
-                        <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs NG logo" className="logo" />
+                        <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="logo" />
                       </Link>
                       <nav role="navigation" className="nav-menu-wrapper w-nav-menu">
                         <ul role="list" className="nav-menu w-list-unstyled">
                           <li className="mobile-logo">
                             <Link href="/" className="hdr-logo w-inline-block">
-                              <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs NG logo" className="logo" />
+                              <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="logo" />
                             </Link>
                           </li>
                           <li>
@@ -238,7 +238,7 @@ export default function AboutUsPage() {
                   <div className="ab-hero-meta">
                     <div className="it">
                       <p className="ab-hero-meta-it-b counter">2020</p>
-                      <p className="ab-hero-meta-it-small">Founded in Lagos, NG</p>
+                      <p className="ab-hero-meta-it-small">Founded in Lagos</p>
                     </div>
                     <div className="sep"></div>
                     <div className="it">
@@ -728,7 +728,7 @@ export default function AboutUsPage() {
               <div className="fh-main">
                 <div className="fh-brand">
                   <Link href="/" className="fh-logo w-inline-block">
-                    <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs NG logo" className="footer-logo" />
+                    <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="footer-logo" />
                   </Link>
                   <p className="fh-statement">
                     Production-ready Next.js website templates engineered for ambitious African businesses, agencies, and e-commerce leaders.
@@ -806,7 +806,7 @@ export default function AboutUsPage() {
 
             <div className="fh-bot">
               <div className="fh-bot-in">
-                <p className="fh-copy">© 2026 aB Labs NG — Production-Ready Next.js Web Flagships</p>
+                <p className="fh-copy">© 2026 aB Labs — Production-Ready Next.js Web Flagships</p>
                 <a href="#top" className="fh-top-top w-inline-block">
                   <div>Back to top</div>
                   <div className="fh-toptop-span">

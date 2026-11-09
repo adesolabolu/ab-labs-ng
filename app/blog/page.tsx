@@ -4,7 +4,7 @@ import NavbarCartButton from '@/components/NavbarCartButton';
 import BlogCatalog from '@/components/BlogCatalog';
 
 export const metadata = {
-  title: 'Engineering Playbooks & Insights | aB Labs NG',
+  title: 'Engineering Playbooks & Insights | aB Labs',
   description: 'Proven web architecture, Paystack checkout optimization, local SEO playbooks, and conversion rate engineering for ambitious African brands.',
 };
 
@@ -20,13 +20,13 @@ export default function BlogPage() {
                 <div className="w-layout-blockcontainer container-large w-container">
                   <div className="navbar-wrapper">
                     <Link href="/" className="hdr-logo w-inline-block">
-                      <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs NG logo" className="logo" />
+                      <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="logo" />
                     </Link>
                     <nav role="navigation" className="nav-menu-wrapper w-nav-menu">
                       <ul role="list" className="nav-menu w-list-unstyled">
                         <li className="mobile-logo">
                           <Link href="/" className="hdr-logo w-inline-block">
-                            <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs NG logo" className="logo" />
+                            <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="logo" />
                           </Link>
                         </li>
                         <li>
@@ -182,7 +182,7 @@ export default function BlogPage() {
             <div className="fh-main">
               <div className="fh-brand">
                 <Link href="/" className="fh-logo w-inline-block">
-                  <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs NG logo" className="footer-logo" />
+                  <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="footer-logo" />
                 </Link>
                 <p className="fh-statement">
                   Production-ready Next.js website templates and bespoke web engineering built for ambitious Nigerian and African businesses.
@@ -210,7 +210,7 @@ export default function BlogPage() {
           </div>
           <div className="fh-bot">
             <div className="fh-bot-in">
-              <p className="fh-copy">© 2026 aB Labs NG — Production-Ready Web Flagships</p>
+              <p className="fh-copy">© 2026 aB Labs — Production-Ready Web Flagships</p>
               <a href="#top" className="fh-top-top w-inline-block">
                 <div>Back to top</div>
               </a>
