@@ -27,7 +27,7 @@ export default function CartPage() {
                 </div>
                 <div className="hero-summary-wrapper max-width-460px">
                   <p className="hero-summary">
-                    Review your selected production-ready website templates. Every purchase includes full source code ownership, lifetime commercial license, and instant repository transfer.
+                    Review your selected production-ready website templates. Every build includes full website ownership, bespoke brand styling, custom domain connection, and dedicated launch support.
                   </p>
                 </div>
               </div>

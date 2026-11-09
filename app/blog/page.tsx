@@ -21,7 +21,7 @@ export default function BlogPage() {
           <path d="M16 8h4l3 3v5h-7V8z"></path>
           <circle cx="5.5" cy="18.5" r="2.5"></circle>
           <circle cx="18.5" cy="18.5" r="2.5"></circle>
-        </svg></div><div>Instant GitHub repo access</div></div><div className="fh-trust-it"><div className="footer-icon w-embed"><svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
+        </svg></div><div>Done-For-You Domain Launch</div></div><div className="fh-trust-it"><div className="footer-icon w-embed"><svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
         </svg></div><div>10-year warranty</div></div><div className="fh-trust-it"><div className="footer-icon w-embed"><svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
   <polyline points="23 4 23 10 17 10"></polyline>

@@ -313,7 +313,7 @@ export default function AboutUsPage() {
                     </div>
                   </div>
                   <h3 className="ab-seal-h">100% Code Ownership</h3>
-                  <p className="ab-seal-p">Complete GitHub repository access with clean, modular Next.js 16 and TypeScript.</p>
+                  <p className="ab-seal-p">Complete website ownership with bespoke branding, domain connection, and live launch.</p>
                 </div>
                 <div className="ab-seal">
                   <div className="ab-seal-ring">
@@ -335,7 +335,7 @@ export default function AboutUsPage() {
                       </div>
                     </div>
                   </div>
-                  <h3 className="ab-seal-h">Instant Digital Transfer</h3>
+                  <h3 className="ab-seal-h">Turnkey Live Launch</h3>
                   <p className="ab-seal-p">Automatic GitHub repository invite and ZIP download immediately upon Paystack checkout.</p>
                 </div>
                 <div className="ab-seal">

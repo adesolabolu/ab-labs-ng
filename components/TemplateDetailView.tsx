@@ -255,7 +255,7 @@ export default function TemplateDetailView({ template }: TemplateDetailViewProps
                   <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '13px', color: '#52525b', lineHeight: '1.8' }}>
                     <li><strong>Full Source Code:</strong> Complete, unminified modern web standards &amp; bespoke responsive styling codebase.</li>
                     <li><strong>Complete Brand Customization:</strong> Tailored with your business logo, custom color palette, and bespoke copy.</li>
-                    <li><strong>Instant GitHub Invite:</strong> Read/write access transferred directly to your organization.</li>
+                    <li><strong>Dedicated Launch Support:</strong> We configure your custom domain, connect your business email, and deploy your live site.</li>
                     <li><strong>Step-by-Step Setup Guide:</strong> Full launch guide and dedicated setup assistance for your domain.</li>
                     <li><strong>Commercial License:</strong> Lifetime usage for your business with zero recurring template fees.</li>
                   </ul>

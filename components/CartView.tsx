@@ -63,7 +63,7 @@ export default function CartView() {
           ✓
         </div>
         <h2 style={{ fontSize: '24px', fontWeight: 800, color: '#111', marginBottom: '8px' }}>
-          Payment &amp; Transfer Confirmed!
+          Order &amp; Build Confirmed!
         </h2>
         <p style={{ color: '#666', fontSize: '15px', lineHeight: '1.6', marginBottom: '24px' }}>
           Thank you, <strong>{fullName}</strong>. A confirmation email with your repository invitation and documentation has been sent to <strong>{email}</strong>.
@@ -462,7 +462,7 @@ export default function CartView() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span>⚡</span>
-              <span>Instant GitHub Repository Transfer upon payment</span>
+              <span>Dedicated onboarding and live launch on your domain</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span>💳</span>
