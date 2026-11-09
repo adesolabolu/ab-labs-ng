@@ -11283,3 +11283,38 @@ option { color: #000 !important; }
     padding: 18px 20px !important;
   }
 }
+
+
+
+/* Section 03 Featured Products Card Polish (No Color Swatches) */
+.section-products .product-rating-block {
+  position: static !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  margin-bottom: 8px !important;
+  color: #52525b !important;
+  font-size: 13px !important;
+}
+
+.section-products .product-content-wrapper {
+  padding: 16px 18px 20px !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.section-products .product-title {
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+  margin-bottom: 10px !important;
+  color: #09090b !important;
+}
+
+.section-products .products-single-item {
+  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.section-products .products-single-item:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 16px 32px -8px rgba(12, 11, 10, 0.12) !important;
+}
