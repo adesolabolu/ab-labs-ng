@@ -10,16 +10,13 @@ export default function Navbar() {
   const router = useRouter();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const dropdownRef = useRef<HTMLLIElement>(null);
 
   // Close menus on route change
   useEffect(() => {
     setIsMobileMenuOpen(false);
-    setIsDropdownOpen(false);
     setIsSearchOpen(false);
   }, [pathname]);
 
@@ -35,23 +32,11 @@ export default function Navbar() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setIsSearchOpen(false);
-        setIsDropdownOpen(false);
         setIsMobileMenuOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  // Handle click outside dropdown
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -87,97 +72,19 @@ export default function Navbar() {
                           </Link>
                         </li>
 
-                        {/* TEMPLATES DROPDOWN */}
-                        <li ref={dropdownRef}>
-                          <div
-                            className={`nav-dropdown w-dropdown ${isDropdownOpen ? 'w--open' : ''}`}
-                            onMouseEnter={() => setIsDropdownOpen(true)}
-                            onMouseLeave={() => setIsDropdownOpen(false)}
-                          >
-                            <div
-                              className={`dropdown w-dropdown-toggle ${isDropdownOpen ? 'w--open' : ''}`}
-                              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                              style={{ cursor: 'pointer' }}
-                            >
-                              <div>Templates</div>
-                              <div className="nav-dropdown-icon w-icon-dropdown-toggle"></div>
-                            </div>
-                            <nav
-                              className={`nav-dropdown-list w-dropdown-list ${isDropdownOpen ? 'w--open' : ''}`}
-                              style={isDropdownOpen ? { display: 'block', opacity: 1, visibility: 'visible' } : undefined}
-                            >
-                              <div className="w-layout-blockcontainer container-large w-container">
-                                <div className="nav-dropdown-flex">
-                                  <div className="nav-content-wrapper">
-                                    <div className="nav-category-text">Templates by Industry</div>
-                                    <div className="nav-content-block">
-                                      <div className="w-dyn-list">
-                                        <div role="list" className="nav-list-category w-dyn-items">
-                                          <div role="listitem" className="w-dyn-item">
-                                            <Link href="/shop" className="nav-link-block w-inline-block">
-                                              <div>All Templates (8)</div>
-                                            </Link>
-                                          </div>
-                                          <div role="listitem" className="w-dyn-item">
-                                            <Link href="/shop?category=ecommerce" className="nav-link-block w-inline-block">
-                                              <div>E-Commerce &amp; Retail</div>
-                                            </Link>
-                                          </div>
-                                          <div role="listitem" className="w-dyn-item">
-                                            <Link href="/shop?category=real-estate" className="nav-link-block w-inline-block">
-                                              <div>Real Estate &amp; PropTech</div>
-                                            </Link>
-                                          </div>
-                                          <div role="listitem" className="w-dyn-item">
-                                            <Link href="/shop?category=corporate" className="nav-link-block w-inline-block">
-                                              <div>Corporate &amp; Agency</div>
-                                            </Link>
-                                          </div>
-                                          <div role="listitem" className="w-dyn-item">
-                                            <Link href="/shop?category=saas" className="nav-link-block w-inline-block">
-                                              <div>Tech Startups &amp; SaaS</div>
-                                            </Link>
-                                          </div>
-                                          <div role="listitem" className="w-dyn-item">
-                                            <Link href="/shop?category=hospitality" className="nav-link-block w-inline-block">
-                                              <div>Hospitality &amp; Dining</div>
-                                            </Link>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="best-collection-flex">
-                                    <div className="best-collection-wrapper">
-                                      <Link href="/shop" className="best-collection-link w-inline-block" style={{ textDecoration: 'none' }}>
-                                        <div style={{ padding: '24px', background: 'linear-gradient(135deg, #18181b 0%, #09090b 100%)', borderRadius: '14px', color: '#fff', display: 'flex', flexDirection: 'column', gap: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                                          <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#60A5FA' }}>2026 Collection</span>
-                                          <h4 style={{ margin: 0, fontSize: '17px', fontWeight: 700, color: '#fff' }}>Production-Ready Digital Flagships</h4>
-                                          <p style={{ margin: 0, fontSize: '12px', color: '#a1a1aa', lineHeight: '1.5' }}>Next.js 16, Tailwind CSS, and Paystack pre-wired for African commerce.</p>
-                                          <span style={{ fontSize: '12px', fontWeight: 600, color: '#38BDF8', marginTop: '6px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>Browse Catalog →</span>
-                                        </div>
-                                      </Link>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </nav>
-                          </div>
-                        </li>
-
                         <li>
-                          <Link href="/shop" className={`hdr-nav-a ${pathname === '/shop' ? 'w--current' : ''}`}>
-                            Templates
+                          <Link href="/" className={`hdr-nav-a ${pathname === '/' ? 'w--current' : ''}`}>
+                            Home
                           </Link>
                         </li>
                         <li>
-                          <Link href="/about-us" className={`hdr-nav-a ${pathname === '/about-us' ? 'w--current' : ''}`}>
-                            About
+                          <Link href="/shop" className={`hdr-nav-a ${pathname.startsWith('/shop') ? 'w--current' : ''}`}>
+                            Shop
                           </Link>
                         </li>
                         <li>
                           <Link href="/blog" className={`hdr-nav-a ${pathname.startsWith('/blog') ? 'w--current' : ''}`}>
-                            Insights
+                            Blog
                           </Link>
                         </li>
                         <li>
