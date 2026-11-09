@@ -6,7 +6,21 @@ const nextConfig = {
   },
   typescript: {
     ignoreBuildErrors: true
-  }
+  },
+  async redirects() {
+    return [
+      {
+        source: '/room-category/:slug*',
+        destination: '/shop',
+        permanent: true,
+      },
+      {
+        source: '/category/:slug*',
+        destination: '/shop',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
