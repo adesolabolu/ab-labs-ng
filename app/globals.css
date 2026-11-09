@@ -11031,3 +11031,6 @@ option { color: #000 !important; }
   height: 218px !important;
   overflow: hidden !important;
 }
+
+/* Disable announcement bar globally */
+.anbar { display: none !important; }
