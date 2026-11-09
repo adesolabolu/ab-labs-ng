@@ -11094,15 +11094,26 @@ option { color: #000 !important; }
 
 
 /* =========================================================================
-   Homepage 50/50 Split Hero Section
+   Homepage 50/50 Split Hero Section (Centered, Expanded Visual & Stage Loop)
    ========================================================================= */
+.section-hero.is-split {
+  padding-top: 200px;
+  padding-bottom: 120px;
+  min-height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
 .split-hero-grid {
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
+  grid-template-columns: 0.95fr 1.05fr;
   align-items: center;
-  gap: 56px;
+  gap: 64px;
   position: relative;
   z-index: 2;
+  width: 100%;
 }
 
 .split-hero-left {
@@ -11112,46 +11123,22 @@ option { color: #000 !important; }
   max-width: 580px;
 }
 
-.split-hero-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(12, 11, 10, 0.12);
-  background-color: #fbf9f5;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #18181b;
-  margin-bottom: 22px;
-}
-
-.split-hero-pill-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: #000;
-  display: inline-block;
-}
-
 .split-hero-title {
-  font-size: clamp(34px, 4.2vw, 62px);
+  font-size: clamp(34px, 4.3vw, 62px);
   line-height: 1.06;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: -0.035em;
   color: #09090b;
-  margin: 0 0 20px 0;
+  margin: 0 0 24px 0;
 }
 
 .split-hero-desc {
-  font-size: clamp(15px, 1.1vw, 17px);
+  font-size: clamp(15px, 1.15vw, 17.5px);
   line-height: 1.6;
   color: #52525b;
-  max-width: 480px;
-  margin: 0 0 32px 0;
+  max-width: 490px;
+  margin: 0 0 36px 0;
 }
 
 .split-hero-desc strong {
@@ -11164,115 +11151,88 @@ option { color: #000 !important; }
   width: 100%;
 }
 
-.split-hero-visual-card {
-  position: relative;
-  width: 100%;
-  height: 520px;
-  border-radius: 28px;
-  overflow: hidden;
-  box-shadow: 0 30px 60px -20px rgba(12, 11, 10, 0.16);
-  background-color: #f3eee7;
+/* Override .hero-content-wrapper when inside the split hero */
+.split-hero-right .hero-content-wrapper {
+  margin-top: 0 !important;
+  width: 100% !important;
+  height: 600px !important;
+  min-height: 560px !important;
+  border-radius: 28px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-shadow: 0 32px 64px -24px rgba(12, 11, 10, 0.22) !important;
+  background-color: #f3eee7 !important;
 }
 
-.split-hero-visual-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+/* Ensure stage images fill the larger container */
+.split-hero-right .hero-stage-img {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
 }
 
-.split-hero-float-card {
-  position: absolute;
-  bottom: 24px;
-  left: 24px;
-  z-index: 10;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background-color: rgba(255, 255, 255, 0.94);
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  border-radius: 20px;
-  width: 260px;
-  padding: 22px 24px;
-  box-shadow: 0 20px 48px -12px rgba(12, 11, 10, 0.18);
+.split-hero-right .hero-stage-img-img {
+  width: 100% !important;
+  min-width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
 }
 
-.split-hero-float-name {
-  font-size: 17px;
-  font-weight: 700;
-  color: #09090b;
-  margin: 0 0 12px 0;
-  line-height: 1.25;
-}
-
-.split-hero-float-rule {
-  width: 100%;
-  height: 1px;
-  background-color: rgba(12, 11, 10, 0.08);
-  margin-bottom: 14px;
-}
-
-.split-hero-float-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  margin-bottom: 12px;
-}
-
-.split-hero-float-meta-lbl {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #71717a;
-  margin: 0;
-}
-
-.split-hero-float-meta-val {
-  font-size: 13px;
-  font-weight: 600;
-  color: #18181b;
-  margin: 0;
-}
-
-.split-hero-float-link {
-  font-size: 13px;
-  font-weight: 600;
-  color: #09090b;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 4px;
-  transition: transform 0.2s ease;
-}
-
-.split-hero-float-link:hover {
-  transform: translateX(3px);
+.split-hero-right .hero-card {
+  z-index: 10 !important;
+  position: absolute !important;
+  bottom: 28px !important;
+  left: 28px !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  background-color: rgba(255, 255, 255, 0.94) !important;
+  border: 1px solid rgba(255, 255, 255, 0.65) !important;
+  border-radius: 20px !important;
+  width: 270px !important;
+  padding: 24px 26px !important;
+  box-shadow: 0 20px 48px -12px rgba(12, 11, 10, 0.18) !important;
 }
 
 @media (max-width: 991px) {
+  .section-hero.is-split {
+    padding-top: 150px;
+    padding-bottom: 80px;
+    min-height: auto;
+  }
   .split-hero-grid {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 44px;
   }
   .split-hero-left {
     max-width: 100%;
   }
-  .split-hero-visual-card {
-    height: 420px;
+  .split-hero-right .hero-content-wrapper {
+    height: 440px !important;
+    min-height: 400px !important;
   }
 }
 
 @media (max-width: 479px) {
-  .split-hero-visual-card {
-    height: 340px;
-    border-radius: 20px;
+  .section-hero.is-split {
+    padding-top: 130px;
+    padding-bottom: 60px;
   }
-  .split-hero-float-card {
-    bottom: 16px;
-    left: 16px;
-    right: 16px;
-    width: auto;
-    padding: 16px 18px;
+  .split-hero-right .hero-content-wrapper {
+    height: 360px !important;
+    min-height: 320px !important;
+    border-radius: 20px !important;
+  }
+  .split-hero-right .hero-card {
+    bottom: 16px !important;
+    left: 16px !important;
+    right: 16px !important;
+    width: auto !important;
+    padding: 18px 20px !important;
   }
 }
