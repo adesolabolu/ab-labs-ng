@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import ClientInitializer from '@/components/ClientInitializer';
 import ScrollToTop from '@/components/ScrollToTop';
+import { CartProvider } from '@/context/CartContext';
 
 export const metadata: Metadata = {
   title: {
@@ -32,9 +33,11 @@ export default function RootLayout({
         />
       </head>
       <body>
-        {children}
-        <ScrollToTop />
-        <ClientInitializer />
+        <CartProvider>
+          {children}
+          <ScrollToTop />
+          <ClientInitializer />
+        </CartProvider>
       </body>
     </html>
   );

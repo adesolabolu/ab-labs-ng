@@ -19,6 +19,11 @@ const nextConfig = {
         destination: '/shop',
         permanent: true,
       },
+      {
+        source: '/curated-collections/:slug*',
+        destination: '/shop',
+        permanent: true,
+      },
     ];
   },
 };

@@ -33,7 +33,7 @@ export default function NotFoundPage() {
         </svg></div><div>10-year warranty</div></div><div className="fh-trust-it"><div className="footer-icon w-embed"><svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
   <polyline points="23 4 23 10 17 10"></polyline>
   <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-</svg></div><div>30-day easy returns</div></div><div className="fh-trust-it"><div className="footer-icon w-embed"><svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
+</svg></div><div>100% Clean Code &amp; Full Source Ownership</div></div><div className="fh-trust-it"><div className="footer-icon w-embed"><svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
           <rect x="3" y="11" width="18" height="11" rx="2"></rect>
           <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
         </svg></div><div>Secure checkout</div></div></div><div className="fh-in"><div className="fh-main"><div className="fh-brand"><a href="/" className="fh-logo w-inline-block"><img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs NG logo" className="footer-logo"/></a><p className="fh-statement">Handcrafted furniture designed to bring warmth, character and lasting quality to every

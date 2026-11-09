@@ -2,12 +2,16 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { TEMPLATES, CATEGORIES, Template } from '@/data/templates';
+import { useCart } from '@/context/CartContext';
 
 export default function ShopCatalog() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get('category') || 'all';
+
+  const { addItem } = useCart();
 
   const [activeCategory, setActiveCategory] = useState<string>(initialCategory);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -36,6 +40,11 @@ export default function ShopCatalog() {
       return 0; // featured (default order)
     });
   }, [activeCategory, searchQuery, sortBy]);
+
+  const handleGetTemplate = (template: Template) => {
+    addItem(template);
+    router.push('/cart');
+  };
 
   return (
     <div className="shop-catalog-container">
@@ -372,8 +381,9 @@ export default function ShopCatalog() {
                       Preview ↗
                     </Link>
 
-                    <Link
-                      href={`/product/${template.slug}`}
+                    <button
+                      type="button"
+                      onClick={() => handleGetTemplate(template)}
                       style={{
                         padding: '8px 14px',
                         backgroundColor: '#111',
@@ -382,13 +392,13 @@ export default function ShopCatalog() {
                         borderRadius: '8px',
                         fontSize: '12px',
                         fontWeight: 600,
-                        textDecoration: 'none',
+                        cursor: 'pointer',
                         display: 'inline-flex',
                         alignItems: 'center'
                       }}
                     >
                       Get Template
-                    </Link>
+                    </button>
                   </div>
                 </div>
               </div>
