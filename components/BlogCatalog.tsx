@@ -117,7 +117,7 @@ export default function BlogCatalog() {
               alignItems: 'stretch'
             }}>
               <Link
-                href={`/blog-post/${featuredPost.slug}`}
+                href={`/blog/${featuredPost.slug}`}
                 style={{
                   display: 'block',
                   position: 'relative',
@@ -171,7 +171,7 @@ export default function BlogCatalog() {
                   <span style={{ fontSize: '12px', color: '#71717a' }}>{featuredPost.readTime}</span>
                 </div>
 
-                <Link href={`/blog-post/${featuredPost.slug}`} style={{ textDecoration: 'none' }}>
+                <Link href={`/blog/${featuredPost.slug}`} style={{ textDecoration: 'none' }}>
                   <h2 style={{
                     fontSize: '24px',
                     fontWeight: 800,
@@ -221,7 +221,7 @@ export default function BlogCatalog() {
                   </div>
 
                   <Link
-                    href={`/blog-post/${featuredPost.slug}`}
+                    href={`/blog/${featuredPost.slug}`}
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
@@ -261,7 +261,7 @@ export default function BlogCatalog() {
               >
                 {/* Thumbnail */}
                 <Link
-                  href={`/blog-post/${post.slug}`}
+                  href={`/blog/${post.slug}`}
                   style={{
                     display: 'block',
                     position: 'relative',
@@ -306,7 +306,7 @@ export default function BlogCatalog() {
                     <span>{post.readTime}</span>
                   </div>
 
-                  <Link href={`/blog-post/${post.slug}`} style={{ textDecoration: 'none' }}>
+                  <Link href={`/blog/${post.slug}`} style={{ textDecoration: 'none' }}>
                     <h3 style={{
                       fontSize: '17px',
                       fontWeight: 700,
@@ -357,7 +357,7 @@ export default function BlogCatalog() {
                     </div>
 
                     <Link
-                      href={`/blog-post/${post.slug}`}
+                      href={`/blog/${post.slug}`}
                       style={{
                         fontSize: '12px',
                         fontWeight: 600,

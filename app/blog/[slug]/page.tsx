@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     .join(' ');
   return {
     title: `${title} | aB Labs Blog`,
-    description: 'Engineering insights, Paystack integration playbooks, and modern web architecture from aB Labs.',
+    description: 'Conversion insights, digital growth strategies, and high-performance web architecture from aB Labs.',
   };
 }
 

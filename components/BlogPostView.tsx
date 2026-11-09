@@ -283,7 +283,7 @@ export default function BlogPostView({ post }: BlogPostViewProps) {
               {relatedPosts.map(rel => (
                 <Link
                   key={rel.id}
-                  href={`/blog-post/${rel.slug}`}
+                  href={`/blog/${rel.slug}`}
                   style={{
                     textDecoration: 'none',
                     display: 'flex',
