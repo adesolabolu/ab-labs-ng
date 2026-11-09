@@ -5,7 +5,7 @@ import ShopCatalog from '@/components/ShopCatalog';
 
 export const metadata = {
   title: 'Shop All Templates | aB Labs',
-  description: 'Explore production-ready Next.js website templates and web systems engineered for African and Nigerian businesses. Paystack pre-integrated, mobile-first, and ultra-fast.',
+  description: 'Explore production-ready Next.js website templates and web systems engineered for African and Nigerian businesses. Mobile-first, turnkey customization, and ultra-fast.',
 };
 
 export default function ShopPage() {
@@ -27,7 +27,7 @@ export default function ShopPage() {
                 </div>
                 <div className="hero-summary-wrapper max-width-460px">
                   <p className="hero-summary">
-                    Handcrafted, ultra-fast Next.js templates engineered for Nigerian &amp; African commerce. Pre-wired for Paystack, responsive across all screen sizes, and optimized for sub-second Core Web Vitals.
+                    Handcrafted, ultra-fast Next.js templates engineered for Nigerian &amp; African commerce. Bespoke brand styling, responsive across all screen sizes, and optimized for sub-second Core Web Vitals.
                   </p>
                 </div>
 
@@ -47,7 +47,7 @@ export default function ShopPage() {
                         <line x1="2" y1="10" x2="22" y2="10"></line>
                       </svg>
                     </div>
-                    <div>Paystack Pre-Wired</div>
+                    <div>Turnkey Customization</div>
                   </div>
                   <div className="ab-flow-tag bg-rgba-249-246-241-7">
                     <div className="him-icon w-embed">

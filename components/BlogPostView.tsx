@@ -235,7 +235,7 @@ export default function BlogPostView({ post }: BlogPostViewProps) {
               Ready to Upgrade to a High-Converting Digital Flagship?
             </h3>
             <p style={{ margin: 0, fontSize: '14px', color: '#a1a1aa', maxWidth: '520px', lineHeight: '1.6' }}>
-              Skip 6-month agency builds. Every aB Labs template is production-ready, mobile-first, and pre-integrated with Paystack for African commerce.
+              Skip 6-month agency builds. Every aB Labs template is production-ready, mobile-first, and customized and deployed turnkey for your business.
             </p>
             <div style={{ display: 'flex', gap: '12px', marginTop: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
               <Link
@@ -341,7 +341,7 @@ export default function BlogPostView({ post }: BlogPostViewProps) {
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                 </svg>
               </div>
-              <div>Paystack &amp; Flutterwave Local Gateway Ready</div>
+              <div>Custom Domain &amp; Fast Turnaround Included</div>
             </div>
             <div className="fh-trust-it">
               <div className="footer-icon w-embed">

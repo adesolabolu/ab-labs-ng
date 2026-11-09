@@ -16,7 +16,7 @@ interface Slide {
 const SLIDES: Slide[] = [
   {
     name: 'Lumina Storefront Pro',
-    category: 'Next.js 16 + Paystack',
+    category: 'E-Commerce & Retail',
     metric: '99.8% Lighthouse',
     metricColor: '#16a34a',
     image: '/assets/6a9d41e8ed1798ce9da07242_hero-stage-grad%20image.webp',
@@ -24,7 +24,7 @@ const SLIDES: Slide[] = [
   },
   {
     name: 'Apex Real Estate Suite',
-    category: 'Next.js 16 + Paystack',
+    category: 'Real Estate & Luxury',
     metric: 'Sub-Second Turnkey',
     metricColor: '#2563eb',
     image: '/assets/6aa8e6c9377fd78d6e9319eb_Rectangle%203xx4624707.webp',
@@ -32,7 +32,7 @@ const SLIDES: Slide[] = [
   },
   {
     name: 'Vertex Corporate Flagship',
-    category: 'Next.js 16 + Paystack',
+    category: 'Corporate & Legal',
     metric: '100% Clean Architecture',
     metricColor: '#9333ea',
     image: '/assets/6aa8e6ca646687ab06e34fdd_Rectanccgle%2034624706.webp',
@@ -40,8 +40,8 @@ const SLIDES: Slide[] = [
   },
   {
     name: 'Pulse SaaS Platform',
-    category: 'Next.js 16 + Paystack',
-    metric: 'Zero-Friction Checkout',
+    category: 'Tech Startup & SaaS',
+    metric: 'High Conversion Flow',
     metricColor: '#ea580c',
     image: '/assets/6aa685cd92e156928afe94c4_Rectangle%2034624705%20(2).webp',
     slug: 'pulse-saas',
@@ -171,7 +171,7 @@ export default function HeroStageSlider() {
         </p>
         <div className="hero-card-rule"></div>
         <div className="hero-card-meta">
-          <p className="hero-card-meta-small">Stack</p>
+          <p className="hero-card-meta-small">Industry</p>
           <span>{active.category}</span>
         </div>
         <div className="hero-card-meta">

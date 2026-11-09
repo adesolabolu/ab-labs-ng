@@ -100,7 +100,7 @@ export default function TemplateDetailView({ template }: TemplateDetailViewProps
                                         <div style={{ padding: '24px', background: 'linear-gradient(135deg, #18181b 0%, #09090b 100%)', borderRadius: '14px', color: '#fff', display: 'flex', flexDirection: 'column', gap: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
                                           <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#60A5FA' }}>2026 Collection</span>
                                           <h4 style={{ margin: 0, fontSize: '17px', fontWeight: 700, color: '#fff' }}>Production-Ready Digital Flagships</h4>
-                                          <p style={{ margin: 0, fontSize: '12px', color: '#a1a1aa', lineHeight: '1.5' }}>Next.js 16, Tailwind CSS, and Paystack pre-wired for African commerce.</p>
+                                          <p style={{ margin: 0, fontSize: '12px', color: '#a1a1aa', lineHeight: '1.5' }}>Next.js 16, Tailwind CSS, customized turnkey for your brand.</p>
                                           <span style={{ fontSize: '12px', fontWeight: 600, color: '#38BDF8', marginTop: '6px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>Browse Catalog →</span>
                                         </div>
                                       </Link>
@@ -254,7 +254,7 @@ export default function TemplateDetailView({ template }: TemplateDetailViewProps
                   </h4>
                   <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '13px', color: '#52525b', lineHeight: '1.8' }}>
                     <li><strong>Full Source Code:</strong> Complete, unminified Next.js 16 &amp; Tailwind CSS codebase.</li>
-                    <li><strong>Paystack Payment Integration:</strong> Ready-to-use checkout controllers and webhook handlers.</li>
+                    <li><strong>Complete Brand Customization:</strong> Tailored with your business logo, custom color palette, and bespoke copy.</li>
                     <li><strong>Instant GitHub Invite:</strong> Read/write access transferred directly to your organization.</li>
                     <li><strong>Step-by-Step Setup Guide:</strong> 15-minute deployment documentation for Vercel or your own server.</li>
                     <li><strong>Commercial License:</strong> Lifetime usage for your business with zero recurring template fees.</li>
@@ -366,7 +366,7 @@ export default function TemplateDetailView({ template }: TemplateDetailViewProps
                         Add Turnkey Vercel Deployment &amp; Domain Setup
                       </div>
                       <div style={{ fontSize: '11px', color: '#64748b' }}>
-                        Our engineering team configures your domain, DNS, and Paystack within 48 hours.
+                        Our engineering team configures your custom domain, SSL certificate, and deployment within days.
                       </div>
                     </div>
                   </div>
@@ -460,7 +460,7 @@ export default function TemplateDetailView({ template }: TemplateDetailViewProps
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                 </svg>
               </div>
-              <div>Paystack &amp; Flutterwave Local Gateway Ready</div>
+              <div>Direct WhatsApp &amp; Live Deployment Support</div>
             </div>
             <div className="fh-trust-it">
               <div className="footer-icon w-embed">

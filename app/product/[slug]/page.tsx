@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     .join(' ');
   return {
     title: `${title} | aB Labs`,
-    description: 'Production-ready website template engineered with Next.js and Paystack.',
+    description: 'Production-ready website template engineered with Next.js 16 and tailored for your brand.',
   };
 }
 
