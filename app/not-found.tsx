@@ -73,46 +73,6 @@ export default function NotFoundPage() {
 
         <section className="footer">
           <div className="w-layout-blockcontainer container-large w-container">
-            <div className="fh-trust">
-              <div className="fh-trust-it">
-                <div className="footer-icon w-embed">
-                  <svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
-                    <rect x="1" y="3" width="15" height="13"></rect>
-                    <path d="M16 8h4l3 3v5h-7V8z"></path>
-                    <circle cx="5.5" cy="18.5" r="2.5"></circle>
-                    <circle cx="18.5" cy="18.5" r="2.5"></circle>
-                  </svg>
-                </div>
-                <div>Instant Code Delivery (GitHub &amp; ZIP)</div>
-              </div>
-              <div className="fh-trust-it">
-                <div className="footer-icon w-embed">
-                  <svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                  </svg>
-                </div>
-                <div>30-Day Engineering Support</div>
-              </div>
-              <div className="fh-trust-it">
-                <div className="footer-icon w-embed">
-                  <svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
-                    <polyline points="23 4 23 10 17 10"></polyline>
-                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-                  </svg>
-                </div>
-                <div>100% Clean Code &amp; Full Ownership</div>
-              </div>
-              <div className="fh-trust-it">
-                <div className="footer-icon w-embed">
-                  <svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
-                    <rect x="3" y="11" width="18" height="11" rx="2"></rect>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                  </svg>
-                </div>
-                <div>Secure Paystack Checkout</div>
-              </div>
-            </div>
-
             <div className="fh-in">
               <div className="fh-main">
                 <div className="fh-brand">
