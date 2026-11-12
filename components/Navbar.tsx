@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import NavbarCartButton from '@/components/NavbarCartButton';
 
 export default function Navbar() {
   const pathname = usePathname() || '/';
@@ -52,61 +51,61 @@ export default function Navbar() {
       <header id="top" className="header">
         <div className="site-top">
           <div className="header-wrapper">
-            <div data-animation="over-left" data-collapse="medium" data-duration="400" data-easing="ease" data-easing2="ease" role="banner" className="hdr w-nav">
+            <div data-nav-animation="over-left" data-nav-collapse="medium" data-nav-duration="400" data-anim-easing="ease" data-anim-easing2="ease" role="banner" className="hdr site-nav">
               <div className="hdr-in">
-                <div className="w-layout-blockcontainer container-large w-container">
+                <div className="site-blockcontainer container-large site-container">
                   <div className="navbar-wrapper">
-                    <Link href="/" className={`hdr-logo w-inline-block ${pathname === '/' ? 'w--current' : ''}`}>
+                    <Link href="/" className={`hdr-logo inline-block ${pathname === '/' ? 'is-current' : ''}`}>
                       <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="logo" />
                     </Link>
 
                     <nav
                       role="navigation"
-                      className={`nav-menu-wrapper w-nav-menu ${isMobileMenuOpen ? 'w--nav-menu-open' : ''}`}
+                      className={`nav-menu-wrapper nav-menu-list ${isMobileMenuOpen ? 'nav-menu-open' : ''}`}
                       style={isMobileMenuOpen ? { display: 'block' } : undefined}
                     >
-                      <ul role="list" className="nav-menu w-list-unstyled">
+                      <ul role="list" className="nav-menu list-unstyled">
                         <li className="mobile-logo">
-                          <Link href="/" className="hdr-logo w-inline-block">
+                          <Link href="/" className="hdr-logo inline-block">
                             <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="logo" />
                           </Link>
                         </li>
 
                         <li>
-                          <Link href="/" className={`hdr-nav-a ${pathname === '/' ? 'w--current' : ''}`}>
+                          <Link href="/" className={`hdr-nav-a ${pathname === '/' ? 'is-current' : ''}`}>
                             Home
                           </Link>
                         </li>
                         <li>
-                          <Link href="/shop" className={`hdr-nav-a ${pathname.startsWith('/shop') ? 'w--current' : ''}`}>
+                          <Link href="/shop" className={`hdr-nav-a ${pathname.startsWith('/shop') ? 'is-current' : ''}`}>
                             Shop
                           </Link>
                         </li>
                         <li>
-                          <Link href="/blog" className={`hdr-nav-a ${pathname.startsWith('/blog') ? 'w--current' : ''}`}>
+                          <Link href="/blog" className={`hdr-nav-a ${pathname.startsWith('/blog') ? 'is-current' : ''}`}>
                             Blog
                           </Link>
                         </li>
                         <li>
-                          <Link href="/contact-us" className={`hdr-nav-a ${pathname === '/contact-us' ? 'w--current' : ''}`}>
+                          <Link href="/contact-us" className={`hdr-nav-a ${pathname === '/contact-us' ? 'is-current' : ''}`}>
                             Contact
                           </Link>
                         </li>
 
                         <li className="mobile-button">
-                          <Link href="/shop" className="primary-button w-inline-block">
+                          <Link href="/shop" className="primary-button inline-block">
                             <div className="button-text-wrapper">
                               <div className="button-text-block">
                                 <div className="link-text is-1">Explore Templates</div>
                                 <div className="link-text is-2">Explore Templates</div>
                               </div>
                               <div className="button-arrow-block">
-                                <div className="link-icon is-1 w-embed">
+                                <div className="link-icon is-1 site-embed">
                                   <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                                     <path d="M7 17 17 7M7 7h10v10"></path>
                                   </svg>
                                 </div>
-                                <div className="link-icon is-2 w-embed">
+                                <div className="link-icon is-2 site-embed">
                                   <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                                     <path d="M7 17 17 7M7 7h10v10"></path>
                                   </svg>
@@ -127,7 +126,7 @@ export default function Navbar() {
                         role="button"
                         aria-label="Open search"
                       >
-                        <div className="search-icon w-embed">
+                        <div className="search-icon site-embed">
                           <svg className="nav__search-ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" strokeWidth="2px" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                             <circle cx="11" cy="11" r="8" stroke="currentColor" fill="none" strokeWidth="2px"></circle>
                             <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" fill="none" strokeWidth="2px"></line>
@@ -135,19 +134,19 @@ export default function Navbar() {
                         </div>
                       </div>
 
-                      <Link href="/shop" className="primary-button w-inline-block">
+                      <Link href="/shop" className="primary-button inline-block">
                         <div className="button-text-wrapper">
                           <div className="button-text-block">
                             <div className="link-text is-1">Explore Templates</div>
                             <div className="link-text is-2">Explore Templates</div>
                           </div>
                           <div className="button-arrow-block">
-                            <div className="link-icon is-1 w-embed">
+                            <div className="link-icon is-1 site-embed">
                               <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                                 <path d="M7 17 17 7M7 7h10v10"></path>
                               </svg>
                             </div>
-                            <div className="link-icon is-2 w-embed">
+                            <div className="link-icon is-2 site-embed">
                               <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                                 <path d="M7 17 17 7M7 7h10v10"></path>
                               </svg>
@@ -159,15 +158,13 @@ export default function Navbar() {
 
                     {/* MOBILE HAMBURGER BUTTON */}
                     <div className="offcanvas-button-wrapper">
-                      <NavbarCartButton />
-                      <div className="cart-devider"></div>
                       <div
-                        className={`menu-button w-nav-button ${isMobileMenuOpen ? 'w--open' : ''}`}
+                        className={`menu-button nav-toggle-btn ${isMobileMenuOpen ? 'is-open' : ''}`}
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         aria-label="Toggle navigation menu"
                         style={{ cursor: 'pointer' }}
                       >
-                        <div className="w-icon-nav-menu"></div>
+                        <div className="icon-nav-menu"></div>
                       </div>
                     </div>
                   </div>
@@ -189,14 +186,14 @@ export default function Navbar() {
             }}
           >
             <div className="search-inner-block">
-              <div className="w-layout-blockcontainer container-large w-container">
+              <div className="site-blockcontainer container-large site-container">
                 <div className="search-inner-wrapper">
-                  <div className="search-form w-form" style={{ width: '100%' }}>
+                  <div className="search-form site-form" style={{ width: '100%' }}>
                     <form onSubmit={handleSearchSubmit} className="search-form">
                       <div className="search-field-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                         <input
                           ref={searchInputRef}
-                          className="search-field w-input"
+                          className="search-field site-input"
                           maxLength={256}
                           name="q"
                           value={searchQuery}
@@ -207,7 +204,7 @@ export default function Navbar() {
                           required={true}
                           style={{ paddingRight: '48px' }}
                         />
-                        <button type="submit" className="search-button-icon w-button" style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}>
+                        <button type="submit" className="search-button-icon site-button" style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}>
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" strokeWidth="2px" strokeLinecap="round" strokeLinejoin="round">
                             <circle cx="11" cy="11" r="8" stroke="currentColor" fill="none" strokeWidth="2px"></circle>
                             <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" fill="none" strokeWidth="2px"></line>
@@ -223,7 +220,7 @@ export default function Navbar() {
                     role="button"
                     aria-label="Close search"
                   >
-                    <div className="close-button-icon w-embed">
+                    <div className="close-button-icon site-embed">
                       <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" strokeWidth="2px" strokeLinecap="round" aria-hidden="true">
                         <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" fill="none" strokeWidth="2px"></line>
                         <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" fill="none" strokeWidth="2px"></line>

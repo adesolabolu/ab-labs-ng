@@ -2,7 +2,7 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import { itemsMap, itemSlugs } from './content';
 
-// Mapping alias slugs (from homepage & insights) to the authentic Webflow blog layout items
+// Mapping alias slugs (from homepage & insights) to the authentic blog layout items
 const BLOG_SLUG_ALIASES: Record<string, string> = {
   'why-single-page-websites-hurt-local-seo-nigeria': 'how-to-create-a-cozy-scandinavian-living-room-in-2026',
   'speed-to-lead-converting-nigerian-web-traffic-under-5-minutes': 'caring-for-your-premium-furniture-a-complete-guide',
@@ -16,7 +16,7 @@ const BLOG_SLUG_ALIASES: Record<string, string> = {
 
 export function generateStaticParams() {
   const allSlugs = Array.from(new Set([...itemSlugs, ...Object.keys(BLOG_SLUG_ALIASES)]));
-  return allSlugs.map(slug => ({ slug }));
+  return allSlugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const resolved = BLOG_SLUG_ALIASES[slug] || slug;
   const title = slug
     .split('-')
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
   return {
     title: `${title} | aB Labs Blog`,

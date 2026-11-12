@@ -26,6 +26,13 @@ yarn-error.log*
 
 # Local env files
 .env*.local
+env.local
+
+# Debug logs and temporary captures
+*.log
+*.png
+.thumb-backup/
+
 
 # Vercel
 .vercel

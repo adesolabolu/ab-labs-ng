@@ -59,7 +59,6 @@ export const TEMPLATES: Template[] = [
       'Mobile-First Responsive Layout'
     ],
     demoUrl: 'https://paws-whiskers-boutique.vercel.app',
-    demoUrl: 'https://paws-whiskers-boutique.vercel.app'
   },
   {
     id: 'lumina-lighting-lamps',
@@ -95,7 +94,6 @@ export const TEMPLATES: Template[] = [
       'SEO & Core Web Vitals Tuned'
     ],
     demoUrl: 'https://lumina-lighting-lamps.vercel.app',
-    demoUrl: 'https://lumina-lighting-lamps.vercel.app'
   },
   {
     id: 'paws-polish-grooming',
@@ -131,7 +129,6 @@ export const TEMPLATES: Template[] = [
       'Mobile-First Dark Aesthetics'
     ],
     demoUrl: 'https://paws-polish-grooming.vercel.app',
-    demoUrl: 'https://paws-polish-grooming.vercel.app'
   },
   {
     id: 'remix-napkin-studio',
@@ -167,7 +164,6 @@ export const TEMPLATES: Template[] = [
       'Mobile-Optimized Experience'
     ],
     demoUrl: 'https://remix-napkin-studio.vercel.app',
-    demoUrl: 'https://remix-napkin-studio.vercel.app'
   },
   {
     id: 'remix-kinetic-engine',
@@ -203,7 +199,6 @@ export const TEMPLATES: Template[] = [
       'High-Speed Core Web Vitals'
     ],
     demoUrl: 'https://remix-kinetic-engine.vercel.app',
-    demoUrl: 'https://remix-kinetic-engine.vercel.app'
   },
   {
     id: 'aura-luxury-interiors',
@@ -239,7 +234,6 @@ export const TEMPLATES: Template[] = [
       'Mobile-First Responsive Layout'
     ],
     demoUrl: 'https://aura-luxury-interiors.vercel.app',
-    demoUrl: 'https://aura-luxury-interiors.vercel.app'
   },
   {
     id: 'acid-system-drops',
@@ -275,7 +269,6 @@ export const TEMPLATES: Template[] = [
       'Automated SSL Security'
     ],
     demoUrl: 'https://acid-system-drops.vercel.app',
-    demoUrl: 'https://acid-system-drops.vercel.app'
   },
   {
     id: 'vertex-elite-marketing',
@@ -311,7 +304,6 @@ export const TEMPLATES: Template[] = [
       'Google Search Ready'
     ],
     demoUrl: 'https://vertex-elite-marketing.vercel.app',
-    demoUrl: 'https://vertex-elite-marketing.vercel.app'
   },
   {
     id: 'bauhaus-atelier',
@@ -347,7 +339,6 @@ export const TEMPLATES: Template[] = [
       'Ultra-Clean Codebase'
     ],
     demoUrl: 'https://bauhaus-atelier.vercel.app',
-    demoUrl: 'https://bauhaus-atelier.vercel.app'
   },
   {
     id: 'kinetic-orange-studio',
@@ -383,7 +374,6 @@ export const TEMPLATES: Template[] = [
       '1-Sec Instant Load Speed'
     ],
     demoUrl: 'https://kinetic-orange-studio.vercel.app',
-    demoUrl: 'https://kinetic-orange-studio.vercel.app'
   },
   {
     id: 'midnight-ramen-tokyo',
@@ -419,8 +409,16 @@ export const TEMPLATES: Template[] = [
       'Mobile-First Dark Aesthetics'
     ],
     demoUrl: 'https://midnight-ramen-tokyo.vercel.app',
-    demoUrl: 'https://midnight-ramen-tokyo.vercel.app'
-  },
+  },
+
+
+
+
+
+
+
+
+
   {
     id: 'alex-chen-architect',
     slug: 'alex-chen-architect',
@@ -445,7 +443,6 @@ export const TEMPLATES: Template[] = [
     stack: ["ARCON & COREN Registered", "Solar-Autonomous Specs", "Site & Load Audit Intake", "Fast 1-Sec Load"],
     features: ["Solar Villa Portfolio Showcase", "Smart-Home Engineering Specs", "Site Audit Consultation Form", "Mobile-First Architecture"],
     demoUrl: 'https://alex-chen-architect.vercel.app',
-    demoUrl: 'https://alex-chen-architect.vercel.app'
   },
   {
     id: 'carzap-detailing',
@@ -471,7 +468,6 @@ export const TEMPLATES: Template[] = [
     stack: ["Concierge Slot Reservation", "Harmattan 9H Shield Specs", "Direct WhatsApp Routing", "Fast 1-Sec Load"],
     features: ["Mobile Slot Booking Engine", "Swirl & Watermark Correction Specs", "Direct WhatsApp Concierge", "Interactive Care Pricing"],
     demoUrl: 'https://carzap-detailing.vercel.app',
-    demoUrl: 'https://carzap-detailing.vercel.app'
   },
   {
     id: 'john-anderson-portfolio',
@@ -497,7 +493,6 @@ export const TEMPLATES: Template[] = [
     stack: ["Creative Code Experiments", "Design System Vault", "Interactive Project Inquiries", "Fast 1-Sec Load"],
     features: ["Interactive 3D Reel Showcase", "Engineering Case Studies", "Direct Consultation Booking", "Ultra-Lightweight Performance"],
     demoUrl: 'https://john-anderson-portfolio.vercel.app',
-    demoUrl: 'https://john-anderson-portfolio.vercel.app'
   },
   {
     id: 'greencare-eco',
@@ -523,7 +518,6 @@ export const TEMPLATES: Template[] = [
     stack: ["Commercial Mini-Grid Specs", "Solar Cold-Hub Network", "Cooperative Intake Flow", "Fast 1-Sec Load"],
     features: ["Mini-Grid Capacity Matrix", "Pay-Small-Small Energy Calculator", "Agri-Cooperative Onboarding", "Field Telemetry Showcase"],
     demoUrl: 'https://greencare-eco.vercel.app',
-    demoUrl: 'https://greencare-eco.vercel.app'
   },
   {
     id: 'swiftmove-logistics',
@@ -549,7 +543,6 @@ export const TEMPLATES: Template[] = [
     stack: ["Instant Move Estimator", "White-Glove Inventory Intake", "Direct WhatsApp Dispatch", "Fast 1-Sec Load"],
     features: ["Relocation Pricing Calculator", "Fleet & Handling Guarantee", "Direct WhatsApp Booking", "High-Conversion Mobile Form"],
     demoUrl: 'https://swiftmove-logistics-rho.vercel.app',
-    demoUrl: 'https://swiftmove-logistics-rho.vercel.app'
   },
   {
     id: 'ananya-singh-motion',
@@ -575,7 +568,6 @@ export const TEMPLATES: Template[] = [
     stack: ["3D Motion Reel Player", "CGI Campaign Vault", "Experiential Booking Intake", "Fast 1-Sec Load"],
     features: ["High-Impact Video Showcases", "3D Fashion & Stage Portfolio", "Direct Project Inquiries", "Dark-Mode Cultural Aesthetics"],
     demoUrl: 'https://ananya-singh-motion.vercel.app',
-    demoUrl: 'https://ananya-singh-motion.vercel.app'
   },
   {
     id: 'arjun-verma-photo',
@@ -601,7 +593,6 @@ export const TEMPLATES: Template[] = [
     stack: ["High-Resolution Photo Gallery", "Campaign Case Dossiers", "Studio Booking Intake", "Fast 1-Sec Load"],
     features: ["Fullscreen Asset Inspection", "Commercial Rate Card Intake", "Direct WhatsApp Studio Booking", "Retina-Optimized Imagery"],
     demoUrl: 'https://arjun-verma-photo.vercel.app',
-    demoUrl: 'https://arjun-verma-photo.vercel.app'
   },
   {
     id: 'launchkit-ng-studio',
@@ -627,7 +618,6 @@ export const TEMPLATES: Template[] = [
     stack: ["Voice Accent Selector", "Video Demo Generator", "Tiered SaaS Pricing Matrix", "Fast 1-Sec Load"],
     features: ["Multilingual Audio Sampler", "Interactive Video Workflow Demo", "SaaS Subscription Plans", "Instant Waitlist & Lead Intake"],
     demoUrl: 'https://launchkit-ng-studio.vercel.app',
-    demoUrl: 'https://launchkit-ng-studio.vercel.app'
   },
   {
     id: 'designer-voice-studio',
@@ -653,7 +643,6 @@ export const TEMPLATES: Template[] = [
     stack: ["FinTech Metrics Telemetry", "Interactive Design Case Studies", "Direct Consultation Booking", "Fast 1-Sec Load"],
     features: ["FinTech UX Deep-Dives", "Interactive Flow Demonstrations", "Enterprise Project Inquiry Form", "Google Search Ready"],
     demoUrl: 'https://designer-voice-studio.vercel.app',
-    demoUrl: 'https://designer-voice-studio.vercel.app'
   },
   {
     id: 'stratos-real-estate',
@@ -679,7 +668,6 @@ export const TEMPLATES: Template[] = [
     stack: ["Dynamic Yield Engine", "Turnkey Interior Curation", "Property Inspection Intake", "Fast 1-Sec Load"],
     features: ["Portfolio ROI Calculator", "Virtual Penthouse Walkthroughs", "Landlord Yield Inquiries", "100% Mobile Ready"],
     demoUrl: 'https://stratos-real-estate.vercel.app',
-    demoUrl: 'https://stratos-real-estate.vercel.app'
   },
   {
     id: 'aetheria-wellness-spa',
@@ -705,7 +693,6 @@ export const TEMPLATES: Template[] = [
     stack: ["Ritual Treatment Menu", "Sanctuary Suite Reservations", "Direct WhatsApp Concierge", "Fast 1-Sec Load"],
     features: ["Archival Wellness Ritual Cards", "VIP Sanctuary Suite Booking", "Kanuri Dukhan & Ikogosi Springs", "High-Craft Minimalist Aesthetics"],
     demoUrl: 'https://aetheria-wellness-spa.vercel.app',
-    demoUrl: 'https://aetheria-wellness-spa.vercel.app'
   },
   {
     id: 'medstrat-healthcare',
@@ -731,7 +718,6 @@ export const TEMPLATES: Template[] = [
     stack: ["Home Sample Collection Intake", "Diagnostic Test Menu", "Digital Result Delivery Portal", "Fast 1-Sec Load"],
     features: ["Online Test Directory & Pricing", "Home Sample Dispatch Booking", "Direct Specialist Consultations", "MLSCN & ISO-15189 Certified"],
     demoUrl: 'https://medstrat-healthcare.vercel.app',
-    demoUrl: 'https://medstrat-healthcare.vercel.app'
   },
   {
     id: 'vanguard-health-medical',
@@ -757,7 +743,6 @@ export const TEMPLATES: Template[] = [
     stack: ["Maternal Consultation Intake", "Fertility & Care Pathways", "Direct WhatsApp Clinic Routing", "Fast 1-Sec Load"],
     features: ["Specialist Doctor Profiles", "Care Pathway Directory", "Private Suite Tour Showcase", "Patient Intake Confidentiality"],
     demoUrl: 'https://vanguard-health-medical.vercel.app',
-    demoUrl: 'https://vanguard-health-medical.vercel.app'
   },
   {
     id: 'shear-hair-artistry',
@@ -783,7 +768,6 @@ export const TEMPLATES: Template[] = [
     stack: ["Chair & VIP Suite Booking", "Wig Architecture Portfolio", "Direct WhatsApp Concierge", "Fast 1-Sec Load"],
     features: ["Online Chair Booking Engine", "Lace Melt Showcase Gallery", "Bridal & Owambe Inquiries", "Luxury Dark-Mode Design"],
     demoUrl: 'https://shear-hair-artistry.vercel.app',
-    demoUrl: 'https://shear-hair-artistry.vercel.app'
   },
 ];
 

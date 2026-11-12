@@ -2,7 +2,15 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { TEMPLATES } from '@/data/templates';
+import { TEMPLATES, type Template } from '@/data/templates';
+
+/** A catalog template merged with any saved price override. */
+type PricedTemplate = Template & {
+  pricingOverride?: boolean;
+  basePriceNgn?: number;
+  baseSetupFeeNgn?: number;
+  baseMonthlyNgn?: number;
+};
 
 export default function AdminPortalPage() {
   const [activeTab, setActiveTab] = useState<'links' | 'clients' | 'orders' | 'templates'>('links');
@@ -43,13 +51,22 @@ export default function AdminPortalPage() {
   const [editDomainExpiry, setEditDomainExpiry] = useState('');
   const [savingDomain, setSavingDomain] = useState(false);
 
+  // Catalog pricing state (defaults from data/templates.ts, overridable in Neon)
+  const [pricedTemplates, setPricedTemplates] = useState<PricedTemplate[]>(TEMPLATES);
+  const [editingPriceSlug, setEditingPriceSlug] = useState<string | null>(null);
+  const [editPriceOutright, setEditPriceOutright] = useState('');
+  const [editPriceSetup, setEditPriceSetup] = useState('');
+  const [editPriceMonthly, setEditPriceMonthly] = useState('');
+  const [savingPrice, setSavingPrice] = useState(false);
+
   const fetchAdminData = async () => {
     setLoading(true);
     try {
-      const [linksRes, clientsRes, ordersRes] = await Promise.all([
+      const [linksRes, clientsRes, ordersRes, templatesRes] = await Promise.all([
         fetch('/api/admin/links').then(r => r.json()),
         fetch('/api/admin/clients').then(r => r.json()),
         fetch('/api/admin/orders').then(r => r.json()),
+        fetch('/api/admin/templates').then(r => r.json()).catch(() => null),
       ]);
 
       if (linksRes.success) {
@@ -61,6 +78,9 @@ export default function AdminPortalPage() {
       }
       if (ordersRes.success) {
         setOrders(ordersRes.orders || []);
+      }
+      if (templatesRes?.success && Array.isArray(templatesRes.templates)) {
+        setPricedTemplates(templatesRes.templates);
       }
     } catch (err) {
       console.error('Error loading admin dashboard:', err);
@@ -168,6 +188,106 @@ export default function AdminPortalPage() {
     }
   };
 
+  const startEditingPrice = (template: PricedTemplate) => {
+    setEditingPriceSlug(template.slug);
+    setEditPriceOutright(String(template.outrightNgn ?? template.priceNgn ?? 0));
+    setEditPriceSetup(String(template.setupFeeNgn ?? 0));
+    setEditPriceMonthly(String(template.monthlyNgn ?? 0));
+  };
+
+  const cancelEditingPrice = () => {
+    setEditingPriceSlug(null);
+    setEditPriceOutright('');
+    setEditPriceSetup('');
+    setEditPriceMonthly('');
+  };
+
+  const saveTemplatePrice = async (slug: string) => {
+    setSavingPrice(true);
+    try {
+      const res = await fetch('/api/admin/templates', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slug,
+          priceNgn: Number(editPriceOutright) || 0,
+          setupFeeNgn: Number(editPriceSetup) || 0,
+          monthlyNgn: Number(editPriceMonthly) || 0,
+        }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        throw new Error(data.error || 'Could not save the pricing.');
+      }
+
+      const saved = data.pricing;
+      setPricedTemplates(prev =>
+        prev.map(t =>
+          t.slug === slug
+            ? {
+                ...t,
+                priceNgn: saved.priceNgn,
+                outrightNgn: saved.priceNgn,
+                setupFeeNgn: saved.setupFeeNgn,
+                monthlyNgn: saved.monthlyNgn,
+                pricingOverride: true,
+              }
+            : t
+        )
+      );
+      cancelEditingPrice();
+    } catch (err: any) {
+      alert(`Pricing update failed: ${err.message}`);
+    } finally {
+      setSavingPrice(false);
+    }
+  };
+
+  const resetTemplatePrice = async (slug: string) => {
+    const fallback = TEMPLATES.find(t => t.slug === slug);
+    if (!fallback) return;
+    if (!confirm('Reset this catalog price back to the coded default?')) return;
+
+    setSavingPrice(true);
+    try {
+      const res = await fetch(`/api/admin/templates?slug=${encodeURIComponent(slug)}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (!data.success) {
+        throw new Error(data.error || 'Could not reset the pricing.');
+      }
+
+      setPricedTemplates(prev =>
+        prev.map(t =>
+          t.slug === slug
+            ? {
+                ...t,
+                priceNgn: fallback.priceNgn,
+                outrightNgn: fallback.outrightNgn,
+                setupFeeNgn: fallback.setupFeeNgn,
+                monthlyNgn: fallback.monthlyNgn,
+                pricingOverride: false,
+              }
+            : t
+        )
+      );
+      cancelEditingPrice();
+    } catch (err: any) {
+      alert(`Reset failed: ${err.message}`);
+    } finally {
+      setSavingPrice(false);
+    }
+  };
+
+  /** ₦15,000 -> "₦15k", ₦5,000 -> "₦5k", ₦2,500 -> "₦2.5k" */
+  const formatShortNgn = (val: number) => {
+    const n = Number(val || 0);
+    if (n >= 1000 && n % 1000 === 0) return `₦${n / 1000}k`;
+    if (n >= 1000) return `₦${(n / 1000).toFixed(1).replace(/\.0$/, '')}k`;
+    return `₦${n}`;
+  };
+
   // Filtered lists based on search
   const filteredLinks = useMemo(() => {
     if (!searchQuery) return links;
@@ -202,18 +322,18 @@ export default function AdminPortalPage() {
   }, [orders, searchQuery]);
 
   const filteredTemplates = useMemo(() => {
-    if (!searchQuery) return TEMPLATES;
+    if (!searchQuery) return pricedTemplates;
     const q = searchQuery.toLowerCase();
-    return TEMPLATES.filter(t =>
+    return pricedTemplates.filter(t =>
       t.name.toLowerCase().includes(q) ||
       t.categoryLabel.toLowerCase().includes(q) ||
       t.tagline.toLowerCase().includes(q)
     );
-  }, [searchQuery]);
+  }, [searchQuery, pricedTemplates]);
 
   const activeTemplateForModal = useMemo(() => {
-    return TEMPLATES.find(t => t.slug === newLinkTemplateSlug) || TEMPLATES[0];
-  }, [newLinkTemplateSlug]);
+    return pricedTemplates.find(t => t.slug === newLinkTemplateSlug) || pricedTemplates[0] || TEMPLATES[0];
+  }, [newLinkTemplateSlug, pricedTemplates]);
 
   return (
     <div style={{
@@ -386,6 +506,24 @@ export default function AdminPortalPage() {
             >
               {loading ? 'Refreshing...' : '↻ Refresh Ledger'}
             </button>
+            <button
+              onClick={async () => {
+                await fetch('/api/admin/auth', { method: 'DELETE' });
+                window.location.href = '/admin/login';
+              }}
+              style={{
+                fontSize: '12px',
+                fontWeight: 600,
+                color: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.08)',
+                border: '1px solid rgba(239, 68, 68, 0.2)',
+                borderRadius: '6px',
+                padding: '6px 12px',
+                cursor: 'pointer',
+              }}
+            >
+              Sign out
+            </button>
           </div>
         </div>
 
@@ -537,6 +675,111 @@ export default function AdminPortalPage() {
             </div>
           </div>
 
+        </div>
+
+        {/* Recent Transactions — compact snapshot, full ledger lives in the Paystack tab */}
+        <div style={{
+          backgroundColor: '#121215',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          borderRadius: '14px',
+          marginBottom: '20px',
+          overflow: 'hidden',
+        }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '16px 20px',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+          }}>
+            <div>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: '#f4f4f5', letterSpacing: '-0.01em' }}>
+                Recent Transactions
+              </span>
+              <span style={{ fontSize: '11.5px', color: '#52525b', marginLeft: '8px' }}>
+                {orders.length === 0
+                  ? 'Awaiting the first Paystack settlement'
+                  : `${orders.length} settled in total`}
+              </span>
+            </div>
+            <button
+              onClick={() => setActiveTab('orders')}
+              style={{
+                fontSize: '11.5px',
+                fontWeight: 600,
+                color: '#a1a1aa',
+                backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '6px',
+                padding: '5px 10px',
+                cursor: 'pointer',
+              }}
+            >
+              View ledger →
+            </button>
+          </div>
+
+          {orders.length === 0 ? (
+            <div style={{ padding: '28px 20px', fontSize: '12.5px', color: '#71717a' }}>
+              No transactions yet. Share a one-click proposal link and settlements will appear here in real-time.
+            </div>
+          ) : (
+            <div>
+              {orders.slice(0, 4).map((o, idx) => {
+                const statusLabel = String(o.status || '').toUpperCase() || 'PAID';
+                const isPaid = statusLabel === 'PAID' || statusLabel === 'SUCCESS';
+                return (
+                  <div
+                    key={o.id || o.paystack_reference || idx}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1.2fr 1.4fr 0.9fr 0.8fr 0.7fr',
+                      alignItems: 'center',
+                      gap: '12px',
+                      padding: '12px 20px',
+                      borderBottom: idx === Math.min(orders.length, 4) - 1 ? 'none' : '1px solid rgba(255, 255, 255, 0.04)',
+                      fontSize: '12.5px',
+                    }}
+                  >
+                    <span style={{ fontFamily: 'monospace', fontSize: '11.5px', color: '#a1a1aa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {o.paystack_reference || '—'}
+                    </span>
+
+                    <div style={{ minWidth: 0 }}>
+                      <span style={{ display: 'block', fontWeight: 600, color: '#e4e4e7', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {o.customer_name || 'Unnamed client'}
+                      </span>
+                      <span style={{ display: 'block', fontSize: '11px', color: '#71717a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {o.customer_email || '—'}
+                      </span>
+                    </div>
+
+                    <span style={{ fontWeight: 700, color: '#10b981', fontVariantNumeric: 'tabular-nums' }}>
+                      {formatNgn(o.amount_paid_ngn)}
+                    </span>
+
+                    <span style={{
+                      justifySelf: 'start',
+                      fontSize: '10px',
+                      fontWeight: 700,
+                      letterSpacing: '0.04em',
+                      textTransform: 'uppercase',
+                      padding: '2px 6px',
+                      borderRadius: '4px',
+                      color: isPaid ? '#34d399' : '#fbbf24',
+                      backgroundColor: isPaid ? 'rgba(52, 211, 153, 0.12)' : 'rgba(251, 191, 36, 0.12)',
+                    }}>
+                      {statusLabel}
+                    </span>
+
+                    <span style={{ fontSize: '11.5px', color: '#71717a', textAlign: 'right' }}>
+                      {o.created_at ? new Date(o.created_at).toLocaleDateString('en-NG', { day: '2-digit', month: 'short' }) : '—'}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Toolbar: Segmented Tab Selector + Universal Search Filter */}
@@ -771,7 +1014,9 @@ export default function AdminPortalPage() {
                           {formatNgn(link.amount_due_now_ngn)}
                         </div>
                         <div style={{ fontSize: '11px', color: '#71717a', marginTop: '1px' }}>
-                          {link.plan_type === 'MONTHLY' ? '₦15k setup + ₦5k/mo' : '₦50k outright ownership'}
+                          {link.plan_type === 'MONTHLY'
+                            ? `${formatShortNgn(Number(link.setup_fee_ngn ?? 0))} setup + ${formatShortNgn(Number(link.monthly_price_ngn ?? 0))}/mo`
+                            : `${formatShortNgn(Number(link.outright_price_ngn ?? link.amount_due_now_ngn ?? 0))} outright ownership`}
                         </div>
                       </td>
 
@@ -1205,60 +1450,197 @@ export default function AdminPortalPage() {
                     </p>
 
                     <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
                       paddingTop: '14px',
                       borderTop: '1px solid rgba(255, 255, 255, 0.06)',
                     }}>
-                      <div>
-                        <span style={{ fontSize: '14px', fontWeight: 800, color: '#ffffff' }}>
-                          ₦50,000
-                        </span>
-                        <span style={{ fontSize: '11px', color: '#71717a', display: 'block' }}>
-                          or ₦15k + ₦5k/mo
-                        </span>
-                      </div>
+                      {editingPriceSlug === t.slug ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                            {([
+                              { label: 'Outright ₦', value: editPriceOutright, set: setEditPriceOutright },
+                              { label: 'Setup ₦', value: editPriceSetup, set: setEditPriceSetup },
+                              { label: 'Monthly ₦', value: editPriceMonthly, set: setEditPriceMonthly },
+                            ]).map((field) => (
+                              <label key={field.label} style={{ display: 'block' }}>
+                                <span style={{ display: 'block', fontSize: '10px', fontWeight: 600, color: '#71717a', marginBottom: '4px' }}>
+                                  {field.label}
+                                </span>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  step={500}
+                                  value={field.value}
+                                  onChange={(e) => field.set(e.target.value)}
+                                  disabled={savingPrice}
+                                  style={{
+                                    width: '100%',
+                                    padding: '7px 8px',
+                                    backgroundColor: '#18181b',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    borderRadius: '6px',
+                                    color: '#ffffff',
+                                    fontSize: '12.5px',
+                                    fontWeight: 600,
+                                    boxSizing: 'border-box',
+                                    outline: 'none',
+                                    colorScheme: 'dark',
+                                  }}
+                                />
+                              </label>
+                            ))}
+                          </div>
 
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        {t.demoUrl && (
-                          <a
-                            href={t.demoUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{
-                              fontSize: '12px',
-                              fontWeight: 600,
-                              color: '#a1a1aa',
-                              textDecoration: 'none',
-                              padding: '5px 10px',
-                              borderRadius: '6px',
-                              border: '1px solid rgba(255, 255, 255, 0.08)',
-                              backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                            }}
-                          >
-                            Demo ↗
-                          </a>
-                        )}
-                        <button
-                          onClick={() => {
-                            setNewLinkTemplateSlug(t.slug);
-                            setShowCreateModal(true);
-                          }}
-                          style={{
-                            fontSize: '12px',
-                            fontWeight: 600,
-                            color: '#ffffff',
-                            backgroundColor: '#27272a',
-                            border: 'none',
-                            borderRadius: '6px',
-                            padding: '5px 12px',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          Use in Link
-                        </button>
-                      </div>
+                          <div style={{ display: 'flex', gap: '8px' }}>
+                            <button
+                              onClick={() => saveTemplatePrice(t.slug)}
+                              disabled={savingPrice}
+                              style={{
+                                flex: 1,
+                                fontSize: '12px',
+                                fontWeight: 600,
+                                color: '#052e16',
+                                backgroundColor: '#34d399',
+                                border: 'none',
+                                borderRadius: '6px',
+                                padding: '6px 12px',
+                                cursor: savingPrice ? 'wait' : 'pointer',
+                                opacity: savingPrice ? 0.6 : 1,
+                              }}
+                            >
+                              {savingPrice ? 'Saving…' : 'Save price'}
+                            </button>
+                            <button
+                              onClick={cancelEditingPrice}
+                              disabled={savingPrice}
+                              style={{
+                                fontSize: '12px',
+                                fontWeight: 600,
+                                color: '#a1a1aa',
+                                backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                                border: '1px solid rgba(255, 255, 255, 0.08)',
+                                borderRadius: '6px',
+                                padding: '6px 12px',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              Cancel
+                            </button>
+                            {(t.pricingOverride || (t.priceNgn !== (t.basePriceNgn ?? t.priceNgn))) && (
+                              <button
+                                onClick={() => resetTemplatePrice(t.slug)}
+                                disabled={savingPrice}
+                                style={{
+                                  fontSize: '12px',
+                                  fontWeight: 600,
+                                  color: '#fca5a5',
+                                  backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                                  border: '1px solid rgba(239, 68, 68, 0.25)',
+                                  borderRadius: '6px',
+                                  padding: '6px 12px',
+                                  cursor: 'pointer',
+                                }}
+                              >
+                                Reset
+                              </button>
+                            )}
+                          </div>
+
+                          <span style={{ fontSize: '10.5px', color: '#71717a' }}>
+                            Saves to the live catalog instantly.
+                          </span>
+                        </div>
+                      ) : (
+                        <div style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}>
+                          <div>
+                            <span style={{ fontSize: '14px', fontWeight: 800, color: '#ffffff' }}>
+                              {formatNgn(t.outrightNgn ?? t.priceNgn)}
+                            </span>
+                            {t.pricingOverride && (
+                              <span style={{
+                                marginLeft: '6px',
+                                fontSize: '9.5px',
+                                fontWeight: 700,
+                                letterSpacing: '0.04em',
+                                textTransform: 'uppercase',
+                                color: '#34d399',
+                                backgroundColor: 'rgba(52, 211, 153, 0.12)',
+                                padding: '2px 5px',
+                                borderRadius: '4px',
+                                verticalAlign: 'middle',
+                              }}>
+                                Custom
+                              </span>
+                            )}
+                            <span style={{ fontSize: '11px', color: '#71717a', display: 'block' }}>
+                              or {formatShortNgn(t.setupFeeNgn)} + {formatShortNgn(t.monthlyNgn)}/mo
+                            </span>
+                          </div>
+
+                          <div style={{ display: 'flex', gap: '8px' }}>
+                            <button
+                              onClick={() => startEditingPrice(t)}
+                              style={{
+                                fontSize: '12px',
+                                fontWeight: 600,
+                                color: '#a1a1aa',
+                                background: 'transparent',
+                                textDecoration: 'none',
+                                padding: '5px 10px',
+                                borderRadius: '6px',
+                                border: '1px solid rgba(255, 255, 255, 0.08)',
+                                backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              Price
+                            </button>
+                            {t.demoUrl && (
+                              <a
+                                href={t.demoUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                  fontSize: '12px',
+                                  fontWeight: 600,
+                                  color: '#a1a1aa',
+                                  textDecoration: 'none',
+                                  padding: '5px 10px',
+                                  borderRadius: '6px',
+                                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                                  backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                                }}
+                              >
+                                Demo ↗
+                              </a>
+                            )}
+                            <button
+                              onClick={() => {
+                                setNewLinkTemplateSlug(t.slug);
+                                setNewLinkOutright(Number(t.outrightNgn ?? t.priceNgn));
+                                setNewLinkSetupFee(Number(t.setupFeeNgn));
+                                setNewLinkMonthly(Number(t.monthlyNgn));
+                                setShowCreateModal(true);
+                              }}
+                              style={{
+                                fontSize: '12px',
+                                fontWeight: 600,
+                                color: '#ffffff',
+                                backgroundColor: '#27272a',
+                                border: 'none',
+                                borderRadius: '6px',
+                                padding: '5px 12px',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              Use in Link
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1361,7 +1743,16 @@ export default function AdminPortalPage() {
                 </label>
                 <select
                   value={newLinkTemplateSlug}
-                  onChange={(e) => setNewLinkTemplateSlug(e.target.value)}
+                  onChange={(e) => {
+                    const slug = e.target.value;
+                    setNewLinkTemplateSlug(slug);
+                    const picked = pricedTemplates.find(t => t.slug === slug);
+                    if (picked) {
+                      setNewLinkOutright(Number(picked.outrightNgn ?? picked.priceNgn));
+                      setNewLinkSetupFee(Number(picked.setupFeeNgn));
+                      setNewLinkMonthly(Number(picked.monthlyNgn));
+                    }
+                  }}
                   style={{
                     width: '100%',
                     padding: '11px 14px',
@@ -1372,10 +1763,15 @@ export default function AdminPortalPage() {
                     fontSize: '14px',
                     boxSizing: 'border-box',
                     outline: 'none',
+                    colorScheme: 'dark',
                   }}
                 >
-                  {TEMPLATES.map((t) => (
-                    <option key={t.slug} value={t.slug}>
+                  {pricedTemplates.map((t) => (
+                    <option
+                      key={t.slug}
+                      value={t.slug}
+                      style={{ backgroundColor: '#18181b', color: '#ffffff' }}
+                    >
                       {t.name} ({t.categoryLabel})
                     </option>
                   ))}

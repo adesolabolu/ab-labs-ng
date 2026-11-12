@@ -48,7 +48,7 @@ function initABLabs(force = false) {
   }
 
   // =========================================================================
-  // 2. GSAP Plugins & Multi-Page Hero Entrance Sequences (Exact Webflow IX)
+  // 2. GSAP Plugins & Multi-Page Hero Entrance Sequences (Exact Interaction IX)
   // =========================================================================
   if (typeof gsap !== 'undefined') {
     if (typeof ScrollTrigger !== 'undefined') gsap.registerPlugin(ScrollTrigger);
@@ -554,7 +554,7 @@ function initABLabs(force = false) {
   }
 
   // =========================================================================
-  // 5. Hero 4-Stage Continuous Curtain Wipe Loop (Exact Webflow IX t-976369a7)
+  // 5. Hero 4-Stage Continuous Curtain Wipe Loop (Exact Interaction IX t-976369a7)
   // =========================================================================
   const stageImages = [
     document.querySelector('.hero-stage-img.is-4'),
@@ -669,10 +669,10 @@ function initABLabs(force = false) {
   // =========================================================================
   // 7. Universal Tabs System (Product Gallery, Swatches, PDP Details)
   // =========================================================================
-  const tabContainers = document.querySelectorAll('.w-tabs');
+  const tabContainers = document.querySelectorAll('.tabs-wrapper, .site-tabs');
   tabContainers.forEach((container) => {
-    const tabLinks = container.querySelectorAll('.w-tab-link');
-    const tabPanes = container.querySelectorAll('.w-tab-pane');
+    const tabLinks = container.querySelectorAll('.tab-trigger, .site-tab-link');
+    const tabPanes = container.querySelectorAll('.tab-panel, .site-tab-pane');
 
     tabLinks.forEach((link, idx) => {
       link.addEventListener('click', (e) => {
@@ -680,19 +680,19 @@ function initABLabs(force = false) {
 
         // Update links
         tabLinks.forEach((l) => {
-          l.classList.remove('w--current');
+          l.classList.remove('is-current');
           l.setAttribute('aria-selected', 'false');
         });
-        link.classList.add('w--current');
+        link.classList.add('is-current');
         link.setAttribute('aria-selected', 'true');
 
         // Update panes
         tabPanes.forEach((p, pIdx) => {
           if (pIdx === idx) {
-            p.classList.add('w--tab-active');
+            p.classList.add('is-active');
             p.style.display = 'block';
           } else {
-            p.classList.remove('w--tab-active');
+            p.classList.remove('is-active');
             p.style.display = 'none';
           }
         });
@@ -703,42 +703,42 @@ function initABLabs(force = false) {
   // =========================================================================
   // 8. Dropdown Mega-Menu
   // =========================================================================
-  const dropdowns = document.querySelectorAll('.nav-dropdown, .w-dropdown');
+  const dropdowns = document.querySelectorAll('.nav-dropdown, .site-dropdown');
   dropdowns.forEach((dropdown) => {
-    const toggle = dropdown.querySelector('.dropdown, .w-dropdown-toggle');
-    const list = dropdown.querySelector('.nav-dropdown-list, .w-dropdown-list');
+    const toggle = dropdown.querySelector('.dropdown, .dropdown-trigger, .site-dropdown-toggle');
+    const list = dropdown.querySelector('.nav-dropdown-list, .dropdown-pane, .site-dropdown-list');
 
     if (toggle && list) {
       toggle.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
 
-        const isOpen = dropdown.classList.contains('w--open');
+        const isOpen = dropdown.classList.contains('is-open');
         dropdowns.forEach((other) => {
-          other.classList.remove('w--open');
-          const otherToggle = other.querySelector('.dropdown, .w-dropdown-toggle');
-          const otherList = other.querySelector('.nav-dropdown-list, .w-dropdown-list');
-          if (otherToggle) otherToggle.classList.remove('w--open');
-          if (otherList) otherList.classList.remove('w--open');
+          other.classList.remove('is-open');
+          const otherToggle = other.querySelector('.dropdown, .dropdown-trigger, .site-dropdown-toggle');
+          const otherList = other.querySelector('.nav-dropdown-list, .dropdown-pane, .site-dropdown-list');
+          if (otherToggle) otherToggle.classList.remove('is-open');
+          if (otherList) otherList.classList.remove('is-open');
         });
 
         if (!isOpen) {
-          dropdown.classList.add('w--open');
-          toggle.classList.add('w--open');
-          list.classList.add('w--open');
+          dropdown.classList.add('is-open');
+          toggle.classList.add('is-open');
+          list.classList.add('is-open');
         }
       });
     }
   });
 
   document.addEventListener('click', (e) => {
-    if (!e.target.closest('.nav-dropdown, .w-dropdown')) {
+    if (!e.target.closest('.nav-dropdown, .site-dropdown')) {
       dropdowns.forEach((dropdown) => {
-        dropdown.classList.remove('w--open');
-        const toggle = dropdown.querySelector('.dropdown, .w-dropdown-toggle');
-        const list = dropdown.querySelector('.nav-dropdown-list, .w-dropdown-list');
-        if (toggle) toggle.classList.remove('w--open');
-        if (list) list.classList.remove('w--open');
+        dropdown.classList.remove('is-open');
+        const toggle = dropdown.querySelector('.dropdown, .dropdown-trigger, .site-dropdown-toggle');
+        const list = dropdown.querySelector('.nav-dropdown-list, .dropdown-pane, .site-dropdown-list');
+        if (toggle) toggle.classList.remove('is-open');
+        if (list) list.classList.remove('is-open');
       });
     }
   });
@@ -746,9 +746,9 @@ function initABLabs(force = false) {
   // =========================================================================
   // 9. Mobile Navigation Drawer & Hamburger Toggle
   // =========================================================================
-  const menuBtn = document.querySelector('.menu-button, .w-nav-button');
-  const navMenu = document.querySelector('.nav-menu, .w-nav-menu');
-  const navOverlay = document.querySelector('.w-nav-overlay');
+  const menuBtn = document.querySelector('.menu-button, .nav-toggle-btn, .site-nav-button');
+  const navMenu = document.querySelector('.nav-menu, .nav-menu-list, .site-nav-menu');
+  const navOverlay = document.querySelector('.nav-overlay-pane, .site-nav-overlay');
 
   if (menuBtn && navMenu) {
     menuBtn.addEventListener('click', (e) => {
@@ -756,12 +756,12 @@ function initABLabs(force = false) {
       const isOpen = navMenu.classList.contains('is-open');
       if (isOpen) {
         navMenu.classList.remove('is-open');
-        menuBtn.classList.remove('w--open');
+        menuBtn.classList.remove('is-open');
         if (navOverlay) navOverlay.style.display = 'none';
         document.body.style.overflow = '';
       } else {
         navMenu.classList.add('is-open');
-        menuBtn.classList.add('w--open');
+        menuBtn.classList.add('is-open');
         if (navOverlay) navOverlay.style.display = 'block';
         document.body.style.overflow = 'hidden';
       }
@@ -770,7 +770,7 @@ function initABLabs(force = false) {
     if (navOverlay) {
       navOverlay.addEventListener('click', () => {
         navMenu.classList.remove('is-open');
-        menuBtn.classList.remove('w--open');
+        menuBtn.classList.remove('is-open');
         navOverlay.style.display = 'none';
         document.body.style.overflow = '';
       });
@@ -780,10 +780,10 @@ function initABLabs(force = false) {
   // =========================================================================
   // 10. Slide-Over Cart Drawer & Commerce Counter Simulation
   // =========================================================================
-  const cartOpenBtns = document.querySelectorAll('.cart-button-wrapper, .w-commerce-commercecartopenlink');
-  const cartCloseBtns = document.querySelectorAll('.close-icons, .w-commerce-commercecartcloselink');
-  const cartWrapper = document.querySelector('.cart-wrapper, .w-commerce-commercecartcontainerwrapper');
-  const cartCountBadges = document.querySelectorAll('.cart-number, .w-commerce-commercecartopenlinkcount');
+  const cartOpenBtns = document.querySelectorAll('.cart-button-wrapper, .cart-open-btn');
+  const cartCloseBtns = document.querySelectorAll('.close-icons, .cart-close-btn');
+  const cartWrapper = document.querySelector('.cart-wrapper, .cart-drawer-wrapper');
+  const cartCountBadges = document.querySelectorAll('.cart-number, .cart-count-badge');
   let cartCount = 0;
 
   const openCart = () => {
@@ -835,7 +835,7 @@ function initABLabs(force = false) {
   }
 
   // Add to Cart Buttons
-  const addToCartBtns = document.querySelectorAll('.add-cart-button-wrapper, .add-to-cart-button, [data-node-type="commerce-add-to-cart-button"], input[value*="Add to Cart"]');
+  const addToCartBtns = document.querySelectorAll('.add-cart-button-wrapper, .add-to-cart-button, [data-type="commerce-add-to-cart-button"], input[value*="Add to Cart"]');
   addToCartBtns.forEach((btn) => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -847,8 +847,8 @@ function initABLabs(force = false) {
         badge.textContent = cartCount;
       });
 
-      const cartForm = document.querySelector('.w-commerce-commercecartform');
-      const cartEmpty = document.querySelector('.w-commerce-commercecartemptystate');
+      const cartForm = document.querySelector('.cart-form, .site-commerce-addtocartform');
+      const cartEmpty = document.querySelector('.cart-empty-message');
       if (cartForm) cartForm.style.display = 'block';
       if (cartEmpty) cartEmpty.style.display = 'none';
 
@@ -857,12 +857,12 @@ function initABLabs(force = false) {
   });
 
   // PDP Variant Radio Pills
-  const variantPills = document.querySelectorAll('.verient-button, [data-node-type="commerce-add-to-cart-pill"]');
+  const variantPills = document.querySelectorAll('.verient-button, [data-type="commerce-add-to-cart-pill"]');
   variantPills.forEach((pill) => {
     pill.addEventListener('click', () => {
       const parentGroup = pill.closest('.verient-button-wrapper, [role="radiogroup"]');
       if (parentGroup) {
-        parentGroup.querySelectorAll('.verient-button, [data-node-type="commerce-add-to-cart-pill"]').forEach((p) => {
+        parentGroup.querySelectorAll('.verient-button, [data-type="commerce-add-to-cart-pill"]').forEach((p) => {
           p.classList.remove('is-active');
           p.setAttribute('aria-checked', 'false');
         });
@@ -907,9 +907,9 @@ function initABLabs(force = false) {
   // =========================================================================
   const testimonialSlider = document.querySelector('.testimonial-slider-wrapper');
   if (testimonialSlider) {
-    const slides = testimonialSlider.querySelectorAll('.testimonial-slider-mask .w-slide');
-    const prevBtn = testimonialSlider.querySelector('.testimonial-button-block.left, .w-slider-arrow-left, .slider-left');
-    const nextBtn = testimonialSlider.querySelector('.testimonial-button-block.right, .w-slider-arrow-right, .slider-right');
+    const slides = testimonialSlider.querySelectorAll('.testimonial-slider-mask .site-slide, .testimonial-slider-mask .slide-item');
+    const prevBtn = testimonialSlider.querySelector('.testimonial-button-block.left, .slider-prev-arrow, .slider-left');
+    const nextBtn = testimonialSlider.querySelector('.testimonial-button-block.right, .slider-next-arrow, .slider-right');
 
     if (slides.length > 0) {
       let currentSlide = 0;
@@ -960,14 +960,14 @@ function initABLabs(force = false) {
   function initDynamicFilters() {
     // A. Blog In-Page Category Filtering
     const blogPills = document.querySelectorAll('.section-blog-page .bl-pills .bl-pill');
-    const blogCards = document.querySelectorAll('.blog-wrappper > .w-dyn-item');
+    const blogCards = document.querySelectorAll('.blog-wrappper > .blog-item-card, .blog-wrappper > .site-dyn-item');
 
     if (blogPills.length > 0 && blogCards.length > 0) {
       blogPills.forEach((pill) => {
         pill.addEventListener('click', (e) => {
           e.preventDefault();
-          blogPills.forEach((p) => p.classList.remove('w--current'));
-          pill.classList.add('w--current');
+          blogPills.forEach((p) => p.classList.remove('is-current'));
+          pill.classList.add('is-current');
 
           const filter = pill.getAttribute('data-filter') || 'all';
 
@@ -1019,14 +1019,14 @@ function initABLabs(force = false) {
 
     // B. Shop In-Page Room Category Filtering
     const shopPills = document.querySelectorAll('.section-shop .bl-pills .bl-pill');
-    const shopCards = document.querySelectorAll('.products-content-wrapper > .w-dyn-item');
+    const shopCards = document.querySelectorAll('.products-content-wrapper > .product-card-item, .products-content-wrapper > .site-dyn-item');
 
     if (shopPills.length > 0 && shopCards.length > 0) {
       shopPills.forEach((pill) => {
         pill.addEventListener('click', (e) => {
           e.preventDefault();
-          shopPills.forEach((p) => p.classList.remove('w--current'));
-          pill.classList.add('w--current');
+          shopPills.forEach((p) => p.classList.remove('is-current'));
+          pill.classList.add('is-current');
 
           const filter = pill.getAttribute('data-filter') || 'all';
 
@@ -1069,9 +1069,9 @@ function initABLabs(force = false) {
   initDynamicFilters();
 
   // =========================================================================
-  // 12. Clean-Room Form Submissions (Zero Webflow Backend / 100% Client-Side)
+  // 12. Clean-Room Form Submissions (Zero External Backend / 100% Client-Side)
   // =========================================================================
-  const forms = document.querySelectorAll('.w-form form');
+  const forms = document.querySelectorAll('.contact-form-wrapper form, .site-form form, form');
   forms.forEach((form) => {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -1086,10 +1086,10 @@ function initABLabs(force = false) {
       }
       
       setTimeout(() => {
-        const parentWForm = form.closest('.w-form');
+        const parentWForm = form.closest('.contact-form-wrapper, .site-form, .form-block-wrapper');
         if (parentWForm) {
-          const doneBlock = parentWForm.querySelector('.w-form-done');
-          const failBlock = parentWForm.querySelector('.w-form-fail');
+          const doneBlock = parentWForm.querySelector('.form-success-block, .site-form-done');
+          const failBlock = parentWForm.querySelector('.form-error-block, .site-form-fail');
           if (failBlock) failBlock.style.display = 'none';
           if (doneBlock) {
             form.style.display = 'none';

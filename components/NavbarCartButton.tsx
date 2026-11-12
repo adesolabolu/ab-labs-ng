@@ -10,7 +10,7 @@ export default function NavbarCartButton() {
   return (
     <Link
       href="/cart"
-      className="cart-button-wrapper w-inline-block"
+      className="cart-button-wrapper inline-block"
       aria-label="View Cart"
       style={{
         display: 'inline-flex',

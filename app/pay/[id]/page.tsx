@@ -198,6 +198,41 @@ export default function OneLinkCheckoutPage() {
             </p>
           </div>
 
+          {/* Client Portal Access Card */}
+          {paymentSuccess.client?.temporaryPassword && (
+            <div style={{ backgroundColor: '#18181b', color: '#f4f4f5', borderRadius: '12px', padding: '18px', marginBottom: '20px', textAlign: 'left', border: '1px solid #27272a' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#a1a1aa', fontWeight: 700 }}>Your Client Portal Access</span>
+                <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 600 }}>● Instant Session Active</span>
+              </div>
+              <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#d4d4d8', lineHeight: 1.5 }}>
+                You are already logged in. You can immediately upload your logo and brand colors in your project portal:
+              </p>
+              <div style={{ backgroundColor: '#27272a', padding: '10px 14px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                <span style={{ fontSize: '12px', color: '#a1a1aa' }}>Password:</span>
+                <code style={{ fontSize: '15px', color: '#34d399', fontWeight: 700, letterSpacing: '0.05em' }}>{paymentSuccess.client.temporaryPassword}</code>
+              </div>
+              <Link
+                href="/portal"
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '12px',
+                  backgroundColor: '#ffffff',
+                  color: '#09090b',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  textAlign: 'center',
+                  textDecoration: 'none',
+                  boxSizing: 'border-box',
+                }}
+              >
+                Go to Client Portal &amp; Upload Assets &rarr;
+              </Link>
+            </div>
+          )}
+
           <a
             href={`https://wa.me/2348123456789?text=${encodeURIComponent(`Hi aB Labs, I just completed payment for reference ${paymentSuccess.reference} (${paymentSuccess.client.name}). Looking forward to the onboarding!`)}`}
             target="_blank"

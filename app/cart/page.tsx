@@ -3,11 +3,14 @@ import Navbar from '@/components/Navbar';
 import React from 'react';
 import Link from 'next/link';
 import CartView from '@/components/CartView';
+import { pageMetadata } from '@/lib/site';
 
-export const metadata = {
-  title: 'Your Cart & Checkout | aB Labs',
+export const metadata = pageMetadata({
+  title: 'Your Cart & Checkout',
   description: 'Review your selected website templates and checkout securely with Paystack.',
-};
+  path: '/cart',
+  noIndex: true,
+});
 
 export default function CartPage() {
   return (
@@ -17,7 +20,7 @@ export default function CartPage() {
         
         <div className="main-wrapper">
           <section className="section-breadcrumb">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="page-heading-block align-center">
                 <div className="hero-subtitle-block">
                   <div className="subtitle-dot"></div>

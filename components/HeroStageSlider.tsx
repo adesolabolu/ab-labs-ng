@@ -180,9 +180,9 @@ export default function HeroStageSlider() {
             {active.metric}
           </span>
         </div>
-        <Link href={`/product/${active.slug}`} className="hero-card-link w-inline-block">
+        <Link href={`/product/${active.slug}`} className="hero-card-link inline-block">
           <div>Preview Template</div>
-          <div className="readmore-button-icon w-embed">
+          <div className="readmore-button-icon site-embed">
             <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
               <path d="M7 17 17 7M7 7h10v10"></path>
             </svg>

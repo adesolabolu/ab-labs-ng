@@ -29,6 +29,13 @@ export default function DualPricingSelector({
 
   const formatNgn = (val: number) => `₦${val.toLocaleString()}`;
 
+  // Discount badges are derived so admin-edited prices stay truthful.
+  const discountPct = (standard: number, current: number) =>
+    standard > current && current > 0 ? Math.round((1 - current / standard) * 100) : 0;
+
+  const monthlyDiscountPct = discountPct(standardMonthlyPrice, monthlyPrice);
+  const outrightDiscountPct = discountPct(standardOutrightPrice, outrightPrice);
+
   const cleanTemplateName = templateName.replace(/ - /g, '-');
 
   const whatsappMessage = selectedPlan === 'monthly'
@@ -79,7 +86,7 @@ export default function DualPricingSelector({
             <span
               style={{
                 fontSize: '11px',
-                fontWeight: 700,
+                fontWeight: '700',
                 color: '#065f46',
                 backgroundColor: '#d1fae5',
                 padding: '2px 8px',
@@ -87,7 +94,7 @@ export default function DualPricingSelector({
                 flexShrink: 0,
               }}
             >
-              50% Launch Off
+              {monthlyDiscountPct > 0 ? `${monthlyDiscountPct}% Launch Off` : 'Monthly Plan'}
             </span>
           </div>
 
@@ -103,7 +110,7 @@ export default function DualPricingSelector({
             </div>
 
             <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#6b7280', lineHeight: 1.45 }}>
-              ⚡ <strong>50% launch discount</strong> active for 3 months. Includes 1-year domain (.com.ng, .online, .store, .site &amp; more), hosting &amp; full management.
+              ⚡ <strong>{monthlyDiscountPct > 0 ? `${monthlyDiscountPct}% launch discount` : 'Launch pricing'}</strong> active for 3 months. Includes 1-year domain (.com.ng, .online, .store, .site &amp; more), hosting &amp; full management.
             </p>
           </div>
         </div>
@@ -146,7 +153,7 @@ export default function DualPricingSelector({
             <span
               style={{
                 fontSize: '11px',
-                fontWeight: 700,
+                fontWeight: '700',
                 color: '#1e40af',
                 backgroundColor: '#dbeafe',
                 padding: '2px 8px',
@@ -154,7 +161,7 @@ export default function DualPricingSelector({
                 flexShrink: 0,
               }}
             >
-              50% Launch Off
+              {outrightDiscountPct > 0 ? `${outrightDiscountPct}% Launch Off` : 'Full Ownership'}
             </span>
           </div>
 
@@ -163,16 +170,18 @@ export default function DualPricingSelector({
               <span style={{ fontSize: '26px', fontWeight: 800, color: '#111827', lineHeight: 1 }}>
                 {formatNgn(outrightPrice)}
               </span>
-              <span
-                style={{
-                  fontSize: '14px',
-                  color: '#9ca3af',
-                  textDecoration: 'line-through',
-                  fontWeight: 500,
-                }}
-              >
-                {formatNgn(standardOutrightPrice)}
-              </span>
+              {outrightDiscountPct > 0 && (
+                <span
+                  style={{
+                    fontSize: '14px',
+                    color: '#9ca3af',
+                    textDecoration: 'line-through',
+                    fontWeight: 500,
+                  }}
+                >
+                  {formatNgn(standardOutrightPrice)}
+                </span>
+              )}
               <span style={{ fontSize: '12px', fontWeight: 600, color: '#047857' }}>
                 One-time
               </span>

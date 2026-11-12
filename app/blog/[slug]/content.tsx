@@ -12,7 +12,7 @@ export function Item_how_to_create_a_cozy_scandinavian_living_room_in_2026() {
         <Navbar />
         <div className="main-wrapper">
           <section className="section-breadcrumb">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="page-heading-block align-center">
                 <div className="hero-subtitle-block">
                   <div className="subtitle-dot"></div>
@@ -26,12 +26,12 @@ export function Item_how_to_create_a_cozy_scandinavian_living_room_in_2026() {
           </section>
 
           <section className="section-blog-details">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="blog-main-image-block">
                 <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80" loading="lazy" alt="Why Single-Page Websites Hurt Local SEO in Nigeria (And How to Fix It)" sizes="100vw" className="blog-main-image" />
               </div>
               <div className="blog-details-content-block">
-                <div fade-in="true" className="blog-details-content w-richtext">
+                <div fade-in="true" className="blog-details-content site-richtext">
                   <p>Hundreds of ambitious Nigerian businesses launch single-page landing websites thinking they are sleek, fast, and modern. Yet within three months, organic search discovery is near zero, and customer acquisition costs spiral out of control.</p>
                   <p>When Google crawls a website, its algorithm scores individual URL paths against distinct user search intents. If your law firm, real estate agency, or medical clinic condenses all services into one long scrolling page, Google can only index a single URL for all search queries.</p>
                   <h2>The Multi-Page Architecture Blueprint</h2>
@@ -42,7 +42,7 @@ export function Item_how_to_create_a_cozy_scandinavian_living_room_in_2026() {
                   <ul role="list">
                     <li>Dedicated URL route per service for granular Google indexing.</li><li>Structured LocalBusiness JSON-LD Schema markup on every page.</li><li>Canonical tag hierarchy preventing duplicate content penalties.</li><li>Sub-second edge transitions with pre-rendered static HTML.</li>
                   </ul>
-                  <figure style={{ maxWidth: "1200px" }} className="w-richtext-align-fullwidth w-richtext-figure-type-image">
+                  <figure style={{ maxWidth: "1200px" }} className="site-richtext-align-fullwidth site-richtext-figure-type-image">
                     <div>
                       <img alt="Why Single-Page Websites Hurt Local SEO in Nigeria (And How to Fix It)" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80" loading="lazy" />
                     </div>
@@ -54,19 +54,19 @@ export function Item_how_to_create_a_cozy_scandinavian_living_room_in_2026() {
                 </div>
 
                 <div fade-in="true" className="blog-button-wrapper">
-                  <Link stagger-up-animate="" href="/blog" className="primary-button w-inline-block">
+                  <Link stagger-up-animate="" href="/blog" className="primary-button inline-block">
                     <div className="button-text-wrapper">
                       <div className="button-text-block">
                         <div className="link-text is-1">All articles</div>
                         <div className="link-text is-2">All articles</div>
                       </div>
                       <div className="button-arrow-block">
-                        <div className="link-icon is-1 w-embed">
+                        <div className="link-icon is-1 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
                         </div>
-                        <div className="link-icon is-2 w-embed">
+                        <div className="link-icon is-2 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
@@ -80,7 +80,7 @@ export function Item_how_to_create_a_cozy_scandinavian_living_room_in_2026() {
           </section>
 
           <section className="section-blog-details-page">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="section-heading-flex">
                 <div className="section-heading-block">
                   <div className="hero-subtitle-block">
@@ -92,19 +92,19 @@ export function Item_how_to_create_a_cozy_scandinavian_living_room_in_2026() {
                   </div>
                 </div>
                 <div className="section-button-block">
-                  <Link href="/blog" className="primary-button w-inline-block">
+                  <Link href="/blog" className="primary-button inline-block">
                     <div className="button-text-wrapper">
                       <div className="button-text-block">
                         <div className="link-text is-1">All articles</div>
                         <div className="link-text is-2">All articles</div>
                       </div>
                       <div className="button-arrow-block">
-                        <div className="link-icon is-1 w-embed">
+                        <div className="link-icon is-1 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
                         </div>
-                        <div className="link-icon is-2 w-embed">
+                        <div className="link-icon is-2 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
@@ -114,12 +114,12 @@ export function Item_how_to_create_a_cozy_scandinavian_living_room_in_2026() {
                   </Link>
                 </div>
               </div>
-              <div className="w-dyn-list">
-                <div fade-in="true" role="list" className="blog-content-wrappper w-dyn-items">
-              <div role="listitem" className="w-dyn-item">
+              <div className="site-dyn-list">
+                <div fade-in="true" role="list" className="blog-content-wrappper site-dyn-items">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/speed-to-lead-converting-nigerian-web-traffic-under-5-minutes" className="blog-image-link w-inline-block">
+                    <Link href="/blog/speed-to-lead-converting-nigerian-web-traffic-under-5-minutes" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Speed-to-Lead: Converting Nigerian Web Traffic in Under 5 Minutes" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Conversion & CRO</span>
@@ -137,10 +137,10 @@ export function Item_how_to_create_a_cozy_scandinavian_living_room_in_2026() {
                   </div>
                 </div>
               </div>
-              <div role="listitem" className="w-dyn-item">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/building-high-trust-ecommerce-stores-with-paystack-in-2026" className="blog-image-link w-inline-block">
+                    <Link href="/blog/building-high-trust-ecommerce-stores-with-paystack-in-2026" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Building High-Trust E-Commerce Stores with Paystack in 2026" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Payments & Trust</span>
@@ -158,10 +158,10 @@ export function Item_how_to_create_a_cozy_scandinavian_living_room_in_2026() {
                   </div>
                 </div>
               </div>
-              <div role="listitem" className="w-dyn-item">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/google-maps-3-pack-playbook-for-lagos-abuja-businesses" className="blog-image-link w-inline-block">
+                    <Link href="/blog/google-maps-3-pack-playbook-for-lagos-abuja-businesses" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="The Google Maps 3-Pack Playbook for Lagos & Abuja Businesses" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Local SEO</span>
@@ -200,7 +200,7 @@ export function Item_caring_for_your_premium_furniture_a_complete_guide() {
         <Navbar />
         <div className="main-wrapper">
           <section className="section-breadcrumb">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="page-heading-block align-center">
                 <div className="hero-subtitle-block">
                   <div className="subtitle-dot"></div>
@@ -214,12 +214,12 @@ export function Item_caring_for_your_premium_furniture_a_complete_guide() {
           </section>
 
           <section className="section-blog-details">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="blog-main-image-block">
                 <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80" loading="lazy" alt="Speed-to-Lead: Converting Nigerian Web Traffic in Under 5 Minutes" sizes="100vw" className="blog-main-image" />
               </div>
               <div className="blog-details-content-block">
-                <div fade-in="true" className="blog-details-content w-richtext">
+                <div fade-in="true" className="blog-details-content site-richtext">
                   <p>In African digital commerce, speed is not merely an engineering metric - it is the single greatest determinant of whether a prospective buyer stays on your site or taps the back button to buy from your competitor.</p>
                   <p>While corporate offices enjoy fast fibre connections, over 84% of your website visitors browse from mobile phones connected to volatile 3G/4G telco signals. If your website weighs 8MB and loads 40 external tracking scripts, mobile users abandon the page before your logo renders.</p>
                   <h2>The WhatsApp CRM Advantage</h2>
@@ -230,7 +230,7 @@ export function Item_caring_for_your_premium_furniture_a_complete_guide() {
                   <ul role="list">
                     <li>Sub-second mobile First Contentful Paint on cellular networks.</li><li>1-click WhatsApp conversation initiation with pre-populated inquiry tags.</li><li>Automated instant lead acknowledgment and routing to sales personnel.</li><li>Zero clunky multi-step forms that cause mobile bounce-offs.</li>
                   </ul>
-                  <figure style={{ maxWidth: "1200px" }} className="w-richtext-align-fullwidth w-richtext-figure-type-image">
+                  <figure style={{ maxWidth: "1200px" }} className="site-richtext-align-fullwidth site-richtext-figure-type-image">
                     <div>
                       <img alt="Speed-to-Lead: Converting Nigerian Web Traffic in Under 5 Minutes" src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1200&q=80" loading="lazy" />
                     </div>
@@ -242,19 +242,19 @@ export function Item_caring_for_your_premium_furniture_a_complete_guide() {
                 </div>
 
                 <div fade-in="true" className="blog-button-wrapper">
-                  <Link stagger-up-animate="" href="/blog" className="primary-button w-inline-block">
+                  <Link stagger-up-animate="" href="/blog" className="primary-button inline-block">
                     <div className="button-text-wrapper">
                       <div className="button-text-block">
                         <div className="link-text is-1">All articles</div>
                         <div className="link-text is-2">All articles</div>
                       </div>
                       <div className="button-arrow-block">
-                        <div className="link-icon is-1 w-embed">
+                        <div className="link-icon is-1 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
                         </div>
-                        <div className="link-icon is-2 w-embed">
+                        <div className="link-icon is-2 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
@@ -268,7 +268,7 @@ export function Item_caring_for_your_premium_furniture_a_complete_guide() {
           </section>
 
           <section className="section-blog-details-page">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="section-heading-flex">
                 <div className="section-heading-block">
                   <div className="hero-subtitle-block">
@@ -280,19 +280,19 @@ export function Item_caring_for_your_premium_furniture_a_complete_guide() {
                   </div>
                 </div>
                 <div className="section-button-block">
-                  <Link href="/blog" className="primary-button w-inline-block">
+                  <Link href="/blog" className="primary-button inline-block">
                     <div className="button-text-wrapper">
                       <div className="button-text-block">
                         <div className="link-text is-1">All articles</div>
                         <div className="link-text is-2">All articles</div>
                       </div>
                       <div className="button-arrow-block">
-                        <div className="link-icon is-1 w-embed">
+                        <div className="link-icon is-1 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
                         </div>
-                        <div className="link-icon is-2 w-embed">
+                        <div className="link-icon is-2 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
@@ -302,12 +302,12 @@ export function Item_caring_for_your_premium_furniture_a_complete_guide() {
                   </Link>
                 </div>
               </div>
-              <div className="w-dyn-list">
-                <div fade-in="true" role="list" className="blog-content-wrappper w-dyn-items">
-              <div role="listitem" className="w-dyn-item">
+              <div className="site-dyn-list">
+                <div fade-in="true" role="list" className="blog-content-wrappper site-dyn-items">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/why-single-page-websites-hurt-local-seo-nigeria" className="blog-image-link w-inline-block">
+                    <Link href="/blog/why-single-page-websites-hurt-local-seo-nigeria" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Why Single-Page Websites Hurt Local SEO in Nigeria" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Local SEO</span>
@@ -325,10 +325,10 @@ export function Item_caring_for_your_premium_furniture_a_complete_guide() {
                   </div>
                 </div>
               </div>
-              <div role="listitem" className="w-dyn-item">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/building-high-trust-ecommerce-stores-with-paystack-in-2026" className="blog-image-link w-inline-block">
+                    <Link href="/blog/building-high-trust-ecommerce-stores-with-paystack-in-2026" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Building High-Trust E-Commerce Stores with Paystack in 2026" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Payments & Trust</span>
@@ -346,10 +346,10 @@ export function Item_caring_for_your_premium_furniture_a_complete_guide() {
                   </div>
                 </div>
               </div>
-              <div role="listitem" className="w-dyn-item">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/zero-friction-checkout-card-transfer-ussd-stack" className="blog-image-link w-inline-block">
+                    <Link href="/blog/zero-friction-checkout-card-transfer-ussd-stack" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Mastering Zero-Friction Checkout: Cards, USSD, and Bank Transfer Fallbacks" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Payments & Trust</span>
@@ -388,7 +388,7 @@ export function Item_2026_furniture_trends_you_need_to_know_this_year() {
         <Navbar />
         <div className="main-wrapper">
           <section className="section-breadcrumb">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="page-heading-block align-center">
                 <div className="hero-subtitle-block">
                   <div className="subtitle-dot"></div>
@@ -402,12 +402,12 @@ export function Item_2026_furniture_trends_you_need_to_know_this_year() {
           </section>
 
           <section className="section-blog-details">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="blog-main-image-block">
                 <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1200&q=80" loading="lazy" alt="Building High-Trust E-Commerce Stores with Paystack in 2026" sizes="100vw" className="blog-main-image" />
               </div>
               <div className="blog-details-content-block">
-                <div fade-in="true" className="blog-details-content w-richtext">
+                <div fade-in="true" className="blog-details-content site-richtext">
                   <p>Building e-commerce in Nigeria requires solving for trust above all else. Nigerian consumers are discerning, security-conscious, and quick to abandon checkouts that feel unfamiliar or clunky.</p>
                   <p>When a customer reaches checkout, forcing them through 4 cumbersome form screens before showing payment options causes catastrophic drop-off. By pairing streamlined single-page order review with pre-integrated payment modal triggers, customers complete payments in under 60 seconds.</p>
                   <h2>The 3 Non-Negotiable Trust Signals</h2>
@@ -418,7 +418,7 @@ export function Item_2026_furniture_trends_you_need_to_know_this_year() {
                   <ul role="list">
                     <li>Single-page checkout with live price calculation and zero hidden charges.</li><li>Pre-integrated payment modals supporting Debit Cards, USSD, and Bank Transfer.</li><li>Real-time webhook listeners delivering instantaneous order confirmation.</li><li>Prominent security guarantees and direct WhatsApp escalation support.</li>
                   </ul>
-                  <figure style={{ maxWidth: "1200px" }} className="w-richtext-align-fullwidth w-richtext-figure-type-image">
+                  <figure style={{ maxWidth: "1200px" }} className="site-richtext-align-fullwidth site-richtext-figure-type-image">
                     <div>
                       <img alt="Building High-Trust E-Commerce Stores with Paystack in 2026" src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80" loading="lazy" />
                     </div>
@@ -430,19 +430,19 @@ export function Item_2026_furniture_trends_you_need_to_know_this_year() {
                 </div>
 
                 <div fade-in="true" className="blog-button-wrapper">
-                  <Link stagger-up-animate="" href="/blog" className="primary-button w-inline-block">
+                  <Link stagger-up-animate="" href="/blog" className="primary-button inline-block">
                     <div className="button-text-wrapper">
                       <div className="button-text-block">
                         <div className="link-text is-1">All articles</div>
                         <div className="link-text is-2">All articles</div>
                       </div>
                       <div className="button-arrow-block">
-                        <div className="link-icon is-1 w-embed">
+                        <div className="link-icon is-1 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
                         </div>
-                        <div className="link-icon is-2 w-embed">
+                        <div className="link-icon is-2 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
@@ -456,7 +456,7 @@ export function Item_2026_furniture_trends_you_need_to_know_this_year() {
           </section>
 
           <section className="section-blog-details-page">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="section-heading-flex">
                 <div className="section-heading-block">
                   <div className="hero-subtitle-block">
@@ -468,19 +468,19 @@ export function Item_2026_furniture_trends_you_need_to_know_this_year() {
                   </div>
                 </div>
                 <div className="section-button-block">
-                  <Link href="/blog" className="primary-button w-inline-block">
+                  <Link href="/blog" className="primary-button inline-block">
                     <div className="button-text-wrapper">
                       <div className="button-text-block">
                         <div className="link-text is-1">All articles</div>
                         <div className="link-text is-2">All articles</div>
                       </div>
                       <div className="button-arrow-block">
-                        <div className="link-icon is-1 w-embed">
+                        <div className="link-icon is-1 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
                         </div>
-                        <div className="link-icon is-2 w-embed">
+                        <div className="link-icon is-2 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
@@ -490,12 +490,12 @@ export function Item_2026_furniture_trends_you_need_to_know_this_year() {
                   </Link>
                 </div>
               </div>
-              <div className="w-dyn-list">
-                <div fade-in="true" role="list" className="blog-content-wrappper w-dyn-items">
-              <div role="listitem" className="w-dyn-item">
+              <div className="site-dyn-list">
+                <div fade-in="true" role="list" className="blog-content-wrappper site-dyn-items">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/zero-friction-checkout-card-transfer-ussd-stack" className="blog-image-link w-inline-block">
+                    <Link href="/blog/zero-friction-checkout-card-transfer-ussd-stack" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Mastering Zero-Friction Checkout: Cards, USSD, and Bank Transfer Fallbacks" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Payments & Trust</span>
@@ -513,10 +513,10 @@ export function Item_2026_furniture_trends_you_need_to_know_this_year() {
                   </div>
                 </div>
               </div>
-              <div role="listitem" className="w-dyn-item">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/speed-to-lead-converting-nigerian-web-traffic-under-5-minutes" className="blog-image-link w-inline-block">
+                    <Link href="/blog/speed-to-lead-converting-nigerian-web-traffic-under-5-minutes" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Speed-to-Lead: Converting Nigerian Web Traffic in Under 5 Minutes" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Conversion & CRO</span>
@@ -534,10 +534,10 @@ export function Item_2026_furniture_trends_you_need_to_know_this_year() {
                   </div>
                 </div>
               </div>
-              <div role="listitem" className="w-dyn-item">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/the-death-of-ai-slop-web-design-in-african-tech" className="blog-image-link w-inline-block">
+                    <Link href="/blog/the-death-of-ai-slop-web-design-in-african-tech" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="The Death of AI-Slop Web Design: Engineering Real Brand Authority" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Web Strategy</span>
@@ -576,7 +576,7 @@ export function Item_small_space_big_style_furnishing_compact_homes() {
         <Navbar />
         <div className="main-wrapper">
           <section className="section-breadcrumb">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="page-heading-block align-center">
                 <div className="hero-subtitle-block">
                   <div className="subtitle-dot"></div>
@@ -590,12 +590,12 @@ export function Item_small_space_big_style_furnishing_compact_homes() {
           </section>
 
           <section className="section-blog-details">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="blog-main-image-block">
                 <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80" loading="lazy" alt="The Google Maps 3-Pack Playbook for Lagos & Abuja Businesses" sizes="100vw" className="blog-main-image" />
               </div>
               <div className="blog-details-content-block">
-                <div fade-in="true" className="blog-details-content w-richtext">
+                <div fade-in="true" className="blog-details-content site-richtext">
                   <p>When high-net-worth clients search for medical clinics, luxury real estate developers, or corporate consultants in Lagos or Abuja, 70% of clicks go directly to the Google Maps 3-Pack at the top of the search results.</p>
                   <p>Having a Google Business Profile alone is no longer enough to maintain top ranking in competitive areas like Victoria Island or Maitama. Google verifies your business authenticity by cross-referencing your profile data against the structured LocalBusiness JSON-LD markup embedded directly in your website code.</p>
                   <h2>Neighborhood Landing Pages</h2>
@@ -606,7 +606,7 @@ export function Item_small_space_big_style_furnishing_compact_homes() {
                   <ul role="list">
                     <li>Exact NAP (Name, Address, Phone) consistency across all public citations.</li><li>Embedded LocalBusiness JSON-LD schema on all location pages.</li><li>Dedicated neighborhood sub-pages targeting specific commercial districts.</li><li>High-resolution geo-tagged business photography uploaded regularly.</li>
                   </ul>
-                  <figure style={{ maxWidth: "1200px" }} className="w-richtext-align-fullwidth w-richtext-figure-type-image">
+                  <figure style={{ maxWidth: "1200px" }} className="site-richtext-align-fullwidth site-richtext-figure-type-image">
                     <div>
                       <img alt="The Google Maps 3-Pack Playbook for Lagos & Abuja Businesses" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80" loading="lazy" />
                     </div>
@@ -618,19 +618,19 @@ export function Item_small_space_big_style_furnishing_compact_homes() {
                 </div>
 
                 <div fade-in="true" className="blog-button-wrapper">
-                  <Link stagger-up-animate="" href="/blog" className="primary-button w-inline-block">
+                  <Link stagger-up-animate="" href="/blog" className="primary-button inline-block">
                     <div className="button-text-wrapper">
                       <div className="button-text-block">
                         <div className="link-text is-1">All articles</div>
                         <div className="link-text is-2">All articles</div>
                       </div>
                       <div className="button-arrow-block">
-                        <div className="link-icon is-1 w-embed">
+                        <div className="link-icon is-1 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
                         </div>
-                        <div className="link-icon is-2 w-embed">
+                        <div className="link-icon is-2 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
@@ -644,7 +644,7 @@ export function Item_small_space_big_style_furnishing_compact_homes() {
           </section>
 
           <section className="section-blog-details-page">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="section-heading-flex">
                 <div className="section-heading-block">
                   <div className="hero-subtitle-block">
@@ -656,19 +656,19 @@ export function Item_small_space_big_style_furnishing_compact_homes() {
                   </div>
                 </div>
                 <div className="section-button-block">
-                  <Link href="/blog" className="primary-button w-inline-block">
+                  <Link href="/blog" className="primary-button inline-block">
                     <div className="button-text-wrapper">
                       <div className="button-text-block">
                         <div className="link-text is-1">All articles</div>
                         <div className="link-text is-2">All articles</div>
                       </div>
                       <div className="button-arrow-block">
-                        <div className="link-icon is-1 w-embed">
+                        <div className="link-icon is-1 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
                         </div>
-                        <div className="link-icon is-2 w-embed">
+                        <div className="link-icon is-2 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
@@ -678,12 +678,12 @@ export function Item_small_space_big_style_furnishing_compact_homes() {
                   </Link>
                 </div>
               </div>
-              <div className="w-dyn-list">
-                <div fade-in="true" role="list" className="blog-content-wrappper w-dyn-items">
-              <div role="listitem" className="w-dyn-item">
+              <div className="site-dyn-list">
+                <div fade-in="true" role="list" className="blog-content-wrappper site-dyn-items">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/why-single-page-websites-hurt-local-seo-nigeria" className="blog-image-link w-inline-block">
+                    <Link href="/blog/why-single-page-websites-hurt-local-seo-nigeria" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Why Single-Page Websites Hurt Local SEO in Nigeria" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Local SEO</span>
@@ -701,10 +701,10 @@ export function Item_small_space_big_style_furnishing_compact_homes() {
                   </div>
                 </div>
               </div>
-              <div role="listitem" className="w-dyn-item">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/speed-to-lead-converting-nigerian-web-traffic-under-5-minutes" className="blog-image-link w-inline-block">
+                    <Link href="/blog/speed-to-lead-converting-nigerian-web-traffic-under-5-minutes" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Speed-to-Lead: Converting Nigerian Web Traffic in Under 5 Minutes" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Conversion & CRO</span>
@@ -722,10 +722,10 @@ export function Item_small_space_big_style_furnishing_compact_homes() {
                   </div>
                 </div>
               </div>
-              <div role="listitem" className="w-dyn-item">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/nextjs-16-turbopack-vs-wordpress-why-modern-brands-are-migrating" className="blog-image-link w-inline-block">
+                    <Link href="/blog/nextjs-16-turbopack-vs-wordpress-why-modern-brands-are-migrating" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Modern Web Engineering vs Legacy CMS: Why Fast-Growing Brands Are Migrating" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Engineering</span>
@@ -764,7 +764,7 @@ export function Item_inside_the_studio_how_an_oak_table_is_made() {
         <Navbar />
         <div className="main-wrapper">
           <section className="section-breadcrumb">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="page-heading-block align-center">
                 <div className="hero-subtitle-block">
                   <div className="subtitle-dot"></div>
@@ -778,12 +778,12 @@ export function Item_inside_the_studio_how_an_oak_table_is_made() {
           </section>
 
           <section className="section-blog-details">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="blog-main-image-block">
                 <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80" loading="lazy" alt="Modern Web Engineering vs Legacy CMS: Why Fast-Growing Brands Are Migrating" sizes="100vw" className="blog-main-image" />
               </div>
               <div className="blog-details-content-block">
-                <div fade-in="true" className="blog-details-content w-richtext">
+                <div fade-in="true" className="blog-details-content site-richtext">
                   <p>For over a decade, WordPress was the default choice for building corporate websites. But in 2026, the cost of maintaining 30 fragile plugins, battling constant PHP security vulnerabilities, and paying high hosting fees has triggered an exodus toward modern web architectures.</p>
                   <p>WordPress sites require constant database patches and third-party plugin updates. A single compromised plugin exposes your entire customer database or defaces your corporate website. With static site generation (SSG), your production web pages are pre-rendered into static HTML, CSS, and TypeScript files.</p>
                   <h2>Turbopack and Instant Deployment</h2>
@@ -794,7 +794,7 @@ export function Item_inside_the_studio_how_an_oak_table_is_made() {
                   <ul role="list">
                     <li>Time-to-First-Byte (TTFB) under 45ms on global edge nodes.</li><li>Zero SQL database vulnerabilities and zero runtime server overhead.</li><li>Instant compilation and zero plugin compatibility conflicts.</li><li>Lower cloud hosting and zero maintenance retainer overhead.</li>
                   </ul>
-                  <figure style={{ maxWidth: "1200px" }} className="w-richtext-align-fullwidth w-richtext-figure-type-image">
+                  <figure style={{ maxWidth: "1200px" }} className="site-richtext-align-fullwidth site-richtext-figure-type-image">
                     <div>
                       <img alt="Modern Web Engineering vs Legacy CMS: Why Fast-Growing Brands Are Migrating" src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80" loading="lazy" />
                     </div>
@@ -806,19 +806,19 @@ export function Item_inside_the_studio_how_an_oak_table_is_made() {
                 </div>
 
                 <div fade-in="true" className="blog-button-wrapper">
-                  <Link stagger-up-animate="" href="/blog" className="primary-button w-inline-block">
+                  <Link stagger-up-animate="" href="/blog" className="primary-button inline-block">
                     <div className="button-text-wrapper">
                       <div className="button-text-block">
                         <div className="link-text is-1">All articles</div>
                         <div className="link-text is-2">All articles</div>
                       </div>
                       <div className="button-arrow-block">
-                        <div className="link-icon is-1 w-embed">
+                        <div className="link-icon is-1 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
                         </div>
-                        <div className="link-icon is-2 w-embed">
+                        <div className="link-icon is-2 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
@@ -832,7 +832,7 @@ export function Item_inside_the_studio_how_an_oak_table_is_made() {
           </section>
 
           <section className="section-blog-details-page">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="section-heading-flex">
                 <div className="section-heading-block">
                   <div className="hero-subtitle-block">
@@ -844,19 +844,19 @@ export function Item_inside_the_studio_how_an_oak_table_is_made() {
                   </div>
                 </div>
                 <div className="section-button-block">
-                  <Link href="/blog" className="primary-button w-inline-block">
+                  <Link href="/blog" className="primary-button inline-block">
                     <div className="button-text-wrapper">
                       <div className="button-text-block">
                         <div className="link-text is-1">All articles</div>
                         <div className="link-text is-2">All articles</div>
                       </div>
                       <div className="button-arrow-block">
-                        <div className="link-icon is-1 w-embed">
+                        <div className="link-icon is-1 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
                         </div>
-                        <div className="link-icon is-2 w-embed">
+                        <div className="link-icon is-2 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
@@ -866,12 +866,12 @@ export function Item_inside_the_studio_how_an_oak_table_is_made() {
                   </Link>
                 </div>
               </div>
-              <div className="w-dyn-list">
-                <div fade-in="true" role="list" className="blog-content-wrappper w-dyn-items">
-              <div role="listitem" className="w-dyn-item">
+              <div className="site-dyn-list">
+                <div fade-in="true" role="list" className="blog-content-wrappper site-dyn-items">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/edge-caching-and-asset-optimization-african-telecoms" className="blog-image-link w-inline-block">
+                    <Link href="/blog/edge-caching-and-asset-optimization-african-telecoms" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Edge Caching & Asset Optimization on 3G/4G African Telecom Networks" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Engineering</span>
@@ -889,10 +889,10 @@ export function Item_inside_the_studio_how_an_oak_table_is_made() {
                   </div>
                 </div>
               </div>
-              <div role="listitem" className="w-dyn-item">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/the-death-of-ai-slop-web-design-in-african-tech" className="blog-image-link w-inline-block">
+                    <Link href="/blog/the-death-of-ai-slop-web-design-in-african-tech" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="The Death of AI-Slop Web Design: Engineering Real Brand Authority" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Web Strategy</span>
@@ -910,10 +910,10 @@ export function Item_inside_the_studio_how_an_oak_table_is_made() {
                   </div>
                 </div>
               </div>
-              <div role="listitem" className="w-dyn-item">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/speed-to-lead-converting-nigerian-web-traffic-under-5-minutes" className="blog-image-link w-inline-block">
+                    <Link href="/blog/speed-to-lead-converting-nigerian-web-traffic-under-5-minutes" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Speed-to-Lead: Converting Nigerian Web Traffic in Under 5 Minutes" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Conversion & CRO</span>
@@ -952,7 +952,7 @@ export function Item_layering_textures_for_a_warm_inviting_home() {
         <Navbar />
         <div className="main-wrapper">
           <section className="section-breadcrumb">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="page-heading-block align-center">
                 <div className="hero-subtitle-block">
                   <div className="subtitle-dot"></div>
@@ -966,12 +966,12 @@ export function Item_layering_textures_for_a_warm_inviting_home() {
           </section>
 
           <section className="section-blog-details">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="blog-main-image-block">
                 <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80" loading="lazy" alt="The Death of AI-Slop Web Design: Engineering Real Brand Authority" sizes="100vw" className="blog-main-image" />
               </div>
               <div className="blog-details-content-block">
-                <div fade-in="true" className="blog-details-content w-richtext">
+                <div fade-in="true" className="blog-details-content site-richtext">
                   <p>The internet is drowning in low-effort AI-generated websites: purple gradient blobs, generic vector illustrations, and repetitive marketing buzzwords that convey zero human craftsmanship or trustworthiness.</p>
                   <p>Institutional clients, enterprise buyers, and affluent consumers evaluate your website as a proxy for the quality of your actual service. If your website looks like an automated template generated in 10 minutes, prospective clients assume your operational standards are equally careless.</p>
                   <h2>The Principles of Anti-Slop Web Architecture</h2>
@@ -982,7 +982,7 @@ export function Item_layering_textures_for_a_warm_inviting_home() {
                   <ul role="list">
                     <li>High-contrast editorial typography paired with generous structural padding.</li><li>Authentic photographic imagery of real operations, facilities, and personnel.</li><li>Subtle micro-interactions that feel snappy and purposeful on touchscreens.</li><li>Total absence of generic AI buzzwords or meaningless filler copy.</li>
                   </ul>
-                  <figure style={{ maxWidth: "1200px" }} className="w-richtext-align-fullwidth w-richtext-figure-type-image">
+                  <figure style={{ maxWidth: "1200px" }} className="site-richtext-align-fullwidth site-richtext-figure-type-image">
                     <div>
                       <img alt="The Death of AI-Slop Web Design: Engineering Real Brand Authority" src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80" loading="lazy" />
                     </div>
@@ -994,19 +994,19 @@ export function Item_layering_textures_for_a_warm_inviting_home() {
                 </div>
 
                 <div fade-in="true" className="blog-button-wrapper">
-                  <Link stagger-up-animate="" href="/blog" className="primary-button w-inline-block">
+                  <Link stagger-up-animate="" href="/blog" className="primary-button inline-block">
                     <div className="button-text-wrapper">
                       <div className="button-text-block">
                         <div className="link-text is-1">All articles</div>
                         <div className="link-text is-2">All articles</div>
                       </div>
                       <div className="button-arrow-block">
-                        <div className="link-icon is-1 w-embed">
+                        <div className="link-icon is-1 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
                         </div>
-                        <div className="link-icon is-2 w-embed">
+                        <div className="link-icon is-2 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
@@ -1020,7 +1020,7 @@ export function Item_layering_textures_for_a_warm_inviting_home() {
           </section>
 
           <section className="section-blog-details-page">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="section-heading-flex">
                 <div className="section-heading-block">
                   <div className="hero-subtitle-block">
@@ -1032,19 +1032,19 @@ export function Item_layering_textures_for_a_warm_inviting_home() {
                   </div>
                 </div>
                 <div className="section-button-block">
-                  <Link href="/blog" className="primary-button w-inline-block">
+                  <Link href="/blog" className="primary-button inline-block">
                     <div className="button-text-wrapper">
                       <div className="button-text-block">
                         <div className="link-text is-1">All articles</div>
                         <div className="link-text is-2">All articles</div>
                       </div>
                       <div className="button-arrow-block">
-                        <div className="link-icon is-1 w-embed">
+                        <div className="link-icon is-1 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
                         </div>
-                        <div className="link-icon is-2 w-embed">
+                        <div className="link-icon is-2 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
@@ -1054,12 +1054,12 @@ export function Item_layering_textures_for_a_warm_inviting_home() {
                   </Link>
                 </div>
               </div>
-              <div className="w-dyn-list">
-                <div fade-in="true" role="list" className="blog-content-wrappper w-dyn-items">
-              <div role="listitem" className="w-dyn-item">
+              <div className="site-dyn-list">
+                <div fade-in="true" role="list" className="blog-content-wrappper site-dyn-items">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/nextjs-16-turbopack-vs-wordpress-why-modern-brands-are-migrating" className="blog-image-link w-inline-block">
+                    <Link href="/blog/nextjs-16-turbopack-vs-wordpress-why-modern-brands-are-migrating" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Modern Web Engineering vs Legacy CMS: Why Fast-Growing Brands Are Migrating" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Engineering</span>
@@ -1077,10 +1077,10 @@ export function Item_layering_textures_for_a_warm_inviting_home() {
                   </div>
                 </div>
               </div>
-              <div role="listitem" className="w-dyn-item">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/speed-to-lead-converting-nigerian-web-traffic-under-5-minutes" className="blog-image-link w-inline-block">
+                    <Link href="/blog/speed-to-lead-converting-nigerian-web-traffic-under-5-minutes" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Speed-to-Lead: Converting Nigerian Web Traffic in Under 5 Minutes" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Conversion & CRO</span>
@@ -1098,10 +1098,10 @@ export function Item_layering_textures_for_a_warm_inviting_home() {
                   </div>
                 </div>
               </div>
-              <div role="listitem" className="w-dyn-item">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/why-single-page-websites-hurt-local-seo-nigeria" className="blog-image-link w-inline-block">
+                    <Link href="/blog/why-single-page-websites-hurt-local-seo-nigeria" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Why Single-Page Websites Hurt Local SEO in Nigeria" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Local SEO</span>
@@ -1140,7 +1140,7 @@ export function Item_the_return_of_warm_minimalism_in_modern_homes() {
         <Navbar />
         <div className="main-wrapper">
           <section className="section-breadcrumb">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="page-heading-block align-center">
                 <div className="hero-subtitle-block">
                   <div className="subtitle-dot"></div>
@@ -1154,12 +1154,12 @@ export function Item_the_return_of_warm_minimalism_in_modern_homes() {
           </section>
 
           <section className="section-blog-details">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="blog-main-image-block">
                 <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80" loading="lazy" alt="Mastering Zero-Friction Checkout: Cards, USSD, and Bank Transfer Fallbacks" sizes="100vw" className="blog-main-image" />
               </div>
               <div className="blog-details-content-block">
-                <div fade-in="true" className="blog-details-content w-richtext">
+                <div fade-in="true" className="blog-details-content site-richtext">
                   <p>Card transaction failure rates in Nigeria fluctuate daily depending on issuing bank switches. If your e-commerce checkout only supports standard debit cards, you are forfeiting up to 30% of your sales every weekend.</p>
                   <p>Modern payment implementations allow customers to dynamically switch payment channels without reloading the checkout page. If a debit card payment triggers a 3D-Secure timeout, the system instantly generates an escrow virtual bank account number with live webhook listening.</p>
                   <h2>Dynamic Payment Routing Architecture</h2>
@@ -1170,7 +1170,7 @@ export function Item_the_return_of_warm_minimalism_in_modern_homes() {
                   <ul role="list">
                     <li>Seamless automated virtual bank account generation on card decline.</li><li>USSD banking string generator for low-bandwidth mobile environments.</li><li>Real-time webhook listener confirming payment in under 3 seconds.</li><li>Instant SMS and email order confirmation receipt with tracking details.</li>
                   </ul>
-                  <figure style={{ maxWidth: "1200px" }} className="w-richtext-align-fullwidth w-richtext-figure-type-image">
+                  <figure style={{ maxWidth: "1200px" }} className="site-richtext-align-fullwidth site-richtext-figure-type-image">
                     <div>
                       <img alt="Mastering Zero-Friction Checkout: Cards, USSD, and Bank Transfer Fallbacks" src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1200&q=80" loading="lazy" />
                     </div>
@@ -1182,19 +1182,19 @@ export function Item_the_return_of_warm_minimalism_in_modern_homes() {
                 </div>
 
                 <div fade-in="true" className="blog-button-wrapper">
-                  <Link stagger-up-animate="" href="/blog" className="primary-button w-inline-block">
+                  <Link stagger-up-animate="" href="/blog" className="primary-button inline-block">
                     <div className="button-text-wrapper">
                       <div className="button-text-block">
                         <div className="link-text is-1">All articles</div>
                         <div className="link-text is-2">All articles</div>
                       </div>
                       <div className="button-arrow-block">
-                        <div className="link-icon is-1 w-embed">
+                        <div className="link-icon is-1 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
                         </div>
-                        <div className="link-icon is-2 w-embed">
+                        <div className="link-icon is-2 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
@@ -1208,7 +1208,7 @@ export function Item_the_return_of_warm_minimalism_in_modern_homes() {
           </section>
 
           <section className="section-blog-details-page">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="section-heading-flex">
                 <div className="section-heading-block">
                   <div className="hero-subtitle-block">
@@ -1220,19 +1220,19 @@ export function Item_the_return_of_warm_minimalism_in_modern_homes() {
                   </div>
                 </div>
                 <div className="section-button-block">
-                  <Link href="/blog" className="primary-button w-inline-block">
+                  <Link href="/blog" className="primary-button inline-block">
                     <div className="button-text-wrapper">
                       <div className="button-text-block">
                         <div className="link-text is-1">All articles</div>
                         <div className="link-text is-2">All articles</div>
                       </div>
                       <div className="button-arrow-block">
-                        <div className="link-icon is-1 w-embed">
+                        <div className="link-icon is-1 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
                         </div>
-                        <div className="link-icon is-2 w-embed">
+                        <div className="link-icon is-2 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
@@ -1242,12 +1242,12 @@ export function Item_the_return_of_warm_minimalism_in_modern_homes() {
                   </Link>
                 </div>
               </div>
-              <div className="w-dyn-list">
-                <div fade-in="true" role="list" className="blog-content-wrappper w-dyn-items">
-              <div role="listitem" className="w-dyn-item">
+              <div className="site-dyn-list">
+                <div fade-in="true" role="list" className="blog-content-wrappper site-dyn-items">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/building-high-trust-ecommerce-stores-with-paystack-in-2026" className="blog-image-link w-inline-block">
+                    <Link href="/blog/building-high-trust-ecommerce-stores-with-paystack-in-2026" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Building High-Trust E-Commerce Stores with Paystack in 2026" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Payments & Trust</span>
@@ -1265,10 +1265,10 @@ export function Item_the_return_of_warm_minimalism_in_modern_homes() {
                   </div>
                 </div>
               </div>
-              <div role="listitem" className="w-dyn-item">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/speed-to-lead-converting-nigerian-web-traffic-under-5-minutes" className="blog-image-link w-inline-block">
+                    <Link href="/blog/speed-to-lead-converting-nigerian-web-traffic-under-5-minutes" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Speed-to-Lead: Converting Nigerian Web Traffic in Under 5 Minutes" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Conversion & CRO</span>
@@ -1286,10 +1286,10 @@ export function Item_the_return_of_warm_minimalism_in_modern_homes() {
                   </div>
                 </div>
               </div>
-              <div role="listitem" className="w-dyn-item">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/why-single-page-websites-hurt-local-seo-nigeria" className="blog-image-link w-inline-block">
+                    <Link href="/blog/why-single-page-websites-hurt-local-seo-nigeria" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Why Single-Page Websites Hurt Local SEO in Nigeria" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Local SEO</span>
@@ -1328,7 +1328,7 @@ export function Item_how_to_clean_and_protect_boucle_upholstery() {
         <Navbar />
         <div className="main-wrapper">
           <section className="section-breadcrumb">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="page-heading-block align-center">
                 <div className="hero-subtitle-block">
                   <div className="subtitle-dot"></div>
@@ -1342,12 +1342,12 @@ export function Item_how_to_clean_and_protect_boucle_upholstery() {
           </section>
 
           <section className="section-blog-details">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="blog-main-image-block">
                 <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80" loading="lazy" alt="Edge Caching & Asset Optimization on 3G/4G African Telecom Networks" sizes="100vw" className="blog-main-image" />
               </div>
               <div className="blog-details-content-block">
-                <div fade-in="true" className="blog-details-content w-richtext">
+                <div fade-in="true" className="blog-details-content site-richtext">
                   <p>Hosting your website on a server located in Frankfurt or Virginia introduces 180ms to 240ms of latency per round trip for users in Nigeria. On mobile networks with frequent packet drops, this latency multiplies exponentially.</p>
                   <p>By deploying applications to modern edge networks with active edge nodes in Lagos and Johannesburg, initial HTML documents and static assets are delivered from physical servers located within Nigeria.</p>
                   <h2>The Cost of Bloated Asset Payloads</h2>
@@ -1358,7 +1358,7 @@ export function Item_how_to_clean_and_protect_boucle_upholstery() {
                   <ul role="list">
                     <li>Next-gen WebP/AVIF automated image transcoding and compression.</li><li>Local edge caching on Lagos and Johannesburg Points of Presence (PoPs).</li><li>Critical CSS inlining and deferred asynchronous script loading.</li><li>Total initial bundle payloads maintained strictly under 80KB.</li>
                   </ul>
-                  <figure style={{ maxWidth: "1200px" }} className="w-richtext-align-fullwidth w-richtext-figure-type-image">
+                  <figure style={{ maxWidth: "1200px" }} className="site-richtext-align-fullwidth site-richtext-figure-type-image">
                     <div>
                       <img alt="Edge Caching & Asset Optimization on 3G/4G African Telecom Networks" src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80" loading="lazy" />
                     </div>
@@ -1370,19 +1370,19 @@ export function Item_how_to_clean_and_protect_boucle_upholstery() {
                 </div>
 
                 <div fade-in="true" className="blog-button-wrapper">
-                  <Link stagger-up-animate="" href="/blog" className="primary-button w-inline-block">
+                  <Link stagger-up-animate="" href="/blog" className="primary-button inline-block">
                     <div className="button-text-wrapper">
                       <div className="button-text-block">
                         <div className="link-text is-1">All articles</div>
                         <div className="link-text is-2">All articles</div>
                       </div>
                       <div className="button-arrow-block">
-                        <div className="link-icon is-1 w-embed">
+                        <div className="link-icon is-1 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
                         </div>
-                        <div className="link-icon is-2 w-embed">
+                        <div className="link-icon is-2 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
@@ -1396,7 +1396,7 @@ export function Item_how_to_clean_and_protect_boucle_upholstery() {
           </section>
 
           <section className="section-blog-details-page">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="section-heading-flex">
                 <div className="section-heading-block">
                   <div className="hero-subtitle-block">
@@ -1408,19 +1408,19 @@ export function Item_how_to_clean_and_protect_boucle_upholstery() {
                   </div>
                 </div>
                 <div className="section-button-block">
-                  <Link href="/blog" className="primary-button w-inline-block">
+                  <Link href="/blog" className="primary-button inline-block">
                     <div className="button-text-wrapper">
                       <div className="button-text-block">
                         <div className="link-text is-1">All articles</div>
                         <div className="link-text is-2">All articles</div>
                       </div>
                       <div className="button-arrow-block">
-                        <div className="link-icon is-1 w-embed">
+                        <div className="link-icon is-1 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
                         </div>
-                        <div className="link-icon is-2 w-embed">
+                        <div className="link-icon is-2 site-embed">
                           <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                             <path d="M7 17 17 7M7 7h10v10"></path>
                           </svg>
@@ -1430,12 +1430,12 @@ export function Item_how_to_clean_and_protect_boucle_upholstery() {
                   </Link>
                 </div>
               </div>
-              <div className="w-dyn-list">
-                <div fade-in="true" role="list" className="blog-content-wrappper w-dyn-items">
-              <div role="listitem" className="w-dyn-item">
+              <div className="site-dyn-list">
+                <div fade-in="true" role="list" className="blog-content-wrappper site-dyn-items">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/nextjs-16-turbopack-vs-wordpress-why-modern-brands-are-migrating" className="blog-image-link w-inline-block">
+                    <Link href="/blog/nextjs-16-turbopack-vs-wordpress-why-modern-brands-are-migrating" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Modern Web Engineering vs Legacy CMS: Why Fast-Growing Brands Are Migrating" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Engineering</span>
@@ -1453,10 +1453,10 @@ export function Item_how_to_clean_and_protect_boucle_upholstery() {
                   </div>
                 </div>
               </div>
-              <div role="listitem" className="w-dyn-item">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/speed-to-lead-converting-nigerian-web-traffic-under-5-minutes" className="blog-image-link w-inline-block">
+                    <Link href="/blog/speed-to-lead-converting-nigerian-web-traffic-under-5-minutes" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="Speed-to-Lead: Converting Nigerian Web Traffic in Under 5 Minutes" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Conversion & CRO</span>
@@ -1474,10 +1474,10 @@ export function Item_how_to_clean_and_protect_boucle_upholstery() {
                   </div>
                 </div>
               </div>
-              <div role="listitem" className="w-dyn-item">
+              <div role="listitem" className="site-dyn-item">
                 <div className="blog-single-item-card">
                   <div className="bl-card-img">
-                    <Link href="/blog/the-death-of-ai-slop-web-design-in-african-tech" className="blog-image-link w-inline-block">
+                    <Link href="/blog/the-death-of-ai-slop-web-design-in-african-tech" className="blog-image-link inline-block">
                       <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80" loading="lazy" alt="The Death of AI-Slop Web Design: Engineering Real Brand Authority" className="bl-card-img-img" />
                     </Link>
                     <span className="bl-card-cat">Web Strategy</span>

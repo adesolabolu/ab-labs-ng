@@ -5,13 +5,22 @@ import React, { Suspense } from 'react';
 import Link from 'next/link';
 import ShopCatalog from '@/components/ShopCatalog';
 import StepsTileMarker from '@/components/StepsTileMarker';
+import { applyPricingOverrides } from '@/lib/template-pricing';
+import { pageMetadata } from '@/lib/site';
 
-export const metadata = {
-  title: 'Website Templates Catalog | aB Labs',
-  description: 'Browse ready-to-launch website templates crafted for Nigerian and African businesses. Pick your favorite design and we launch your custom website in less than 36 hours.',
-};
+// Prices are editable from the admin portal, so refresh the cached page.
+export const revalidate = 60;
 
-export default function ShopPage() {
+export const metadata = pageMetadata({
+  title: 'Website Templates Catalog',
+  description:
+    'Browse ready-to-launch website templates crafted for Nigerian and African businesses. Pick your favorite design and we launch your custom website in less than 36 hours.',
+  path: '/shop',
+});
+
+export default async function ShopPage() {
+  const templates = await applyPricingOverrides();
+
   return (
     <>
       <div className="page-wrapper">
@@ -19,7 +28,7 @@ export default function ShopPage() {
         
         <div className="main-wrapper">
           <section className="section-breadcrumb">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="page-heading-block align-center">
                 <div className="hero-subtitle-block">
                   <div className="subtitle-dot"></div>
@@ -42,9 +51,9 @@ export default function ShopPage() {
           </section>
 
           <section className="section-shop-catalog" style={{ padding: '40px 0 80px' }}>
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <Suspense fallback={<div style={{ textAlign: 'center', padding: '60px' }}>Loading templates...</div>}>
-                <ShopCatalog />
+                <ShopCatalog templates={templates} />
               </Suspense>
             </div>
           </section>

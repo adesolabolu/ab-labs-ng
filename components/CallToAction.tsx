@@ -26,7 +26,7 @@ export default function CallToAction({
 }: CallToActionProps) {
   return (
     <section className="section-cta" style={bgColor ? { backgroundColor: bgColor } : undefined}>
-      <div className="w-layout-blockcontainer container-large w-container">
+      <div className="site-blockcontainer container-large site-container">
         <div className="ctas-in">
           <div className="ctas-l rv">
             <div className="section-heading-block">
@@ -37,13 +37,13 @@ export default function CallToAction({
                 <h2 className="heading-style-h2 cta-title text-color-white" style={{ color: '#ffffff', fontSize: '36px', lineHeight: '1.2' }}>{title}</h2>
               </div>
               <div className="section-summary-block" style={{ maxWidth: '460px' }}>
-                <p summary="true" className="ctas-p" style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '15px', lineHeight: '1.6' }}>{summary}</p>
+                <p data-summary="true" className="ctas-p" style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '15px', lineHeight: '1.6' }}>{summary}</p>
               </div>
             </div>
             <div className="ctas-btns">
               <Link
                 href={primaryBtnHref}
-                className="primary-button w-variant-3b5a4d32-eebf-cbfb-72aa-bab6d6dbb242 w-inline-block"
+                className="primary-button site-variant-3b5a4d32-eebf-cbfb-72aa-bab6d6dbb242 inline-block"
               >
                 <div className="button-text-wrapper">
                   <div className="button-text-block">
@@ -51,12 +51,12 @@ export default function CallToAction({
                     <div className="link-text is-2">{primaryBtnText} </div>
                   </div>
                   <div className="button-arrow-block">
-                    <div className="link-icon is-1 w-embed">
+                    <div className="link-icon is-1 site-embed">
                       <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                         <path d="M7 17 17 7M7 7h10v10"></path>
                       </svg>
                     </div>
-                    <div className="link-icon is-2 w-embed">
+                    <div className="link-icon is-2 site-embed">
                       <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                         <path d="M7 17 17 7M7 7h10v10"></path>
                       </svg>
@@ -66,7 +66,7 @@ export default function CallToAction({
               </Link>
               <Link
                 href={secondaryBtnHref}
-                className="primary-button w-variant-446f7c99-5055-c60b-2e0e-10ff042897b8 w-inline-block"
+                className="primary-button site-variant-446f7c99-5055-c60b-2e0e-10ff042897b8 inline-block"
               >
                 <div className="button-text-wrapper">
                   <div className="button-text-block">
@@ -74,12 +74,12 @@ export default function CallToAction({
                     <div className="link-text is-2">{secondaryBtnText}</div>
                   </div>
                   <div className="button-arrow-block">
-                    <div className="link-icon is-1 w-embed">
+                    <div className="link-icon is-1 site-embed">
                       <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                         <path d="M7 17 17 7M7 7h10v10"></path>
                       </svg>
                     </div>
-                    <div className="link-icon is-2 w-embed">
+                    <div className="link-icon is-2 site-embed">
                       <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                         <path d="M7 17 17 7M7 7h10v10"></path>
                       </svg>

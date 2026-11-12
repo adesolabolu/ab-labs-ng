@@ -3,10 +3,26 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { TEMPLATES, CATEGORIES, Template } from '@/data/templates';
+import { CATEGORIES, Template } from '@/data/templates';
 // Direct design onboarding without shopping cart
 
-export default function ShopCatalog() {
+/** Compact money label for tight card footers (₦5k, ₦15k, ₦35,500). */
+function formatShortNgn(value: number): string {
+  if (!Number.isFinite(value) || value <= 0) return '₦0';
+  if (value >= 1000 && value % 1000 === 0) return `₦${value / 1000}k`;
+  return `₦${value.toLocaleString()}`;
+}
+
+function discountPct(standard: number, current: number): number {
+  return standard > current && current > 0 ? Math.round((1 - current / standard) * 100) : 0;
+}
+
+interface ShopCatalogProps {
+  /** Catalog with any admin price overrides already applied. */
+  templates: Template[];
+}
+
+export default function ShopCatalog({ templates }: ShopCatalogProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get('category') || 'all';
@@ -25,7 +41,7 @@ export default function ShopCatalog() {
   }, [searchParams]);
 
   const filteredTemplates = useMemo(() => {
-    return TEMPLATES.filter((tpl) => {
+    return templates.filter((tpl) => {
       const matchesCategory = activeCategory === 'all' || tpl.category === activeCategory;
       const matchesSearch =
         tpl.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -39,7 +55,7 @@ export default function ShopCatalog() {
       if (sortBy === 'rating') return b.rating - a.rating;
       return 0; // featured (default order)
     });
-  }, [activeCategory, searchQuery, sortBy]);
+  }, [templates, activeCategory, searchQuery, sortBy]);
 
   const handleGetTemplate = (template: Template) => {
     router.push(`/product/${template.slug}`);
@@ -320,17 +336,21 @@ export default function ShopCatalog() {
                   <div>
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
                       <span style={{ fontSize: '18px', fontWeight: 800, color: '#111827', letterSpacing: '-0.02em' }}>
-                        ₦50,000
+                        ₦{template.outrightNgn.toLocaleString()}
                       </span>
-                      <span style={{ fontSize: '12px', color: '#9ca3af', textDecoration: 'line-through' }}>
-                        ₦100,000
-                      </span>
-                      <span style={{ fontSize: '10px', fontWeight: 700, color: '#047857', backgroundColor: '#ecfdf5', padding: '1px 6px', borderRadius: '4px' }}>
-                        50% OFF
-                      </span>
+                      {template.standardOutrightNgn > template.outrightNgn && (
+                        <span style={{ fontSize: '12px', color: '#9ca3af', textDecoration: 'line-through' }}>
+                          ₦{template.standardOutrightNgn.toLocaleString()}
+                        </span>
+                      )}
+                      {discountPct(template.standardOutrightNgn, template.outrightNgn) > 0 && (
+                        <span style={{ fontSize: '10px', fontWeight: 700, color: '#047857', backgroundColor: '#ecfdf5', padding: '1px 6px', borderRadius: '4px' }}>
+                          {discountPct(template.standardOutrightNgn, template.outrightNgn)}% OFF
+                        </span>
+                      )}
                     </div>
                     <div style={{ fontSize: '11px', color: '#4b5563', marginTop: '2px' }}>
-                      or <strong>₦5k/mo</strong> + ₦15k setup
+                      or <strong>{formatShortNgn(template.monthlyNgn)}/mo</strong> + {formatShortNgn(template.setupFeeNgn)} setup
                     </div>
                   </div>
 

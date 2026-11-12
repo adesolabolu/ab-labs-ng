@@ -3,11 +3,14 @@ import Footer from '@/components/Footer';
 import React from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
+import { pageMetadata } from '@/lib/site';
 
-export const metadata = {
-  title: 'About aB Labs | High-Performance Next.js Website Templates & Digital Flagships',
-  description: 'Learn how aB Labs engineers production-grade Next.js website templates, custom digital storefronts, and conversion-optimized web applications for ambitious African brands.',
-};
+export const metadata = pageMetadata({
+  title: 'About Us — High-Performance Web Engineering',
+  description:
+    'Learn how aB Labs engineers production-grade Next.js website templates, custom digital storefronts, and conversion-optimized web applications for ambitious African brands.',
+  path: '/about-us',
+});
 
 export default function AboutUsPage() {
   return (
@@ -18,7 +21,7 @@ export default function AboutUsPage() {
         <main className="main-wrapper">
           {/* SECTION: HERO */}
           <section className="section-about-hero">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="ab-hero-in">
                 <div className="ab-hero-left">
                   <div className="page-heading-block">
@@ -36,19 +39,19 @@ export default function AboutUsPage() {
                     </div>
                   </div>
                   <div className="ab-hero-actions">
-                    <Link href="/shop" className="primary-button w-inline-block">
+                    <Link href="/shop" className="primary-button inline-block">
                       <div className="button-text-wrapper">
                         <div className="button-text-block">
                           <div className="link-text is-1">Explore Templates</div>
                           <div className="link-text is-2">Explore Templates</div>
                         </div>
                         <div className="button-arrow-block">
-                          <div className="link-icon is-1 w-embed">
+                          <div className="link-icon is-1 site-embed">
                             <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                               <path d="M7 17 17 7M7 7h10v10"></path>
                             </svg>
                           </div>
-                          <div className="link-icon is-2 w-embed">
+                          <div className="link-icon is-2 site-embed">
                             <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                               <path d="M7 17 17 7M7 7h10v10"></path>
                             </svg>
@@ -56,19 +59,19 @@ export default function AboutUsPage() {
                         </div>
                       </div>
                     </Link>
-                    <Link href="/contact-us" className="primary-button w-variant-247f4bce-739b-3294-dc6c-b061c876c17e w-inline-block">
+                    <Link href="/contact-us" className="primary-button site-variant-247f4bce-739b-3294-dc6c-b061c876c17e inline-block">
                       <div className="button-text-wrapper">
                         <div className="button-text-block">
                           <div className="link-text is-1">Book a Consultation</div>
                           <div className="link-text is-2">Book a Consultation</div>
                         </div>
                         <div className="button-arrow-block">
-                          <div className="link-icon is-1 w-embed">
+                          <div className="link-icon is-1 site-embed">
                             <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                               <path d="M7 17 17 7M7 7h10v10"></path>
                             </svg>
                           </div>
-                          <div className="link-icon is-2 w-embed">
+                          <div className="link-icon is-2 site-embed">
                             <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
                               <path d="M7 17 17 7M7 7h10v10"></path>
                             </svg>
@@ -114,7 +117,7 @@ export default function AboutUsPage() {
 
           {/* SECTION: PHILOSOPHY */}
           <section className="section-philoshphy">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="section-heading-block align-center">
                 <div className="section-subtitle-block">
                   <div className="subtitle-text">02 - Our Philosophy</div>
@@ -156,7 +159,7 @@ export default function AboutUsPage() {
 
           {/* SECTION: STORY */}
           <section className="section-story">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="story-wrapper">
                 <div className="story-left-column">
                   <div className="section-heading-block">
@@ -242,7 +245,7 @@ export default function AboutUsPage() {
 
           {/* SECTION: NUMBERS */}
           <section className="section-number">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="ab-stats-stage">
                 <div className="ab-stats-bg">
                   <img src="/assets/6aa0f4f06ebeb100bcea2cac_About%20stats%20image.webp" alt="Inside the aB Labs studio" loading="lazy" sizes="100vw" className="ab-stats-bg-img" />
@@ -282,7 +285,7 @@ export default function AboutUsPage() {
 
           {/* SECTION: STANDARDS / PROMISE */}
           <section className="section-promise">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="section-heading-block align-center">
                 <div className="section-subtitle-block">
                   <div className="subtitle-text">05 - Our Standards</div>
@@ -300,14 +303,14 @@ export default function AboutUsPage() {
                 <div className="ab-seal">
                   <div className="ab-seal-ring">
                     <div className="ab-seal-tick">
-                      <div className="arrow-icon w-embed">
+                      <div className="arrow-icon site-embed">
                         <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
                           <path d="M20 6 9 17l-5-5"></path>
                         </svg>
                       </div>
                     </div>
                     <div className="ab-seal-disc">
-                      <div className="promise-icon w-embed">
+                      <div className="promise-icon site-embed">
                         <svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
                           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                         </svg>
@@ -320,14 +323,14 @@ export default function AboutUsPage() {
                 <div className="ab-seal">
                   <div className="ab-seal-ring">
                     <div className="ab-seal-tick">
-                      <div className="arrow-icon w-embed">
+                      <div className="arrow-icon site-embed">
                         <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
                           <path d="M20 6 9 17l-5-5"></path>
                         </svg>
                       </div>
                     </div>
                     <div className="ab-seal-disc">
-                      <div className="promise-icon w-embed">
+                      <div className="promise-icon site-embed">
                         <svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
                           <rect x="1" y="3" width="15" height="13"></rect>
                           <path d="M16 8h4l3 3v5h-7V8z"></path>
@@ -343,14 +346,14 @@ export default function AboutUsPage() {
                 <div className="ab-seal">
                   <div className="ab-seal-ring">
                     <div className="ab-seal-tick">
-                      <div className="arrow-icon w-embed">
+                      <div className="arrow-icon site-embed">
                         <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
                           <path d="M20 6 9 17l-5-5"></path>
                         </svg>
                       </div>
                     </div>
                     <div className="ab-seal-disc">
-                      <div className="promise-icon w-embed">
+                      <div className="promise-icon site-embed">
                         <svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
                           <polyline points="23 4 23 10 17 10"></polyline>
                           <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
@@ -364,14 +367,14 @@ export default function AboutUsPage() {
                 <div className="ab-seal">
                   <div className="ab-seal-ring">
                     <div className="ab-seal-tick">
-                      <div className="arrow-icon w-embed">
+                      <div className="arrow-icon site-embed">
                         <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
                           <path d="M20 6 9 17l-5-5"></path>
                         </svg>
                       </div>
                     </div>
                     <div className="ab-seal-disc">
-                      <div className="promise-icon w-embed">
+                      <div className="promise-icon site-embed">
                         <svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
                           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                           <polyline points="9 22 9 12 15 12 15 22"></polyline>
@@ -388,7 +391,7 @@ export default function AboutUsPage() {
 
           {/* SECTION: HOW IT'S ENGINEERED */}
           <section className="section-him">
-            <div className="w-layout-blockcontainer container-large w-container">
+            <div className="site-blockcontainer container-large site-container">
               <div className="section-heading-block align-center">
                 <div className="section-subtitle-block">
                   <div className="subtitle-text">06 - How We Engineer</div>
@@ -421,7 +424,7 @@ export default function AboutUsPage() {
                     </p>
                     <div className="ab-flow-meta">
                       <div className="ab-flow-tag">
-                        <div className="him-icon w-embed">
+                        <div className="him-icon site-embed">
                           <svg fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                           </svg>
@@ -429,7 +432,7 @@ export default function AboutUsPage() {
                         <div>Semantic Tokens</div>
                       </div>
                       <div className="ab-flow-tag">
-                        <div className="him-icon w-embed">
+                        <div className="him-icon site-embed">
                           <svg fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
                             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                           </svg>
@@ -454,7 +457,7 @@ export default function AboutUsPage() {
                     </p>
                     <div className="ab-flow-meta">
                       <div className="ab-flow-tag">
-                        <div className="him-icon w-embed">
+                        <div className="him-icon site-embed">
                           <svg fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
                             <path d="M20 6 9 17l-5-5"></path>
                           </svg>
@@ -462,7 +465,7 @@ export default function AboutUsPage() {
                         <div>100% Type-Safe</div>
                       </div>
                       <div className="ab-flow-tag">
-                        <div className="him-icon w-embed">
+                        <div className="him-icon site-embed">
                           <svg fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
                             <circle cx="12" cy="12" r="9"></circle>
                             <path d="M12 7v5l3 2"></path>
@@ -496,7 +499,7 @@ export default function AboutUsPage() {
                     </p>
                     <div className="ab-flow-meta">
                       <div className="ab-flow-tag">
-                        <div className="him-icon w-embed">
+                        <div className="him-icon site-embed">
                           <svg fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
                             <rect x="1" y="3" width="15" height="13"></rect>
                             <path d="M16 8h4l3 3v5h-7V8z"></path>
@@ -507,7 +510,7 @@ export default function AboutUsPage() {
                         <div>Paystack Pre-Wired</div>
                       </div>
                       <div className="ab-flow-tag">
-                        <div className="him-icon w-embed">
+                        <div className="him-icon site-embed">
                           <svg fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
                             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                             <polyline points="9 22 9 12 15 12 15 22"></polyline>
