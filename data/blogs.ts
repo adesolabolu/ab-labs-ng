@@ -30,58 +30,58 @@ export interface BlogPost {
 }
 
 export const BLOG_CATEGORIES = [
-  { id: 'all', label: 'All Articles' },
-  { id: 'web-strategy', label: 'Web Strategy' },
-  { id: 'conversion', label: 'Conversion & CRO' },
-  { id: 'payments', label: 'Payments & Trust' },
-  { id: 'local-seo', label: 'Local SEO' },
-  { id: 'engineering', label: 'Architecture' }
+  { id: 'all', label: 'All Guides' },
+  { id: 'web-strategy', label: 'Website Tips' },
+  { id: 'conversion', label: 'Getting More Sales' },
+  { id: 'payments', label: 'Payments & Checkout' },
+  { id: 'local-seo', label: 'Google & SEO' },
+  { id: 'engineering', label: 'Speed & Tech' }
 ];
 
 export const BLOG_POSTS: BlogPost[] = [
   {
     id: '1',
     slug: 'why-single-page-websites-hurt-local-seo-nigeria',
-    title: 'Why Single-Page Websites Hurt Local SEO in Nigeria (And How to Fix It)',
-    subtitle: 'How structured multi-page architecture unlocks 5x organic customer inquiries across Lagos and Abuja.',
-    category: 'Web Strategy',
+    title: 'Why One-Page Websites Lose Customers on Google (And How to Fix It)',
+    subtitle: 'How having dedicated pages for each service brings 5x more customer inquiries in Lagos and Abuja.',
+    category: 'Website Tips',
     categorySlug: 'web-strategy',
     date: 'Oct 14, 2026',
     readTime: '6 min read',
     author: {
       name: 'Tunde Alabi',
-      role: 'Lead Architect, aB Labs',
+      role: 'Head of Web Development, aB Labs',
       initials: 'TA'
     },
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
-    excerpt: 'Discover why single-page landing sites fail to rank on Google Maps and search results across Lagos and Abuja, and how structured multi-page architecture unlocks 5x organic customer inquiries.',
+    excerpt: 'Having just one long scrolling page makes it difficult for Google to show your business when local customers search in Lagos or Abuja. Here is how having proper pages brings 5x more customer calls.',
     content: {
-      lead: 'Hundreds of ambitious Nigerian businesses launch single-page landing websites thinking they are sleek, fast, and modern. Yet within three months, organic search discovery is near zero, and customer acquisition costs spiral out of control.',
+      lead: 'Many business owners launch a single scrolling website because it seems quick and inexpensive. But after a few months, nobody finds them on Google search, and they spend heavily on ads just to get noticed.',
       sections: [
         {
-          heading: 'The Single-Page Trap on Nigerian Search Engines',
+          heading: 'Why Google Struggles with One-Page Websites',
           paragraphs: [
-            'When Google crawls a website, its algorithm scores individual URL paths against distinct user search intents. If your law firm, real estate agency, or medical clinic condenses all services into one long scrolling page, Google can only index a single URL for all search queries.',
-            'A prospective client in Ikeja searching for "commercial lease agreement lawyer" has a completely different intent than someone searching for "trademark registration in Lagos". When both topics share one URL, Google awards the top rank to a competitor with dedicated, schema-marked service pages.'
+            'When people search Google in Lagos or Abuja, they search for specific things. Someone looking for "real estate lawyer in Ikeja" wants a page about property law. Someone searching for "company registration" wants a page about business setup.',
+            'If your website is just one long page with everything cramped together, Google does not know which keyword to rank you for. Competitors who have a separate page for each service get shown first every single time.'
           ],
-          keyTakeaway: 'One page can rank for one core primary query. Trying to cram 6 services onto a single URL dilutes topical authority across all of them.'
+          keyTakeaway: 'Google ranks specific pages for specific searches. Cramming 6 different services onto one single page makes Google ignore all of them.'
         },
         {
-          heading: 'The Multi-Page Architecture Blueprint',
+          heading: 'The Multi-Page Advantage',
           paragraphs: [
-            'Modern Next.js 16 architectures allow you to maintain sub-second page transitions without sacrificing search engine visibility. Each core service gets a dedicated indexable route (/services/property-acquisition, /services/corporate-advisory) complete with LocalBusiness Schema markup.',
-            'By linking these pages together through clean breadcrumb hierarchies and high-authority contextual anchors, Google crawlers understand your exact domain authority in the Nigerian market.'
+            'Giving each of your main services its own clean page lets Google understand exactly what you offer. When a customer searches for that specific service, Google shows your exact page at the top of the results.',
+            'Each page can have its own clear phone number, WhatsApp link, and booking form so visitors can contact you immediately.'
           ],
           codeOrMetric: {
-            label: 'Organic Lead Lift',
+            label: 'Customer Inquiry Lift',
             value: '+340%',
-            description: 'Average 90-day organic inquiry increase observed after migrating single-page sites to multi-page Next.js architecture.'
+            description: 'Average increase in phone calls and inquiries after switching from a single-page site to separate service pages.'
           }
         },
         {
-          heading: 'How to Execute the Migration Safely',
+          heading: 'Simple Steps to Fix It',
           paragraphs: [
-            'Audit your existing page sections to identify individual high-intent service categories. Build distinct routes with localized metadata (city, state, targeted service keywords), submit your automated Next.js sitemap to Google Search Console, and verify your NAP (Name, Address, Phone) consistency across all local directories.'
+            'List the top 3 to 5 services your business sells. Create a dedicated page for each one with clear photos, pricing details, and client reviews. Add your business address and phone number on every page so local customers know you are legitimate and close to them.'
           ]
         }
       ]
@@ -90,38 +90,38 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     id: '2',
     slug: 'speed-to-lead-converting-nigerian-web-traffic-under-5-minutes',
-    title: 'Speed-to-Lead: Converting Nigerian Web Traffic in Under 5 Minutes',
-    subtitle: 'Why mobile performance and instant WhatsApp CRM routing determine who wins high-value clients.',
-    category: 'Conversion & CRO',
+    title: 'How Replying in 5 Minutes on WhatsApp Doubles Your Website Sales',
+    subtitle: 'Why fast mobile pages and a direct WhatsApp button turn website visitors into paying clients.',
+    category: 'Getting More Sales',
     categorySlug: 'conversion',
     date: 'Oct 10, 2026',
     readTime: '4 min read',
     author: {
       name: 'Amina Bello',
-      role: 'Product Strategist, aB Labs',
+      role: 'Growth Specialist, aB Labs',
       initials: 'AB'
     },
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
-    excerpt: 'Every second of mobile loading delay cuts conversion rates by 26% on Nigerian telco networks. Here is how modern Next.js caching and instant WhatsApp CRM routing turn cold clicks into closed deals.',
+    excerpt: 'Most website visitors leave if they have to wait for pages to load or fill out long contact forms. Here is how instant WhatsApp buttons and fast-loading mobile sites turn clicks into closed deals.',
     content: {
-      lead: 'In African digital commerce, speed is not merely an engineering metric — it is the single greatest determinant of whether a prospective buyer stays on your site or taps the back button to buy from your competitor.',
+      lead: 'In Nigeria, business moves fast on WhatsApp. If a prospective customer lands on your website and cannot reach you within 60 seconds, they will click back and call your competitor.',
       sections: [
         {
-          heading: 'The Reality of Mobile Networks in Lagos & Port Harcourt',
+          heading: 'Why Speed Matters on Nigerian Mobile Networks',
           paragraphs: [
-            'While corporate offices enjoy fast fibre connections, over 84% of your website visitors browse from mobile phones connected to volatile 3G/4G telco signals. If your website weighs 8MB and loads 40 external tracking scripts, mobile users abandon the page before your logo renders.',
-            'Optimizing First Contentful Paint (FCP) to sub-800ms ensures that even during peak network congestion, your value proposition and call-to-action appear immediately.'
+            'Most people visit your site on their phone using mobile data. If your site is heavy and takes more than 3 seconds to open, visitors leave before they even see your products.',
+            'A fast website that opens in under one second keeps potential buyers engaged and ready to buy.'
           ],
           codeOrMetric: {
-            label: 'Lighthouse Target',
-            value: '99/100',
-            description: 'Benchmark mobile performance score maintained by every production aB Labs template.'
+            label: 'Page Speed Goal',
+            value: '< 1 Sec',
+            description: 'Every aB Labs website template is built to load in under a second on mobile phones in Nigeria.'
           }
         },
         {
-          heading: 'Instant WhatsApp Routing vs Slow Contact Forms',
+          heading: 'Replace Long Forms with 1-Click WhatsApp',
           paragraphs: [
-            'Traditional email contact forms that reply within 24 hours lose over 80% of Nigerian commercial buyers. Integrating direct 1-click WhatsApp intake with pre-filled context (the exact template or service viewed) creates an instant conversational sales channel while the customer intent is hottest.'
+            'Nobody likes filling out long contact forms and waiting 24 hours for an email reply. Adding a direct WhatsApp button with a pre-typed message lets interested clients chat with you immediately while their buying interest is highest.'
           ]
         }
       ]
@@ -130,38 +130,38 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     id: '3',
     slug: 'building-high-trust-ecommerce-stores-with-paystack-in-2026',
-    title: 'Building High-Trust E-Commerce Stores with Paystack in 2026',
-    subtitle: 'Cart abandonment prevention, payment fallback matrices, and psychological trust engineering.',
-    category: 'Payments & Trust',
+    title: 'How to Stop Customers from Abandoning Their Cart at Checkout',
+    subtitle: 'Simple payment setups and trust badges that make shoppers feel safe paying with cards and bank transfers.',
+    category: 'Payments & Checkout',
     categorySlug: 'payments',
     date: 'Oct 04, 2026',
     readTime: '5 min read',
     author: {
       name: 'Emeka Nwosu',
-      role: 'Senior Systems Engineer, aB Labs',
+      role: 'Payment Systems Lead, aB Labs',
       initials: 'EN'
     },
     image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1200&q=80',
-    excerpt: 'Why cart abandonment reaches 78% on generic checkout pages in Africa, and the exact payment flow, bank transfer verification, and trust badge layout that lifts sales by 40%.',
+    excerpt: 'Over 70% of online shoppers abandon their order if the checkout looks confusing or card payments fail. Here is how offering bank transfers and clear trust badges boosts your completed orders by 40%.',
     content: {
-      lead: 'Building e-commerce in Nigeria requires solving for trust above all else. Nigerian consumers are discerning, security-conscious, and quick to abandon checkouts that feel unfamiliar or clunky.',
+      lead: 'Selling online in Nigeria requires building trust. If your checkout page looks confusing, or if bank card OTPs fail with no alternative, shoppers will leave and never return.',
       sections: [
         {
-          heading: 'Eliminating Friction at the Payment Gateway',
+          heading: 'Give Buyers Both Card and Bank Transfer Options',
           paragraphs: [
-            'When a customer reaches checkout, forcing them through 4 cumbersome form screens before showing payment options causes catastrophic drop-off. By pairing streamlined single-page order review with pre-integrated Paystack modal triggers, customers complete payments in under 60 seconds.',
-            'Crucially, offering automated bank transfer accounts alongside debit card processing recovers the 35% of shoppers whose card OTPs fail due to banking gateway latency.'
+            'Many Nigerian shoppers still prefer paying via instant bank transfer rather than typing their debit card details online. When you use Paystack, customers can pay with card, bank transfer, or USSD code.',
+            'If their bank OTP delays, they can simply transfer the money and the order confirms automatically in seconds.'
           ],
           codeOrMetric: {
-            label: 'Checkout Recovery',
+            label: 'Completed Sales Lift',
             value: '+42%',
-            description: 'Increase in completed checkout transactions when offering automated Paystack bank transfer accounts.'
+            description: 'Increase in successful orders when customers can pay via bank transfer directly at checkout.'
           }
         },
         {
-          heading: 'The 3 Non-Negotiable Trust Signals',
+          heading: 'Show Safety and Delivery Badges Clearly',
           paragraphs: [
-            'Every checkout must display clear PCI-DSS Level 1 compliance badges, transparent return/exchange guarantees, and direct customer care contact information. Hidden delivery fees or unexpected surcharges at the final step are the number one cause of cart abandonment.'
+            'Always show clear delivery times, return policies, and official payment security logos right beside your checkout button. Removing hidden fees and being transparent upfront makes customers confident to pay immediately.'
           ]
         }
       ]
@@ -170,33 +170,33 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     id: '4',
     slug: 'google-maps-3-pack-playbook-for-lagos-abuja-businesses',
-    title: 'The Google Maps 3-Pack Playbook for Lagos & Abuja Businesses',
-    subtitle: 'Dominate high-ticket local search in Victoria Island, Ikeja, Lekki, and Maitama.',
-    category: 'Local SEO',
+    title: 'How to Rank on the First Page of Google in Lagos & Abuja',
+    subtitle: 'The straightforward guide to appearing at the top of Google Maps so nearby customers call you first.',
+    category: 'Google & SEO',
     categorySlug: 'local-seo',
     date: 'Sep 28, 2026',
     readTime: '7 min read',
     author: {
       name: 'Tunde Alabi',
-      role: 'Lead Architect, aB Labs',
+      role: 'Head of Web Development, aB Labs',
       initials: 'TA'
     },
-    image: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80',
-    excerpt: 'Step-by-step guide to dominating Google Local Search in Victoria Island, Ikeja, Lekki, and Maitama with structured Schema.org JSON-LD, NAP consistency, and fast landing pages.',
+    image: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80',
+    excerpt: 'Step-by-step guide to ranking at the top of Google Search and Google Maps so clients in Victoria Island, Ikeja, Lekki, or Abuja call you before your competitors.',
     content: {
-      lead: 'When high-net-worth clients search for medical clinics, luxury real estate developers, or corporate consultants in Lagos or Abuja, 70% of clicks go directly to the Google Maps 3-Pack at the top of the search results.',
+      lead: 'When customers in Lagos or Abuja look for a doctor, interior designer, caterer, or property agent, 70% of them tap the top 3 businesses shown on Google Maps. Here is how to make sure your business is one of them.',
       sections: [
         {
-          heading: 'Connecting On-Page Schema to Google Business Profile',
+          heading: 'Match Your Website and Google Profile Exactly',
           paragraphs: [
-            'Having a Google Business Profile alone is no longer enough to maintain top ranking in competitive areas like Victoria Island or Maitama. Google verifies your business authenticity by cross-referencing your profile data against the structured LocalBusiness JSON-LD markup embedded directly in your website code.',
-            'Ensuring that your business name, physical street address, phone number, and operating hours match character-for-character between your website header, footer, and Google profile sends unambiguous trust signals to Google algorithms.'
+            'Google checks your website to verify that your business is real. Your business name, street address, and phone number on your website header and footer must match your Google Business Profile exactly.',
+            'When Google sees consistent details across your website and profile, it rewards you with higher rankings in local search.'
           ]
         },
         {
-          heading: 'Neighborhood Landing Pages',
+          heading: 'Highlight the Areas You Serve',
           paragraphs: [
-            'Creating localized hub pages tailored to specific service districts (e.g., Lekki Phase 1, Ikoyi, Central Business District Abuja) allows you to capture geo-targeted search volume that generic city-wide pages will never rank for.'
+            'If you serve clients in Lekki, Ikoyi, Ikeja, or Maitama, mention those locations on your website. Google uses these location mentions to show your business to nearby people searching on their phones.'
           ]
         }
       ]
@@ -205,39 +205,33 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     id: '5',
     slug: 'nextjs-16-turbopack-vs-wordpress-why-modern-brands-are-migrating',
-    title: 'Modern Web Engineering vs Legacy CMS: Why Fast-Growing Brands Are Migrating',
-    subtitle: 'Fragile plugin bloat, database vulnerabilities, and sluggish page speeds compared to modern custom web flagships.',
-    category: 'Architecture',
+    title: 'Why Old WordPress Sites Crash and Slow Down (And What to Use Instead)',
+    subtitle: 'How modern, clean websites protect your business from plugin hacks, crashes, and sluggish loading.',
+    category: 'Speed & Tech',
     categorySlug: 'engineering',
     date: 'Sep 21, 2026',
     readTime: '6 min read',
     author: {
       name: 'Emeka Nwosu',
-      role: 'Senior Systems Engineer, aB Labs',
+      role: 'Payment Systems Lead, aB Labs',
       initials: 'EN'
     },
     image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80',
-    excerpt: 'Slow plugin bloat, SQL injection vulnerabilities, and monthly hosting surcharges are pushing ambitious African brands from WordPress to static headless Next.js architectures.',
+    excerpt: 'Old WordPress websites break when plugins update and get hacked easily. Here is why modern, cleanly coded websites protect your business, never crash, and load in under a second.',
     content: {
-      lead: 'For over a decade, WordPress was the default choice for building corporate websites. But in 2026, the cost of maintaining 30 fragile plugins, battling constant PHP security vulnerabilities, and paying high hosting fees has triggered an exodus toward modern Next.js architectures.',
+      lead: 'Many business owners have experienced the frustration of a WordPress site breaking after a plugin update, or getting hacked with spam. Modern websites eliminate those headaches completely.',
       sections: [
         {
-          heading: 'The Security & Maintenance Nightmare of Legacy CMS',
+          heading: 'No Vulnerable Plugins to Manage',
           paragraphs: [
-            'WordPress sites require constant database patches and third-party plugin updates. A single compromised plugin exposes your entire customer database or defaces your corporate website. With Next.js static site generation (SSG), your production web pages are pre-rendered into static HTML, CSS, and TypeScript files.',
-            'With zero exposed SQL databases and zero PHP execution on your web server, your digital surface area becomes virtually unhackable.'
+            'Traditional websites rely on 20 to 30 separate plugins that require constant updates. If one plugin is outdated, hackers can deface your website or crash your store.',
+            'Our website templates are built with clean, modern code that does not use messy plugins. Your site stays fast, reliable, and secure 24/7 without ongoing maintenance stress.'
           ],
           codeOrMetric: {
-            label: 'TTFB Benchmark',
-            value: '< 45ms',
-            description: 'Time-to-First-Byte achieved on edge CDN nodes compared to 850ms+ on legacy WordPress hosting.'
+            label: 'Uptime Reliability',
+            value: '99.9%',
+            description: 'Zero database crashes and zero plugin conflicts on modern static web architectures.'
           }
-        },
-        {
-          heading: 'Turbopack: Sub-Second Builds for Rapid Iteration',
-          paragraphs: [
-            'Next.js 16 with Turbopack compiles modifications in milliseconds. Your marketing team can publish new landing pages, update product catalogs, and deploy to Vercel without worrying about server crashes or plugin conflicts.'
-          ]
         }
       ]
     }
@@ -245,33 +239,27 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     id: '6',
     slug: 'the-death-of-ai-slop-web-design-in-african-tech',
-    title: 'The Death of AI-Slop Web Design: Engineering Real Brand Authority',
-    subtitle: 'Why cookie-cutter AI generators destroy conversion rates and how tactile design systems command premium pricing.',
-    category: 'Web Strategy',
+    title: 'Why Cheap AI Websites Scare Away Serious Paying Clients',
+    subtitle: 'Why cookie-cutter AI generated websites look fake and how clean, bespoke design makes customers trust you.',
+    category: 'Website Tips',
     categorySlug: 'web-strategy',
     date: 'Sep 15, 2026',
     readTime: '5 min read',
     author: {
       name: 'Amina Bello',
-      role: 'Product Strategist, aB Labs',
+      role: 'Growth Specialist, aB Labs',
       initials: 'AB'
     },
     image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
-    excerpt: 'Generic AI landing page generators produce template soup that users bounce from in 3 seconds. Here is why bespoke typography, intentional layout hierarchy, and tactile micro-interactions command premium pricing.',
+    excerpt: 'Cheap websites generated by AI tools look fake and amateurish. Serious customers who are about to spend real money want to see professional branding that looks established and trustworthy.',
     content: {
-      lead: 'The internet is drowning in low-effort AI-generated websites: purple gradient blobs, generic vector illustrations, and repetitive marketing buzzwords that convey zero human craftsmanship or trustworthiness.',
+      lead: 'Today, anyone can use an AI tool to generate a website in 5 minutes. But high-paying clients can immediately tell when a site is cheap, and they will hesitate before trusting you with their money.',
       sections: [
         {
-          heading: 'Why High-Value Clients Instantly Detect AI-Slop',
+          heading: 'Your Website Reflects Your Service Quality',
           paragraphs: [
-            'Institutional clients, enterprise buyers, and affluent consumers evaluate your website as a proxy for the quality of your actual service. If your website looks like an automated template generated in 10 minutes, prospective clients assume your operational standards are equally careless.',
-            'High-converting digital flagships rely on restrained typography, generous whitespace, tactile contrast, and authentic business photography that anchors your brand in the physical world.'
-          ]
-        },
-        {
-          heading: 'The Principles of Anti-Slop Web Architecture',
-          paragraphs: [
-            '1. Clear Typographic Hierarchy: High-contrast editorial headers paired with legible body copy. 2. Performance First: Zero unnecessary animation scripts that jitter on mobile devices. 3. Tangible Social Proof: Real case studies, verified client quotes, and measurable business outcomes instead of empty stock testimonials.'
+            'Clients judge your business based on how professional your website looks. If your website has blurry stock photos, generic text, and sloppy layouts, clients assume your service is equally careless.',
+            'A clean, well-structured website with crisp typography and real business details gives you the credibility needed to charge premium prices.'
           ]
         }
       ]
@@ -280,33 +268,27 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     id: '7',
     slug: 'zero-friction-checkout-card-transfer-ussd-stack',
-    title: 'Mastering Zero-Friction Checkout: Cards, USSD, and Bank Transfer Fallbacks',
-    subtitle: 'Building a bulletproof payment pipeline that prevents transaction drops during bank network downtime.',
-    category: 'Payments & Trust',
+    title: 'How to Never Lose a Sale When Bank Cards Fail at Checkout',
+    subtitle: 'Ensuring customers can pay instantly with virtual bank transfers and USSD without leaving your page.',
+    category: 'Payments & Checkout',
     categorySlug: 'payments',
     date: 'Sep 08, 2026',
     readTime: '4 min read',
     author: {
       name: 'Emeka Nwosu',
-      role: 'Senior Systems Engineer, aB Labs',
+      role: 'Payment Systems Lead, aB Labs',
       initials: 'EN'
     },
     image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80',
-    excerpt: 'When 3D-Secure OTPs fail on Nigerian debit cards, having an instant virtual bank transfer account and USSD popup retains 91% of abandoning shoppers.',
+    excerpt: 'When bank card OTPs delay or fail in Nigeria, giving customers an instant virtual bank transfer option saves the sale on the spot instead of losing them forever.',
     content: {
-      lead: 'Card transaction failure rates in Nigeria fluctuate daily depending on issuing bank switches. If your e-commerce checkout only supports standard debit cards, you are forfeiting up to 30% of your sales every weekend.',
+      lead: 'Every Nigerian business owner knows that bank card networks can be unpredictable on weekends or evenings. If card payment is your only option, you are losing sales every single week.',
       sections: [
         {
-          heading: 'Dynamic Payment Routing Architecture',
+          heading: 'Instant Virtual Account Transfers',
           paragraphs: [
-            'Modern Paystack implementations allow customers to dynamically switch payment channels without reloading the checkout page. If a debit card payment triggers a 3D-Secure timeout, the system instantly generates an escrow virtual bank account number with live webhook listening.',
-            'The moment the customer completes the bank transfer from their mobile banking app, the checkout automatically resolves to the confirmation screen in real time.'
-          ],
-          codeOrMetric: {
-            label: 'Abandonment Drop',
-            value: '-28%',
-            description: 'Reduction in checkout drop-off when implementing seamless virtual account transfer fallbacks.'
-          }
+            'With Paystack integrated into your store, when a card transaction fails, the customer is immediately offered a dedicated virtual account number to transfer to. Once they make the transfer from their bank app, the order confirms on screen immediately.'
+          ]
         }
       ]
     }
@@ -314,33 +296,27 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     id: '8',
     slug: 'edge-caching-and-asset-optimization-african-telecoms',
-    title: 'Edge Caching & Asset Optimization on 3G/4G African Telecom Networks',
-    subtitle: 'How sub-80KB Next.js bundles and Lagos edge points of presence achieve near-instant initial render.',
-    category: 'Engineering',
+    title: 'How to Make Your Website Open in 1 Second on Any Phone in Nigeria',
+    subtitle: 'Fast loading speeds keep customers browsing even on weak 3G and 4G mobile networks.',
+    category: 'Speed & Tech',
     categorySlug: 'engineering',
     date: 'Aug 30, 2026',
     readTime: '5 min read',
     author: {
       name: 'Tunde Alabi',
-      role: 'Lead Architect, aB Labs',
+      role: 'Head of Web Development, aB Labs',
       initials: 'TA'
     },
     image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80',
-    excerpt: 'How we compress Next.js static bundles under 80KB and route assets through local edge points-of-presence (PoPs) in Lagos and Johannesburg for sub-second First Contentful Paint.',
+    excerpt: 'Even on slow phone data in Lagos traffic, a fast website ensures customers see your products immediately without waiting, leading to higher orders and happier clients.',
     content: {
-      lead: 'Hosting your website on a server located in Frankfurt or Virginia introduces 180ms to 240ms of latency per round trip for users in Nigeria. On mobile networks with frequent packet drops, this latency multiplies exponentially.',
+      lead: 'If your website takes 6 seconds to open on a phone in traffic, prospective clients will tap back to Google and visit someone else. Speed is your biggest competitive advantage.',
       sections: [
         {
-          heading: 'Leveraging African Edge Points of Presence (PoPs)',
+          heading: 'Optimized for African Mobile Networks',
           paragraphs: [
-            'By deploying Next.js applications to modern edge networks with active edge nodes in Lagos and Johannesburg, initial HTML documents and static assets are delivered from physical servers located within Nigeria.',
-            'Combined with next-gen WebP image compression, aggressive font subsetting, and tree-shaken JavaScript bundles under 80KB, your site feels instantaneous across any smartphone in Africa.'
-          ],
-          codeOrMetric: {
-            label: 'Latency Reduction',
-            value: '75%',
-            description: 'Round-trip time reduction when assets are served directly from Lagos edge caches instead of US/EU datacenters.'
-          }
+            'We compress all images and write clean, lightweight code so your website uses very little mobile data and loads in under a second on MTN, Airtel, and Glo.'
+          ]
         }
       ]
     }

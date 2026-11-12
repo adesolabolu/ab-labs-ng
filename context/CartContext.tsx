@@ -6,7 +6,7 @@ import { Template, TEMPLATES } from '@/data/templates';
 export interface CartItem {
   template: Template;
   quantity: number;
-  setupService: boolean; // Optional turnkey deployment setup (+₦50,000)
+  setupService: boolean; // Optional complete setup service (+₦50,000)
 }
 
 interface CartContextType {

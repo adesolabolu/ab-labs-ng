@@ -4,14 +4,14 @@ import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { TEMPLATES, CATEGORIES, Template } from '@/data/templates';
-import { useCart } from '@/context/CartContext';
+// Direct design onboarding without shopping cart
 
 export default function ShopCatalog() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get('category') || 'all';
 
-  const { addItem } = useCart();
+  // direct flow
 
   const [activeCategory, setActiveCategory] = useState<string>(initialCategory);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -42,138 +42,102 @@ export default function ShopCatalog() {
   }, [activeCategory, searchQuery, sortBy]);
 
   const handleGetTemplate = (template: Template) => {
-    addItem(template);
-    router.push('/cart');
+    router.push(`/product/${template.slug}`);
   };
 
   return (
     <div className="shop-catalog-container">
-      {/* Search and Sort Toolbar */}
-      <div style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: '16px',
-        marginBottom: '28px'
-      }}>
-        {/* Category Pills */}
-        <div style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '8px',
-          alignItems: 'center'
-        }}>
+      {/* Filter Bar */}
+      <div className="abfilter">
+        <div className="abfilter-pills" role="group" aria-label="Filter templates by industry">
           {CATEGORIES.map((cat) => {
             const isActive = activeCategory === cat.id;
             return (
               <button
                 key={cat.id}
+                type="button"
+                aria-pressed={isActive}
                 onClick={() => setActiveCategory(cat.id)}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: '100px',
-                  fontSize: '13px',
-                  fontWeight: isActive ? 600 : 500,
-                  border: isActive ? '1px solid #111' : '1px solid #e5e5e5',
-                  backgroundColor: isActive ? '#111' : '#fff',
-                  color: isActive ? '#fff' : '#444',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}
+                className={`abfilter-pill${isActive ? ' is-active' : ''}`}
               >
-                {cat.label}
+                <span>{cat.label}</span>
+                <span className="abfilter-count">{cat.count}</span>
               </button>
             );
           })}
         </div>
 
-        {/* Search & Sort Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-          <div style={{ position: 'relative', minWidth: '220px' }}>
-            <input
-              type="text"
-              placeholder="Search templates..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '8px 14px 8px 34px',
-                borderRadius: '8px',
-                border: '1px solid #e0e0e0',
-                fontSize: '13px',
-                outline: 'none',
-                background: '#fff'
-              }}
-            />
+        <div className="abfilter-controls">
+          <div className="abfilter-search">
             <svg
-              style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#999' }}
-              width="15"
-              height="15"
+              width="16"
+              height="16"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
+              aria-hidden="true"
             >
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              <circle cx="11" cy="11" r="7"></circle>
+              <line x1="20" y1="20" x2="16.65" y2="16.65"></line>
             </svg>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by name, industry or stack"
+              aria-label="Search templates"
+            />
             {searchQuery && (
               <button
+                type="button"
+                className="abfilter-clear-input"
                 onClick={() => setSearchQuery('')}
-                style={{
-                  position: 'absolute',
-                  right: '8px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: '#999',
-                  fontSize: '14px'
-                }}
+                aria-label="Clear search"
               >
                 ×
               </button>
             )}
           </div>
 
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
-            style={{
-              padding: '8px 12px',
-              borderRadius: '8px',
-              border: '1px solid #e0e0e0',
-              fontSize: '13px',
-              backgroundColor: '#fff',
-              color: '#333',
-              outline: 'none',
-              cursor: 'pointer'
-            }}
-          >
-            <option value="featured">Sort: Featured</option>
-            <option value="rating">Highest Rated</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-          </select>
+          <div className="abfilter-sort">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              aria-label="Sort templates"
+            >
+              <option value="featured">Featured order</option>
+              <option value="rating">Highest rated</option>
+              <option value="price-low">Price: low to high</option>
+              <option value="price-high">Price: high to low</option>
+            </select>
+          </div>
         </div>
-      </div>
 
-      {/* Results Header Count */}
-      <div style={{ marginBottom: '20px', fontSize: '13px', color: '#666', display: 'flex', justifyContent: 'space-between' }}>
-        <span>Showing <strong>{filteredTemplates.length}</strong> {filteredTemplates.length === 1 ? 'template' : 'templates'}</span>
-        {activeCategory !== 'all' && (
-          <button
-            onClick={() => setActiveCategory('all')}
-            style={{ background: 'none', border: 'none', color: '#2563EB', cursor: 'pointer', fontSize: '13px', textDecoration: 'underline' }}
-          >
-            Clear category filter
-          </button>
-        )}
+        <div className="abfilter-meta">
+          <span>
+            <strong>{filteredTemplates.length}</strong>{' '}
+            {filteredTemplates.length === 1 ? 'design' : 'designs'}
+            {activeCategory !== 'all' && (
+              <> in <strong>{CATEGORIES.find((c) => c.id === activeCategory)?.label}</strong></>
+            )}
+            {searchQuery && (
+              <> matching <strong>&ldquo;{searchQuery}&rdquo;</strong></>
+            )}
+          </span>
+          {(activeCategory !== 'all' || searchQuery) && (
+            <button
+              type="button"
+              className="abfilter-reset"
+              onClick={() => {
+                setActiveCategory('all');
+                setSearchQuery('');
+              }}
+            >
+              Reset filters
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Templates Grid */}
@@ -343,63 +307,51 @@ export default function ShopCatalog() {
                   {template.description}
                 </p>
 
-                {/* Footer with Price and CTA */}
+                {/* Footer with Dual Launch Pricing and CTA */}
                 <div style={{
                   marginTop: 'auto',
                   paddingTop: '16px',
                   borderTop: '1px solid #f0f0f0',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'space-between'
+                  justifyContent: 'space-between',
+                  gap: '12px'
                 }}>
                   <div>
-                    <div style={{ fontSize: '18px', fontWeight: 800, color: '#111', letterSpacing: '-0.02em' }}>
-                      ₦{template.priceNgn.toLocaleString()}
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                      <span style={{ fontSize: '18px', fontWeight: 800, color: '#111827', letterSpacing: '-0.02em' }}>
+                        ₦50,000
+                      </span>
+                      <span style={{ fontSize: '12px', color: '#9ca3af', textDecoration: 'line-through' }}>
+                        ₦100,000
+                      </span>
+                      <span style={{ fontSize: '10px', fontWeight: 700, color: '#047857', backgroundColor: '#ecfdf5', padding: '1px 6px', borderRadius: '4px' }}>
+                        50% OFF
+                      </span>
                     </div>
-                    <div style={{ fontSize: '11px', color: '#888' }}>
-                      ≈ ${template.priceUsd} USD
+                    <div style={{ fontSize: '11px', color: '#4b5563', marginTop: '2px' }}>
+                      or <strong>₦5k/mo</strong> + ₦15k setup
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <Link
-                      href={`/product/${template.slug}`}
-                      style={{
-                        padding: '8px 14px',
-                        backgroundColor: '#f8fafc',
-                        border: '1px solid #e2e8f0',
-                        color: '#0f172a',
-                        borderRadius: '8px',
-                        fontSize: '12px',
-                        fontWeight: 600,
-                        textDecoration: 'none',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}
-                    >
-                      Preview ↗
-                    </Link>
-
-                    <button
-                      type="button"
-                      onClick={() => handleGetTemplate(template)}
-                      style={{
-                        padding: '8px 14px',
-                        backgroundColor: '#111',
-                        border: '1px solid #111',
-                        color: '#fff',
-                        borderRadius: '8px',
-                        fontSize: '12px',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        display: 'inline-flex',
-                        alignItems: 'center'
-                      }}
-                    >
-                      Get Template
-                    </button>
-                  </div>
+                  <Link
+                    href={`/product/${template.slug}`}
+                    style={{
+                      padding: '8px 14px',
+                      backgroundColor: '#111827',
+                      color: '#ffffff',
+                      borderRadius: '8px',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      textDecoration: 'none',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    Order this design →
+                  </Link>
                 </div>
               </div>
             </article>

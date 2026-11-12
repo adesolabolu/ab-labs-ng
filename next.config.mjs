@@ -1,5 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  allowedDevOrigins: [
+    '127.0.0.1',
+    'localhost',
+    '127.0.0.1:3005',
+    'localhost:3005',
+    '*.localhost',
+  ],
   reactStrictMode: false,
   images: {
     unoptimized: true

@@ -1,0 +1,1699 @@
+'use client';
+
+import React, { useState, useEffect, useMemo } from 'react';
+import Link from 'next/link';
+import { TEMPLATES } from '@/data/templates';
+
+export default function AdminPortalPage() {
+  const [activeTab, setActiveTab] = useState<'links' | 'clients' | 'orders' | 'templates'>('links');
+  
+  // Data States
+  const [loading, setLoading] = useState(true);
+  const [links, setLinks] = useState<any[]>([]);
+  const [clients, setClients] = useState<any[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [stats, setStats] = useState({
+    totalLinks: 0,
+    activeLinks: 0,
+    paidLinks: 0,
+    totalPaidAmount: 0,
+  });
+
+  // Search Filter State
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // New Link Modal / Form State
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [creatingLink, setCreatingLink] = useState(false);
+  const [newLinkTitle, setNewLinkTitle] = useState('');
+  const [newLinkClientName, setNewLinkClientName] = useState('');
+  const [newLinkClientEmail, setNewLinkClientEmail] = useState('');
+  const [newLinkClientPhone, setNewLinkClientPhone] = useState('');
+  const [newLinkTemplateSlug, setNewLinkTemplateSlug] = useState('carzap-detailing');
+  const [newLinkPlanType, setNewLinkPlanType] = useState<'MONTHLY' | 'OUTRIGHT'>('MONTHLY');
+  const [newLinkSetupFee, setNewLinkSetupFee] = useState(15000);
+  const [newLinkMonthly, setNewLinkMonthly] = useState(5000);
+  const [newLinkOutright, setNewLinkOutright] = useState(50000);
+  const [newLinkNotes, setNewLinkNotes] = useState('');
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  // Client domain editing state
+  const [editingClientId, setEditingClientId] = useState<string | null>(null);
+  const [editDomainName, setEditDomainName] = useState('');
+  const [editDomainExpiry, setEditDomainExpiry] = useState('');
+  const [savingDomain, setSavingDomain] = useState(false);
+
+  const fetchAdminData = async () => {
+    setLoading(true);
+    try {
+      const [linksRes, clientsRes, ordersRes] = await Promise.all([
+        fetch('/api/admin/links').then(r => r.json()),
+        fetch('/api/admin/clients').then(r => r.json()),
+        fetch('/api/admin/orders').then(r => r.json()),
+      ]);
+
+      if (linksRes.success) {
+        setLinks(linksRes.links || []);
+        setStats(linksRes.stats || { totalLinks: 0, activeLinks: 0, paidLinks: 0, totalPaidAmount: 0 });
+      }
+      if (clientsRes.success) {
+        setClients(clientsRes.clients || []);
+      }
+      if (ordersRes.success) {
+        setOrders(ordersRes.orders || []);
+      }
+    } catch (err) {
+      console.error('Error loading admin dashboard:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAdminData();
+  }, []);
+
+  const handleCreateLink = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreatingLink(true);
+
+    const chosenTemplate = TEMPLATES.find(t => t.slug === newLinkTemplateSlug);
+    const autoTitle = `${chosenTemplate ? chosenTemplate.name : 'Digital Web Flagship'} Launch Proposal`;
+    const titleToSend = newLinkTitle.trim() || autoTitle;
+
+    try {
+      const res = await fetch('/api/admin/links', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: titleToSend,
+          clientName: newLinkClientName.trim() || null,
+          clientEmail: newLinkClientEmail.trim() || null,
+          clientPhone: newLinkClientPhone.trim() || null,
+          templateSlug: newLinkTemplateSlug,
+          templateName: chosenTemplate ? chosenTemplate.name : newLinkTemplateSlug,
+          planType: newLinkPlanType,
+          setupFeeNgn: Number(newLinkSetupFee) || 15000,
+          monthlyPriceNgn: Number(newLinkMonthly) || 5000,
+          outrightPriceNgn: Number(newLinkOutright) || 50000,
+          notes: newLinkNotes.trim() || null,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setShowCreateModal(false);
+        setNewLinkTitle('');
+        setNewLinkClientName('');
+        setNewLinkClientEmail('');
+        setNewLinkClientPhone('');
+        setNewLinkNotes('');
+        fetchAdminData();
+      } else {
+        alert(`Failed to create link: ${data.error}`);
+      }
+    } catch (err: any) {
+      alert(`Error creating link: ${err.message}`);
+    } finally {
+      setCreatingLink(false);
+    }
+  };
+
+  const copyToClipboard = (id: string) => {
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const fullUrl = `${origin}/pay/${id}`;
+    navigator.clipboard.writeText(fullUrl);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2500);
+  };
+
+  const formatNgn = (val: number) => `₦${Number(val || 0).toLocaleString()}`;
+
+  const startEditingDomain = (client: any) => {
+    setEditingClientId(client.id);
+    setEditDomainName(client.domain_name || '');
+    setEditDomainExpiry(
+      client.domain_expiry_date ? new Date(client.domain_expiry_date).toISOString().slice(0, 10) : ''
+    );
+  };
+
+  const cancelEditingDomain = () => {
+    setEditingClientId(null);
+    setEditDomainName('');
+    setEditDomainExpiry('');
+  };
+
+  const saveClientDomain = async (clientId: string) => {
+    setSavingDomain(true);
+    try {
+      const res = await fetch('/api/admin/clients', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clientId,
+          domainName: editDomainName,
+          domainExpiryDate: editDomainExpiry || null,
+        }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        throw new Error(data.error || 'Could not save the domain.');
+      }
+      setClients(prev => prev.map(c => (c.id === clientId ? { ...c, ...data.client } : c)));
+      cancelEditingDomain();
+    } catch (err: any) {
+      alert(`Domain update failed: ${err.message}`);
+    } finally {
+      setSavingDomain(false);
+    }
+  };
+
+  // Filtered lists based on search
+  const filteredLinks = useMemo(() => {
+    if (!searchQuery) return links;
+    const q = searchQuery.toLowerCase();
+    return links.filter(l => 
+      (l.title && l.title.toLowerCase().includes(q)) ||
+      (l.client_name && l.client_name.toLowerCase().includes(q)) ||
+      (l.client_email && l.client_email.toLowerCase().includes(q)) ||
+      (l.template_name && l.template_name.toLowerCase().includes(q))
+    );
+  }, [links, searchQuery]);
+
+  const filteredClients = useMemo(() => {
+    if (!searchQuery) return clients;
+    const q = searchQuery.toLowerCase();
+    return clients.filter(c =>
+      (c.name && c.name.toLowerCase().includes(q)) ||
+      (c.business_name && c.business_name.toLowerCase().includes(q)) ||
+      (c.domain_name && c.domain_name.toLowerCase().includes(q)) ||
+      (c.email && c.email.toLowerCase().includes(q))
+    );
+  }, [clients, searchQuery]);
+
+  const filteredOrders = useMemo(() => {
+    if (!searchQuery) return orders;
+    const q = searchQuery.toLowerCase();
+    return orders.filter(o =>
+      (o.paystack_reference && o.paystack_reference.toLowerCase().includes(q)) ||
+      (o.customer_name && o.customer_name.toLowerCase().includes(q)) ||
+      (o.customer_email && o.customer_email.toLowerCase().includes(q))
+    );
+  }, [orders, searchQuery]);
+
+  const filteredTemplates = useMemo(() => {
+    if (!searchQuery) return TEMPLATES;
+    const q = searchQuery.toLowerCase();
+    return TEMPLATES.filter(t =>
+      t.name.toLowerCase().includes(q) ||
+      t.categoryLabel.toLowerCase().includes(q) ||
+      t.tagline.toLowerCase().includes(q)
+    );
+  }, [searchQuery]);
+
+  const activeTemplateForModal = useMemo(() => {
+    return TEMPLATES.find(t => t.slug === newLinkTemplateSlug) || TEMPLATES[0];
+  }, [newLinkTemplateSlug]);
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#0c0c0e',
+      color: '#e4e4e7',
+      fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      WebkitFontSmoothing: 'antialiased',
+      MozOsxFontSmoothing: 'grayscale',
+    }}>
+      
+      {/* Top Studio Executive Bar */}
+      <header style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        backdropFilter: 'blur(16px)',
+        backgroundColor: 'rgba(12, 12, 14, 0.85)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+        padding: '0 32px',
+        height: '68px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}>
+        {/* Left Brand Unit */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <Link 
+            href="/" 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '10px', 
+              textDecoration: 'none' 
+            }}
+          >
+            <span style={{
+              fontSize: '19px',
+              fontWeight: 900,
+              letterSpacing: '-0.04em',
+              color: '#ffffff',
+            }}>
+              aB Labs
+            </span>
+            <span style={{
+              fontSize: '11px',
+              fontWeight: 600,
+              letterSpacing: '0.04em',
+              padding: '3px 8px',
+              borderRadius: '6px',
+              backgroundColor: 'rgba(255, 255, 255, 0.06)',
+              color: '#a1a1aa',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+            }}>
+              Executive Studio
+            </span>
+          </Link>
+
+          <div style={{ width: '1px', height: '18px', backgroundColor: 'rgba(255, 255, 255, 0.1)' }} />
+
+          {/* Database Live Telemetry Pill */}
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '12px',
+            color: '#a1a1aa',
+          }}>
+            <span style={{
+              width: '7px',
+              height: '7px',
+              borderRadius: '50%',
+              backgroundColor: '#10b981',
+              boxShadow: '0 0 10px rgba(16, 185, 129, 0.6)',
+              display: 'inline-block',
+            }} />
+            <span style={{ fontWeight: 500 }}>Neon Serverless Postgres</span>
+            <span style={{ fontSize: '11px', color: '#52525b' }}>· aws-us-east-2</span>
+          </div>
+        </div>
+
+        {/* Right Actions */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <Link
+            href="/shop"
+            target="_blank"
+            style={{
+              fontSize: '13px',
+              fontWeight: 500,
+              color: '#a1a1aa',
+              textDecoration: 'none',
+              padding: '8px 14px',
+              borderRadius: '8px',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              backgroundColor: 'rgba(255, 255, 255, 0.03)',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            Public Catalog ↗
+          </Link>
+
+          <button
+            onClick={() => setShowCreateModal(true)}
+            style={{
+              padding: '9px 18px',
+              borderRadius: '8px',
+              fontSize: '13px',
+              fontWeight: 600,
+              letterSpacing: '-0.01em',
+              backgroundColor: '#f4f4f5',
+              color: '#09090b',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.2)',
+              transition: 'transform 0.1s ease',
+            }}
+          >
+            <span style={{ fontSize: '16px', lineHeight: 1, fontWeight: 700 }}>+</span>
+            <span>Create Launch Proposal</span>
+          </button>
+        </div>
+      </header>
+
+      {/* Main Executive Body */}
+      <main style={{ maxWidth: '1360px', margin: '0 auto', padding: '36px 32px 80px' }}>
+        
+        {/* Editorial Header & Timeframe */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-end',
+          marginBottom: '28px',
+        }}>
+          <div>
+            <h1 style={{
+              fontSize: '26px',
+              fontWeight: 800,
+              letterSpacing: '-0.03em',
+              color: '#fafafa',
+              margin: '0 0 4px',
+            }}>
+              Operations &amp; Client Dispatch
+            </h1>
+            <p style={{
+              fontSize: '14px',
+              color: '#71717a',
+              margin: 0,
+            }}>
+              Monitor active payments, provisioned client accounts, 1-year domain cycles, and catalog inventory.
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button
+              onClick={fetchAdminData}
+              disabled={loading}
+              style={{
+                fontSize: '12px',
+                fontWeight: 600,
+                color: '#a1a1aa',
+                backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '6px',
+                padding: '6px 12px',
+                cursor: loading ? 'not-allowed' : 'pointer',
+              }}
+            >
+              {loading ? 'Refreshing...' : '↻ Refresh Ledger'}
+            </button>
+          </div>
+        </div>
+
+        {/* Unified Integrated Metric Board (Anti-SaaS-Card Polish) */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+          backgroundColor: '#121215',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          borderRadius: '16px',
+          overflow: 'hidden',
+          marginBottom: '36px',
+        }}>
+          
+          {/* Stat 1: Total Paid Revenue */}
+          <div style={{
+            padding: '24px 28px',
+            borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#71717a', letterSpacing: '0.02em' }}>
+                Total Paid Revenue
+              </span>
+              <span style={{
+                fontSize: '10.5px',
+                fontWeight: 700,
+                color: '#10b981',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                border: '1px solid rgba(16, 185, 129, 0.2)',
+              }}>
+                Verified
+              </span>
+            </div>
+            <div style={{
+              fontSize: '32px',
+              fontWeight: 800,
+              letterSpacing: '-0.03em',
+              color: '#ffffff',
+              fontVariantNumeric: 'tabular-nums',
+            }}>
+              {formatNgn(stats.totalPaidAmount)}
+            </div>
+            <div style={{ fontSize: '12px', color: '#52525b', marginTop: '4px' }}>
+              Confirmed Paystack settlements
+            </div>
+          </div>
+
+          {/* Stat 2: Active Proposals */}
+          <div style={{
+            padding: '24px 28px',
+            borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#71717a', letterSpacing: '0.02em' }}>
+                One-Click Proposals
+              </span>
+              <span style={{
+                fontSize: '10.5px',
+                fontWeight: 600,
+                color: '#a1a1aa',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              }}>
+                {stats.paidLinks} Converted
+              </span>
+            </div>
+            <div style={{
+              fontSize: '32px',
+              fontWeight: 800,
+              letterSpacing: '-0.03em',
+              color: '#ffffff',
+              fontVariantNumeric: 'tabular-nums',
+            }}>
+              {stats.totalLinks}
+            </div>
+            <div style={{ fontSize: '12px', color: '#52525b', marginTop: '4px' }}>
+              {stats.activeLinks} awaiting client action
+            </div>
+          </div>
+
+          {/* Stat 3: Provisioned Clients */}
+          <div style={{
+            padding: '24px 28px',
+            borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#71717a', letterSpacing: '0.02em' }}>
+                Provisioned Clients
+              </span>
+              <span style={{
+                fontSize: '10.5px',
+                fontWeight: 600,
+                color: '#10b981',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              }}>
+                100% Active
+              </span>
+            </div>
+            <div style={{
+              fontSize: '32px',
+              fontWeight: 800,
+              letterSpacing: '-0.03em',
+              color: '#ffffff',
+              fontVariantNumeric: 'tabular-nums',
+            }}>
+              {clients.length}
+            </div>
+            <div style={{ fontSize: '12px', color: '#52525b', marginTop: '4px' }}>
+              Automated account + domain cycle
+            </div>
+          </div>
+
+          {/* Stat 4: Catalog Ready */}
+          <div style={{
+            padding: '24px 28px',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#71717a', letterSpacing: '0.02em' }}>
+                Catalog Foundations
+              </span>
+              <span style={{
+                fontSize: '10.5px',
+                fontWeight: 600,
+                color: '#d97706',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                backgroundColor: 'rgba(217, 119, 6, 0.1)',
+                border: '1px solid rgba(217, 119, 6, 0.2)',
+              }}>
+                Zero 404s
+              </span>
+            </div>
+            <div style={{
+              fontSize: '32px',
+              fontWeight: 800,
+              letterSpacing: '-0.03em',
+              color: '#ffffff',
+              fontVariantNumeric: 'tabular-nums',
+            }}>
+              {TEMPLATES.length}
+            </div>
+            <div style={{ fontSize: '12px', color: '#52525b', marginTop: '4px' }}>
+              25 Live Vercel production demos
+            </div>
+          </div>
+
+        </div>
+
+        {/* Toolbar: Segmented Tab Selector + Universal Search Filter */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '16px',
+          marginBottom: '20px',
+        }}>
+          {/* Segmented Control */}
+          <div style={{
+            display: 'inline-flex',
+            padding: '4px',
+            backgroundColor: '#16161a',
+            borderRadius: '10px',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+          }}>
+            <button
+              onClick={() => setActiveTab('links')}
+              style={{
+                padding: '7px 16px',
+                borderRadius: '7px',
+                fontSize: '13px',
+                fontWeight: 600,
+                border: 'none',
+                cursor: 'pointer',
+                backgroundColor: activeTab === 'links' ? '#27272a' : 'transparent',
+                color: activeTab === 'links' ? '#ffffff' : '#71717a',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              One-Click Proposals ({links.length})
+            </button>
+
+            <button
+              onClick={() => setActiveTab('clients')}
+              style={{
+                padding: '7px 16px',
+                borderRadius: '7px',
+                fontSize: '13px',
+                fontWeight: 600,
+                border: 'none',
+                cursor: 'pointer',
+                backgroundColor: activeTab === 'clients' ? '#27272a' : 'transparent',
+                color: activeTab === 'clients' ? '#ffffff' : '#71717a',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              Clients &amp; Domains ({clients.length})
+            </button>
+
+            <button
+              onClick={() => setActiveTab('orders')}
+              style={{
+                padding: '7px 16px',
+                borderRadius: '7px',
+                fontSize: '13px',
+                fontWeight: 600,
+                border: 'none',
+                cursor: 'pointer',
+                backgroundColor: activeTab === 'orders' ? '#27272a' : 'transparent',
+                color: activeTab === 'orders' ? '#ffffff' : '#71717a',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              Paystack Ledger ({orders.length})
+            </button>
+
+            <button
+              onClick={() => setActiveTab('templates')}
+              style={{
+                padding: '7px 16px',
+                borderRadius: '7px',
+                fontSize: '13px',
+                fontWeight: 600,
+                border: 'none',
+                cursor: 'pointer',
+                backgroundColor: activeTab === 'templates' ? '#27272a' : 'transparent',
+                color: activeTab === 'templates' ? '#ffffff' : '#71717a',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              Catalog Inventory ({TEMPLATES.length})
+            </button>
+          </div>
+
+          {/* Quick Search Field */}
+          <div style={{ position: 'relative', width: '280px' }}>
+            <input
+              type="text"
+              placeholder="Search records or filter..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '8px 12px 8px 32px',
+                backgroundColor: '#16161a',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '8px',
+                color: '#ffffff',
+                fontSize: '13px',
+                outline: 'none',
+                boxSizing: 'border-box',
+              }}
+            />
+            <span style={{
+              position: 'absolute',
+              left: '10px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: '#52525b',
+              fontSize: '13px',
+              pointerEvents: 'none',
+            }}>
+              🔍
+            </span>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                style={{
+                  position: 'absolute',
+                  right: '8px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  color: '#71717a',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                }}
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Tab 1: One-Click Proposals Table */}
+        {activeTab === 'links' && (
+          <div style={{
+            backgroundColor: '#121215',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '14px',
+            overflow: 'hidden',
+          }}>
+            {filteredLinks.length === 0 ? (
+              <div style={{ padding: '64px 24px', textAlign: 'center' }}>
+                <div style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '50%',
+                  backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 16px',
+                  color: '#71717a',
+                }}>
+                  ✦
+                </div>
+                <h3 style={{ fontSize: '15px', fontWeight: 600, color: '#f4f4f5', margin: '0 0 6px' }}>
+                  {searchQuery ? 'No matching proposals found' : 'No checkout links generated yet'}
+                </h3>
+                <p style={{ fontSize: '13px', color: '#71717a', margin: '0 0 20px', maxWidth: '380px', marginLeft: 'auto', marginRight: 'auto' }}>
+                  {searchQuery ? 'Try clearing your search query.' : 'Create your first personalized launch proposal link to send to prospective clients.'}
+                </p>
+                <button
+                  onClick={() => setShowCreateModal(true)}
+                  style={{
+                    padding: '8px 18px',
+                    backgroundColor: '#ffffff',
+                    color: '#09090b',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Create Proposal Link
+                </button>
+              </div>
+            ) : (
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+                <thead>
+                  <tr style={{
+                    backgroundColor: '#16161a',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                    color: '#71717a',
+                    fontSize: '11.5px',
+                    fontWeight: 600,
+                    letterSpacing: '0.04em',
+                    textTransform: 'uppercase',
+                  }}>
+                    <th style={{ padding: '14px 20px' }}>Proposal &amp; Client</th>
+                    <th style={{ padding: '14px 20px' }}>Selected Foundation</th>
+                    <th style={{ padding: '14px 20px' }}>Fee Structure</th>
+                    <th style={{ padding: '14px 20px' }}>Status</th>
+                    <th style={{ padding: '14px 20px' }}>Views</th>
+                    <th style={{ padding: '14px 20px', textAlign: 'right' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredLinks.map((link, idx) => (
+                    <tr 
+                      key={link.id} 
+                      style={{ 
+                        borderBottom: idx === filteredLinks.length - 1 ? 'none' : '1px solid rgba(255, 255, 255, 0.05)',
+                        transition: 'background-color 0.12s ease',
+                      }}
+                    >
+                      {/* Proposal Title & Client */}
+                      <td style={{ padding: '16px 20px' }}>
+                        <div style={{ fontWeight: 600, color: '#f4f4f5', fontSize: '14px' }}>
+                          {link.title}
+                        </div>
+                        <div style={{ color: '#71717a', fontSize: '12px', marginTop: '2px' }}>
+                          {link.client_name ? `${link.client_name} · ` : ''}{link.client_email || 'Direct Share'}
+                        </div>
+                      </td>
+
+                      {/* Template */}
+                      <td style={{ padding: '16px 20px', color: '#a1a1aa' }}>
+                        <span style={{ fontWeight: 500, color: '#e4e4e7' }}>{link.template_name}</span>
+                      </td>
+
+                      {/* Plan & Amount */}
+                      <td style={{ padding: '16px 20px' }}>
+                        <div style={{ fontWeight: 700, color: '#ffffff', fontVariantNumeric: 'tabular-nums' }}>
+                          {formatNgn(link.amount_due_now_ngn)}
+                        </div>
+                        <div style={{ fontSize: '11px', color: '#71717a', marginTop: '1px' }}>
+                          {link.plan_type === 'MONTHLY' ? '₦15k setup + ₦5k/mo' : '₦50k outright ownership'}
+                        </div>
+                      </td>
+
+                      {/* Status */}
+                      <td style={{ padding: '16px 20px' }}>
+                        <span style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                          padding: '3px 8px',
+                          borderRadius: '6px',
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          backgroundColor: link.status === 'PAID' ? 'rgba(16, 185, 129, 0.12)' : 'rgba(217, 119, 6, 0.12)',
+                          color: link.status === 'PAID' ? '#34d399' : '#fbbf24',
+                          border: link.status === 'PAID' ? '1px solid rgba(16, 185, 129, 0.25)' : '1px solid rgba(217, 119, 6, 0.25)',
+                        }}>
+                          <span style={{
+                            width: '5px',
+                            height: '5px',
+                            borderRadius: '50%',
+                            backgroundColor: link.status === 'PAID' ? '#34d399' : '#fbbf24',
+                          }} />
+                          {link.status}
+                        </span>
+                      </td>
+
+                      {/* Clicks */}
+                      <td style={{ padding: '16px 20px', color: '#71717a', fontVariantNumeric: 'tabular-nums' }}>
+                        {link.clicks_count || 0}
+                      </td>
+
+                      {/* Actions */}
+                      <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                        <div style={{ display: 'inline-flex', gap: '8px' }}>
+                          <button
+                            onClick={() => copyToClipboard(link.id)}
+                            style={{
+                              padding: '6px 12px',
+                              backgroundColor: copiedId === link.id ? '#10b981' : 'rgba(255, 255, 255, 0.05)',
+                              color: copiedId === link.id ? '#ffffff' : '#d4d4d8',
+                              border: '1px solid rgba(255, 255, 255, 0.08)',
+                              borderRadius: '6px',
+                              fontSize: '12px',
+                              fontWeight: 500,
+                              cursor: 'pointer',
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {copiedId === link.id ? '✓ Copied' : 'Copy Link'}
+                          </button>
+                          
+                          <Link
+                            href={`/pay/${link.id}`}
+                            target="_blank"
+                            style={{
+                              padding: '6px 12px',
+                              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                              color: '#a1a1aa',
+                              border: '1px solid rgba(255, 255, 255, 0.08)',
+                              borderRadius: '6px',
+                              fontSize: '12px',
+                              fontWeight: 500,
+                              textDecoration: 'none',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                            }}
+                          >
+                            <span>Open</span>
+                            <span style={{ fontSize: '11px' }}>↗</span>
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        )}
+
+        {/* Tab 2: Clients & Domain Tracker */}
+        {activeTab === 'clients' && (
+          <div style={{
+            backgroundColor: '#121215',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '14px',
+            overflow: 'hidden',
+          }}>
+            {filteredClients.length === 0 ? (
+              <div style={{ padding: '64px 24px', textAlign: 'center' }}>
+                <p style={{ color: '#71717a', fontSize: '14px' }}>
+                  {searchQuery ? 'No matching clients found.' : 'No client accounts provisioned yet. Accounts automatically appear upon Paystack settlement.'}
+                </p>
+              </div>
+            ) : (
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+                <thead>
+                  <tr style={{
+                    backgroundColor: '#16161a',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                    color: '#71717a',
+                    fontSize: '11.5px',
+                    fontWeight: 600,
+                    letterSpacing: '0.04em',
+                    textTransform: 'uppercase',
+                  }}>
+                    <th style={{ padding: '14px 20px' }}>Client &amp; Brand</th>
+                    <th style={{ padding: '14px 20px' }}>Registered Domain</th>
+                    <th style={{ padding: '14px 20px' }}>1-Year Renewal Runway</th>
+                    <th style={{ padding: '14px 20px' }}>Monthly Status</th>
+                    <th style={{ padding: '14px 20px', textAlign: 'right' }}>Direct Contact</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredClients.map((c, idx) => {
+                    const expiry = c.domain_expiry_date ? new Date(c.domain_expiry_date) : null;
+                    const daysLeft = expiry ? Math.ceil((expiry.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : 365;
+
+                    return (
+                      <tr 
+                        key={c.id} 
+                        style={{ 
+                          borderBottom: idx === filteredClients.length - 1 ? 'none' : '1px solid rgba(255, 255, 255, 0.05)',
+                        }}
+                      >
+                        <td style={{ padding: '16px 20px' }}>
+                          <strong style={{ color: '#f4f4f5', display: 'block', fontSize: '14px' }}>{c.name}</strong>
+                          <span style={{ color: '#71717a', fontSize: '12px' }}>{c.business_name || c.email}</span>
+                        </td>
+
+                        <td style={{ padding: '16px 20px' }}>
+                          {editingClientId === c.id ? (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', minWidth: '190px' }}>
+                              <input
+                                type="text"
+                                value={editDomainName}
+                                onChange={(e) => setEditDomainName(e.target.value)}
+                                placeholder="clientbrand.com.ng"
+                                style={{
+                                  padding: '7px 9px',
+                                  borderRadius: '6px',
+                                  border: '1px solid rgba(255, 255, 255, 0.14)',
+                                  backgroundColor: '#16161a',
+                                  color: '#f4f4f5',
+                                  fontSize: '12.5px',
+                                  fontFamily: 'monospace',
+                                  outline: 'none',
+                                  width: '100%',
+                                }}
+                              />
+                              <input
+                                type="date"
+                                value={editDomainExpiry}
+                                onChange={(e) => setEditDomainExpiry(e.target.value)}
+                                style={{
+                                  padding: '6px 9px',
+                                  borderRadius: '6px',
+                                  border: '1px solid rgba(255, 255, 255, 0.14)',
+                                  backgroundColor: '#16161a',
+                                  color: '#f4f4f5',
+                                  fontSize: '12.5px',
+                                  outline: 'none',
+                                  width: '100%',
+                                }}
+                              />
+                              <div style={{ display: 'flex', gap: '6px' }}>
+                                <button
+                                  type="button"
+                                  onClick={() => saveClientDomain(c.id)}
+                                  disabled={savingDomain}
+                                  style={{
+                                    padding: '5px 12px',
+                                    borderRadius: '6px',
+                                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                                    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                                    color: '#34d399',
+                                    fontSize: '11.5px',
+                                    fontWeight: 700,
+                                    cursor: savingDomain ? 'not-allowed' : 'pointer',
+                                  }}
+                                >
+                                  {savingDomain ? 'Saving...' : 'Save'}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={cancelEditingDomain}
+                                  disabled={savingDomain}
+                                  style={{
+                                    padding: '5px 12px',
+                                    borderRadius: '6px',
+                                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                                    backgroundColor: 'transparent',
+                                    color: '#a1a1aa',
+                                    fontSize: '11.5px',
+                                    fontWeight: 600,
+                                    cursor: savingDomain ? 'not-allowed' : 'pointer',
+                                  }}
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                              <span style={{
+                                fontFamily: 'monospace',
+                                fontWeight: 600,
+                                color: c.domain_name ? '#10b981' : '#71717a',
+                                fontSize: '13px',
+                              }}>
+                                {c.domain_name || 'Custom .com.ng (Pending)'}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => startEditingDomain(c)}
+                                style={{
+                                  padding: '3px 9px',
+                                  borderRadius: '6px',
+                                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                                  backgroundColor: 'transparent',
+                                  color: '#a1a1aa',
+                                  fontSize: '11px',
+                                  fontWeight: 600,
+                                  cursor: 'pointer',
+                                }}
+                              >
+                                {c.domain_name ? 'Edit' : 'Set'}
+                              </button>
+                            </div>
+                          )}
+                        </td>
+
+                        <td style={{ padding: '16px 20px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontWeight: 600, color: '#ffffff', fontVariantNumeric: 'tabular-nums' }}>
+                              {daysLeft} days remaining
+                            </span>
+                          </div>
+                          <span style={{ display: 'block', fontSize: '11px', color: '#71717a', marginTop: '2px' }}>
+                            Expires: {expiry ? expiry.toLocaleDateString() : '1 Year From Launch'}
+                          </span>
+                        </td>
+
+                        <td style={{ padding: '16px 20px' }}>
+                          <span style={{
+                            padding: '3px 8px',
+                            borderRadius: '6px',
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                            color: '#34d399',
+                            border: '1px solid rgba(16, 185, 129, 0.25)',
+                          }}>
+                            {c.monthly_status}
+                          </span>
+                        </td>
+
+                        <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                          {c.phone ? (
+                            <a
+                              href={`https://wa.me/${c.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi ${c.name}, this is engineering from aB Labs regarding your domain setup.`)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                padding: '6px 12px',
+                                backgroundColor: 'rgba(22, 163, 74, 0.15)',
+                                color: '#4ade80',
+                                border: '1px solid rgba(22, 163, 74, 0.3)',
+                                borderRadius: '6px',
+                                fontSize: '12px',
+                                fontWeight: 600,
+                                textDecoration: 'none',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                              }}
+                            >
+                              <span>WhatsApp</span>
+                              <span style={{ fontSize: '10px' }}>↗</span>
+                            </a>
+                          ) : (
+                            <span style={{ color: '#52525b' }}>-</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
+          </div>
+        )}
+
+        {/* Tab 3: Orders Ledger */}
+        {activeTab === 'orders' && (
+          <div style={{
+            backgroundColor: '#121215',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '14px',
+            overflow: 'hidden',
+          }}>
+            {filteredOrders.length === 0 ? (
+              <div style={{ padding: '64px 24px', textAlign: 'center' }}>
+                <p style={{ color: '#71717a', fontSize: '14px' }}>
+                  {searchQuery ? 'No matching orders found.' : 'No transactions recorded yet. When a lead pays via Paystack, the ledger updates in real-time.'}
+                </p>
+              </div>
+            ) : (
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+                <thead>
+                  <tr style={{
+                    backgroundColor: '#16161a',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                    color: '#71717a',
+                    fontSize: '11.5px',
+                    fontWeight: 600,
+                    letterSpacing: '0.04em',
+                    textTransform: 'uppercase',
+                  }}>
+                    <th style={{ padding: '14px 20px' }}>Paystack Reference</th>
+                    <th style={{ padding: '14px 20px' }}>Client</th>
+                    <th style={{ padding: '14px 20px' }}>Settled Amount</th>
+                    <th style={{ padding: '14px 20px' }}>Plan Type</th>
+                    <th style={{ padding: '14px 20px' }}>Status</th>
+                    <th style={{ padding: '14px 20px', textAlign: 'right' }}>Settlement Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredOrders.map((o, idx) => (
+                    <tr 
+                      key={o.id} 
+                      style={{ 
+                        borderBottom: idx === filteredOrders.length - 1 ? 'none' : '1px solid rgba(255, 255, 255, 0.05)',
+                      }}
+                    >
+                      <td style={{ padding: '16px 20px', fontFamily: 'monospace', color: '#a1a1aa' }}>
+                        {o.paystack_reference}
+                      </td>
+
+                      <td style={{ padding: '16px 20px' }}>
+                        <strong style={{ color: '#f4f4f5', display: 'block', fontSize: '14px' }}>{o.customer_name}</strong>
+                        <span style={{ color: '#71717a', fontSize: '12px' }}>{o.customer_email}</span>
+                      </td>
+
+                      <td style={{ padding: '16px 20px', fontWeight: 700, color: '#10b981', fontVariantNumeric: 'tabular-nums' }}>
+                        {formatNgn(o.amount_paid_ngn)}
+                      </td>
+
+                      <td style={{ padding: '16px 20px', color: '#d4d4d8' }}>
+                        {o.plan_type}
+                      </td>
+
+                      <td style={{ padding: '16px 20px' }}>
+                        <span style={{
+                          padding: '3px 8px',
+                          borderRadius: '6px',
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          backgroundColor: o.paystack_status === 'success' ? 'rgba(16, 185, 129, 0.12)' : 'rgba(217, 119, 6, 0.12)',
+                          color: o.paystack_status === 'success' ? '#34d399' : '#fbbf24',
+                          border: o.paystack_status === 'success' ? '1px solid rgba(16, 185, 129, 0.25)' : '1px solid rgba(217, 119, 6, 0.25)',
+                        }}>
+                          {o.paystack_status}
+                        </span>
+                      </td>
+
+                      <td style={{ padding: '16px 20px', textAlign: 'right', color: '#71717a', fontSize: '12px' }}>
+                        {new Date(o.created_at).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        )}
+
+        {/* Tab 4: Catalog Foundations Grid */}
+        {activeTab === 'templates' && (
+          <div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+              gap: '20px',
+            }}>
+              {filteredTemplates.map((t) => (
+                <div 
+                  key={t.slug}
+                  style={{
+                    backgroundColor: '#121215',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    borderRadius: '14px',
+                    overflow: 'hidden',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    transition: 'border-color 0.15s ease',
+                  }}
+                >
+                  <div style={{ position: 'relative', height: '170px', backgroundColor: '#18181b', overflow: 'hidden' }}>
+                    <img 
+                      src={t.image} 
+                      alt={t.name} 
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                    />
+                    <div style={{
+                      position: 'absolute',
+                      top: '12px',
+                      left: '12px',
+                      fontSize: '10.5px',
+                      fontWeight: 700,
+                      letterSpacing: '0.04em',
+                      textTransform: 'uppercase',
+                      padding: '3px 8px',
+                      borderRadius: '6px',
+                      backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                      backdropFilter: 'blur(8px)',
+                      color: '#ffffff',
+                    }}>
+                      {t.categoryLabel}
+                    </div>
+                  </div>
+
+                  <div style={{ padding: '18px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                    <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#f4f4f5', margin: '0 0 6px' }}>
+                      {t.name}
+                    </h3>
+                    <p style={{ fontSize: '12.5px', color: '#71717a', lineHeight: 1.45, margin: '0 0 16px', flex: 1 }}>
+                      {t.tagline}
+                    </p>
+
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      paddingTop: '14px',
+                      borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                    }}>
+                      <div>
+                        <span style={{ fontSize: '14px', fontWeight: 800, color: '#ffffff' }}>
+                          ₦50,000
+                        </span>
+                        <span style={{ fontSize: '11px', color: '#71717a', display: 'block' }}>
+                          or ₦15k + ₦5k/mo
+                        </span>
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        {t.demoUrl && (
+                          <a
+                            href={t.demoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              fontSize: '12px',
+                              fontWeight: 600,
+                              color: '#a1a1aa',
+                              textDecoration: 'none',
+                              padding: '5px 10px',
+                              borderRadius: '6px',
+                              border: '1px solid rgba(255, 255, 255, 0.08)',
+                              backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                            }}
+                          >
+                            Demo ↗
+                          </a>
+                        )}
+                        <button
+                          onClick={() => {
+                            setNewLinkTemplateSlug(t.slug);
+                            setShowCreateModal(true);
+                          }}
+                          style={{
+                            fontSize: '12px',
+                            fontWeight: 600,
+                            color: '#ffffff',
+                            backgroundColor: '#27272a',
+                            border: 'none',
+                            borderRadius: '6px',
+                            padding: '5px 12px',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          Use in Link
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+      </main>
+
+      {/* Bespoke Proposal Generator Modal / Drawer */}
+      {showCreateModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          backdropFilter: 'blur(8px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '24px',
+          zIndex: 9999,
+        }}>
+          <div style={{
+            backgroundColor: '#121215',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '18px',
+            maxWidth: '620px',
+            width: '100%',
+            maxHeight: '92vh',
+            overflowY: 'auto',
+            padding: '32px',
+            boxShadow: '0 24px 64px rgba(0, 0, 0, 0.6)',
+          }}>
+            
+            {/* Modal Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#10b981' }}>
+                  ✦ Instant One-Click Checkout
+                </span>
+                <h2 style={{ fontSize: '20px', fontWeight: 800, letterSpacing: '-0.02em', color: '#ffffff', margin: '4px 0 0' }}>
+                  Create Launch Proposal Link
+                </h2>
+                <p style={{ fontSize: '13px', color: '#71717a', margin: '4px 0 0' }}>
+                  Configure a custom proposal link configured for your prospective client.
+                </p>
+              </div>
+
+              <button
+                onClick={() => setShowCreateModal(false)}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  color: '#a1a1aa',
+                  borderRadius: '6px',
+                  width: '32px',
+                  height: '32px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateLink} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              
+              {/* Proposal Title */}
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#d4d4d8', marginBottom: '6px' }}>
+                  Proposal Title (Optional)
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. VIP Detailing Launch (Auto-generated if left blank)"
+                  value={newLinkTitle}
+                  onChange={(e) => setNewLinkTitle(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '11px 14px',
+                    backgroundColor: '#18181b',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '8px',
+                    color: '#ffffff',
+                    fontSize: '14px',
+                    boxSizing: 'border-box',
+                    outline: 'none',
+                  }}
+                />
+              </div>
+
+              {/* Template Selector with Visual Summary */}
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#d4d4d8', marginBottom: '6px' }}>
+                  Target Design Foundation *
+                </label>
+                <select
+                  value={newLinkTemplateSlug}
+                  onChange={(e) => setNewLinkTemplateSlug(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '11px 14px',
+                    backgroundColor: '#18181b',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '8px',
+                    color: '#ffffff',
+                    fontSize: '14px',
+                    boxSizing: 'border-box',
+                    outline: 'none',
+                  }}
+                >
+                  {TEMPLATES.map((t) => (
+                    <option key={t.slug} value={t.slug}>
+                      {t.name} ({t.categoryLabel})
+                    </option>
+                  ))}
+                </select>
+
+                {/* Selected Template Mini-Preview */}
+                {activeTemplateForModal && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    marginTop: '10px',
+                    padding: '10px 12px',
+                    borderRadius: '8px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                    border: '1px solid rgba(255, 255, 255, 0.06)',
+                  }}>
+                    <img
+                      src={activeTemplateForModal.image}
+                      alt={activeTemplateForModal.name}
+                      style={{ width: '48px', height: '36px', objectFit: 'cover', borderRadius: '4px' }}
+                    />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {activeTemplateForModal.name}
+                      </div>
+                      <div style={{ fontSize: '11px', color: '#71717a' }}>
+                        {activeTemplateForModal.categoryLabel}
+                      </div>
+                    </div>
+                    {activeTemplateForModal.demoUrl && (
+                      <a
+                        href={activeTemplateForModal.demoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ fontSize: '11.5px', color: '#a1a1aa', textDecoration: 'none' }}
+                      >
+                        Preview ↗
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Client Info Grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#d4d4d8', marginBottom: '6px' }}>
+                    Client Name (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Kolawole Davies"
+                    value={newLinkClientName}
+                    onChange={(e) => setNewLinkClientName(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '11px 14px',
+                      backgroundColor: '#18181b',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '8px',
+                      color: '#ffffff',
+                      fontSize: '14px',
+                      boxSizing: 'border-box',
+                      outline: 'none',
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#d4d4d8', marginBottom: '6px' }}>
+                    Client Email (Optional)
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="kola@company.ng"
+                    value={newLinkClientEmail}
+                    onChange={(e) => setNewLinkClientEmail(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '11px 14px',
+                      backgroundColor: '#18181b',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '8px',
+                      color: '#ffffff',
+                      fontSize: '14px',
+                      boxSizing: 'border-box',
+                      outline: 'none',
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* WhatsApp Phone */}
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#d4d4d8', marginBottom: '6px' }}>
+                  Client WhatsApp Phone (Optional)
+                </label>
+                <input
+                  type="tel"
+                  placeholder="e.g. 08012345678"
+                  value={newLinkClientPhone}
+                  onChange={(e) => setNewLinkClientPhone(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '11px 14px',
+                    backgroundColor: '#18181b',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '8px',
+                    color: '#ffffff',
+                    fontSize: '14px',
+                    boxSizing: 'border-box',
+                    outline: 'none',
+                  }}
+                />
+              </div>
+
+              {/* Flexible Pricing Structure Customizer */}
+              <div style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '10px',
+                padding: '14px',
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    Flexible Pricing & Retainer (₦)
+                  </label>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <button
+                      type="button"
+                      onClick={() => { setNewLinkSetupFee(15000); setNewLinkMonthly(5000); setNewLinkOutright(50000); }}
+                      style={{ padding: '3px 8px', fontSize: '10.5px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.06)', border: '1px solid rgba(255, 255, 255, 0.08)', color: '#d4d4d8', cursor: 'pointer' }}
+                    >
+                      Standard (15k/5k/50k)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setNewLinkSetupFee(25000); setNewLinkMonthly(8000); setNewLinkOutright(75000); }}
+                      style={{ padding: '3px 8px', fontSize: '10.5px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.06)', border: '1px solid rgba(255, 255, 255, 0.08)', color: '#d4d4d8', cursor: 'pointer' }}
+                    >
+                      Growth (25k/8k/75k)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setNewLinkSetupFee(50000); setNewLinkMonthly(15000); setNewLinkOutright(120000); }}
+                      style={{ padding: '3px 8px', fontSize: '10.5px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.06)', border: '1px solid rgba(255, 255, 255, 0.08)', color: '#d4d4d8', cursor: 'pointer' }}
+                    >
+                      Enterprise (50k/15k/120k)
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
+                  <div>
+                    <span style={{ display: 'block', fontSize: '11px', color: '#a1a1aa', marginBottom: '4px' }}>Setup Fee (₦)</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="1000"
+                      value={newLinkSetupFee}
+                      onChange={(e) => setNewLinkSetupFee(Number(e.target.value))}
+                      style={{ width: '100%', padding: '9px 10px', backgroundColor: '#18181b', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '6px', color: '#ffffff', fontSize: '13px', boxSizing: 'border-box' }}
+                    />
+                  </div>
+
+                  <div>
+                    <span style={{ display: 'block', fontSize: '11px', color: '#a1a1aa', marginBottom: '4px' }}>Monthly Retainer (₦)</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="500"
+                      value={newLinkMonthly}
+                      onChange={(e) => setNewLinkMonthly(Number(e.target.value))}
+                      style={{ width: '100%', padding: '9px 10px', backgroundColor: '#18181b', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '6px', color: '#ffffff', fontSize: '13px', boxSizing: 'border-box' }}
+                    />
+                  </div>
+
+                  <div>
+                    <span style={{ display: 'block', fontSize: '11px', color: '#a1a1aa', marginBottom: '4px' }}>Outright Buyout (₦)</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="5000"
+                      value={newLinkOutright}
+                      onChange={(e) => setNewLinkOutright(Number(e.target.value))}
+                      style={{ width: '100%', padding: '9px 10px', backgroundColor: '#18181b', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '6px', color: '#ffffff', fontSize: '13px', boxSizing: 'border-box' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Pricing Plan Selector */}
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#d4d4d8', marginBottom: '8px' }}>
+                  Default Pricing Plan for Link
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setNewLinkPlanType('MONTHLY')}
+                    style={{
+                      padding: '14px',
+                      borderRadius: '10px',
+                      border: newLinkPlanType === 'MONTHLY' ? '1.5px solid #10b981' : '1px solid rgba(255, 255, 255, 0.1)',
+                      backgroundColor: newLinkPlanType === 'MONTHLY' ? 'rgba(16, 185, 129, 0.08)' : '#18181b',
+                      color: '#ffffff',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <strong style={{ fontSize: '14px' }}>Monthly Plan</strong>
+                      {newLinkPlanType === 'MONTHLY' && <span style={{ color: '#10b981', fontSize: '13px' }}>✓</span>}
+                    </div>
+                    <span style={{ fontSize: '12px', color: '#a1a1aa', display: 'block', marginTop: '4px' }}>
+                      ₦{Number(newLinkSetupFee).toLocaleString()} setup + ₦{Number(newLinkMonthly).toLocaleString()}/mo
+                    </span>
+                    <span style={{ fontSize: '11px', color: '#71717a', display: 'block', marginTop: '2px' }}>
+                      (₦{(Number(newLinkSetupFee) + Number(newLinkMonthly)).toLocaleString()} due now)
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setNewLinkPlanType('OUTRIGHT')}
+                    style={{
+                      padding: '14px',
+                      borderRadius: '10px',
+                      border: newLinkPlanType === 'OUTRIGHT' ? '1.5px solid #10b981' : '1px solid rgba(255, 255, 255, 0.1)',
+                      backgroundColor: newLinkPlanType === 'OUTRIGHT' ? 'rgba(16, 185, 129, 0.08)' : '#18181b',
+                      color: '#ffffff',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <strong style={{ fontSize: '14px' }}>Outright Buyout</strong>
+                      {newLinkPlanType === 'OUTRIGHT' && <span style={{ color: '#10b981', fontSize: '13px' }}>✓</span>}
+                    </div>
+                    <span style={{ fontSize: '12px', color: '#a1a1aa', display: 'block', marginTop: '4px' }}>
+                      ₦{Number(newLinkOutright).toLocaleString()} full ownership
+                    </span>
+                    <span style={{ fontSize: '11px', color: '#71717a', display: 'block', marginTop: '2px' }}>
+                      (Zero recurring fees)
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Custom Scope Notes */}
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#d4d4d8', marginBottom: '6px' }}>
+                  Scope Notes (Visible to Client on Checkout)
+                </label>
+                <textarea
+                  rows={2}
+                  placeholder="e.g. Includes custom photography upload, WhatsApp test-drive intake, and 1 year .com.ng domain."
+                  value={newLinkNotes}
+                  onChange={(e) => setNewLinkNotes(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '11px 14px',
+                    backgroundColor: '#18181b',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '8px',
+                    color: '#ffffff',
+                    fontSize: '13px',
+                    boxSizing: 'border-box',
+                    outline: 'none',
+                  }}
+                />
+              </div>
+
+              {/* Form Buttons */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '8px' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  style={{
+                    padding: '10px 18px',
+                    backgroundColor: 'transparent',
+                    color: '#a1a1aa',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '8px',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={creatingLink}
+                  style={{
+                    padding: '10px 22px',
+                    backgroundColor: '#ffffff',
+                    color: '#09090b',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '13px',
+                    fontWeight: 700,
+                    cursor: creatingLink ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {creatingLink ? 'Generating...' : 'Generate Proposal Link'}
+                </button>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}

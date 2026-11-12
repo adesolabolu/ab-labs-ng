@@ -4105,7 +4105,7 @@ figcaption {
 
 .hero-h {
   letter-spacing: var(--_letter-spacing---letter-spacing-1);
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .hero-thumb-tag {
@@ -4450,7 +4450,7 @@ figcaption {
   line-height: var(--_line-height---line-height-2);
   font-weight: var(--_font-weight---semi-bold-600);
   letter-spacing: var(--_letter-spacing---letter-spacing-2);
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .subtitle-text.text-color-white {
@@ -5915,8 +5915,8 @@ figcaption {
   grid-column-gap: 9px;
   grid-row-gap: 9px;
   color: var(--chestnut-beach);
-  letter-spacing: .16em;
-  text-transform: uppercase;
+  letter-spacing: .06em;
+  text-transform: none;
   align-items: center;
   gap: 9px;
   font-size: 11.5px;
@@ -6687,8 +6687,9 @@ figcaption {
 }
 
 .bl-feat-meta {
-  color: var(--siyâh-black);
-  font-size: var(--_font-size---body-text-extra-small);
+  color: #ffffff !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
   margin-top: 5px;
 }
 

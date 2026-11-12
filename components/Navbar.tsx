@@ -135,9 +135,6 @@ export default function Navbar() {
                         </div>
                       </div>
 
-                      <NavbarCartButton />
-                      <div className="cart-devider"></div>
-
                       <Link href="/shop" className="primary-button w-inline-block">
                         <div className="button-text-wrapper">
                           <div className="button-text-block">

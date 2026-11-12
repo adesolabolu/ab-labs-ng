@@ -1,11 +1,14 @@
+import CallToAction from '@/components/CallToAction';
+import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
 import React, { Suspense } from 'react';
 import Link from 'next/link';
 import ShopCatalog from '@/components/ShopCatalog';
+import StepsTileMarker from '@/components/StepsTileMarker';
 
 export const metadata = {
-  title: 'Shop All Templates | aB Labs',
-  description: 'Explore production-ready website designs and web systems engineered for African and Nigerian businesses. Mobile-first, turnkey customization, and ultra-fast.',
+  title: 'Website Templates Catalog | aB Labs',
+  description: 'Browse ready-to-launch website templates crafted for Nigerian and African businesses. Pick your favorite design and we launch your custom website in less than 36 hours.',
 };
 
 export default function ShopPage() {
@@ -20,53 +23,20 @@ export default function ShopPage() {
               <div className="page-heading-block align-center">
                 <div className="hero-subtitle-block">
                   <div className="subtitle-dot"></div>
-                  <div>01 — Complete Catalog</div>
+                  <div>01 - Ready-Made Templates</div>
                 </div>
                 <div className="page-title-block">
-                  <h1 className="heading-style-h1">Shop All Templates</h1>
+                  <h1 className="heading-style-h1">Website Templates for Your Business</h1>
                 </div>
                 <div className="hero-summary-wrapper max-width-460px">
                   <p className="hero-summary">
-                    Handcrafted, ultra-fast website templates engineered for Nigerian &amp; African commerce. Bespoke brand styling, responsive across all screen sizes, and optimized for sub-second loading speeds and mobile perfection.
+                    Pick a proven website design for your industry. We customize your logo, colors, text, and payments, then launch your site on your own domain in less than 36 hours.
                   </p>
                 </div>
 
-                <div className="breadcrumb-badge-wrapper" style={{ marginTop: '20px', display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
-                  <div className="ab-flow-tag bg-rgba-249-246-241-7">
-                    <div className="him-icon w-embed">
-                      <svg fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" width="16" height="16">
-                        <path d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                      </svg>
-                    </div>
-                    <div>Sub-Second Load Times</div>
-                  </div>
-                  <div className="ab-flow-tag bg-rgba-249-246-241-7">
-                    <div className="him-icon w-embed">
-                      <svg fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" width="16" height="16">
-                        <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-                        <line x1="2" y1="10" x2="22" y2="10"></line>
-                      </svg>
-                    </div>
-                    <div>Turnkey Customization</div>
-                  </div>
-                  <div className="ab-flow-tag bg-rgba-249-246-241-7">
-                    <div className="him-icon w-embed">
-                      <svg fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" width="16" height="16">
-                        <rect x="5" y="2" width="14" height="20" rx="2"></rect>
-                        <line x1="12" y1="18" x2="12.01" y2="18"></line>
-                      </svg>
-                    </div>
-                    <div>100% Mobile Optimized</div>
-                  </div>
-                  <div className="ab-flow-tag bg-rgba-249-246-241-7">
-                    <div className="him-icon w-embed">
-                      <svg fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" width="16" height="16">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                      </svg>
-                    </div>
-                    <div>Direct Lifetime Support</div>
-                  </div>
-                </div>
+                <StepsTileMarker />
+
+
               </div>
             </div>
           </section>
@@ -78,14 +48,11 @@ export default function ShopPage() {
               </Suspense>
             </div>
           </section>
+        <CallToAction />
         </div>
-
-        <section className="footer"><div className="w-layout-blockcontainer container-large w-container"><div className="fh-in"><div className="fh-main"><div className="fh-brand"><a href="/" aria-current="page" className="fh-logo w-inline-block w--current"><img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="footer-logo"/></a><p className="fh-statement">Production-ready website designs and bespoke web engineering built for ambitious Nigerian and African businesses.</p><div className="w-form"><form id="cta-forms" name="email-form" data-name="Email Form" method="get" data-turnstile-sitekey="0x4AAAAAAAQTptj2So4dx43e"><label htmlFor="name" aria-label="text" className="fh-nl-ey">Get New Template Drops &amp; Playbooks</label><div className="fh-nl-form"><input className="fh-nl-inp w-input" maxLength={256} name="email" data-name="email" aria-label="Email address" placeholder="Enter your business email" type="email" id="email" required={true}/><button type="submit" className="fh-nl-btn"><div className="arrow-icon w-embed"><svg fill="none" width="15" height="15" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
-                <path d="M5 12h14M12 5l7 7-7 7"></path>
-              </svg></div></button></div></form><div className="form_message-success w-form-done"><div>You&#x27;re on the list! Check your inbox for our next update.</div></div><div className="form_message-error w-form-fail"><div>We couldn&#x27;t subscribe you just now. Please check your email and try again.</div></div></div><div className="fh-soc"><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="fh-si"><div className="arrow-icon w-embed"><svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></div></a><a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="fh-si"><div className="arrow-icon w-embed"><svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></div></a><a href="https://wa.me/2348000000000" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="fh-si"><div className="arrow-icon w-embed"><svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"></path><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"></path></svg></div></a></div></div><div className="fh-col"><p className="fh-col-h">Templates</p><a href="/shop" className="fh-lk">All Templates</a><a href="/shop?category=ecommerce" className="fh-lk">E-Commerce</a><a href="/shop?category=real-estate" className="fh-lk">Real Estate</a><a href="/shop?category=corporate" className="fh-lk">Corporate</a><a href="/shop?category=saas" className="fh-lk">Tech &amp; SaaS</a></div><div className="fh-col"><p className="fh-col-h">Company</p><a href="/" aria-current="page" className="fh-lk a w--current">Home</a><a href="/about-us" className="fh-lk a">About Us</a><a href="/contact-us" className="fh-lk a">Contact Us</a><a href="/blog" className="fh-lk a">Insights</a></div></div><div className="footer-border v2"></div><div className="footer-border"></div></div><div className="fh-bot"><div className="fh-bot-in"><p className="fh-copy">© 2026 aB Labs — Production-Ready Web Flagships</p><a href="/#top" className="fh-top-top w-inline-block"><div>Back to top</div><div className="fh-toptop-span"><div className="arrow-icon w-embed"><svg fill="none" width="14" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
-              <path d="M12 19V5M5 12l7-7 7 7"></path>
-            </svg></div></div></a></div></div></div></section>
+        <Footer />
       </div>
+      <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.1/dist/lenis.css" />
     </>
   );
 }

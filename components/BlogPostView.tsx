@@ -4,6 +4,8 @@ import React from 'react';
 import Link from 'next/link';
 import { BlogPost, BLOG_POSTS } from '@/data/blogs';
 import Navbar from '@/components/Navbar';
+import CallToAction from '@/components/CallToAction';
+import Footer from '@/components/Footer';
 
 interface BlogPostViewProps {
   post: BlogPost;
@@ -235,7 +237,7 @@ export default function BlogPostView({ post }: BlogPostViewProps) {
               Ready to Upgrade to a High-Converting Digital Flagship?
             </h3>
             <p style={{ margin: 0, fontSize: '14px', color: '#a1a1aa', maxWidth: '520px', lineHeight: '1.6' }}>
-              Skip 6-month agency builds. Every aB Labs template is production-ready, mobile-first, and customized and deployed turnkey for your business.
+              Skip 6-month agency builds. Every aB Labs template is production-ready, mobile-first, and customized and launched for your business.
             </p>
             <div style={{ display: 'flex', gap: '12px', marginTop: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
               <Link
@@ -320,50 +322,8 @@ export default function BlogPostView({ post }: BlogPostViewProps) {
         </article>
       </div>
 
-      {/* Footer */}
-      <section className="footer">
-        <div className="w-layout-blockcontainer container-large w-container">
-          <div className="fh-in">
-            <div className="fh-main">
-              <div className="fh-brand">
-                <Link href="/" className="fh-logo w-inline-block">
-                  <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="footer-logo" />
-                </Link>
-                <p className="fh-statement">
-                  Production-ready website designs and bespoke web engineering built for ambitious Nigerian and African businesses.
-                </p>
-                <div className="fh-soc"><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="fh-si"><div className="arrow-icon w-embed"><svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></div></a><a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="fh-si"><div className="arrow-icon w-embed"><svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></div></a><a href="https://wa.me/2348000000000" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="fh-si"><div className="arrow-icon w-embed"><svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"></path><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"></path></svg></div></a></div>
-              </div>
-              <div className="fh-col">
-                <p className="fh-col-h">Templates</p>
-                <Link href="/shop" className="fh-lk">All Templates</Link>
-                <Link href="/shop?category=ecommerce" className="fh-lk">E-Commerce</Link>
-                <Link href="/shop?category=real-estate" className="fh-lk">Real Estate</Link>
-                <Link href="/shop?category=corporate" className="fh-lk">Corporate</Link>
-                <Link href="/shop?category=saas" className="fh-lk">Tech &amp; SaaS</Link>
-              </div>
-              <div className="fh-col">
-                <p className="fh-col-h">Company</p>
-                <Link href="/" className="fh-lk">Home</Link>
-                <Link href="/about-us" className="fh-lk">About Us</Link>
-                <Link href="/contact-us" className="fh-lk">Contact Us</Link>
-                <Link href="/blog" className="fh-lk">Insights</Link>
-                <Link href="/cart" className="fh-lk">Your Cart</Link>
-              </div>
-            </div>
-            <div className="footer-border v2"></div>
-            <div className="footer-border"></div>
-          </div>
-          <div className="fh-bot">
-            <div className="fh-bot-in">
-              <p className="fh-copy">© 2026 aB Labs — Production-Ready Web Flagships</p>
-              <a href="#top" className="fh-top-top w-inline-block">
-                <div>Back to top</div>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+      <CallToAction />
+      <Footer />
     </div>
   );
 }

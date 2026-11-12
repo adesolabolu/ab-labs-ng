@@ -2,486 +2,509 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Template } from '@/data/templates';
-import { useCart } from '@/context/CartContext';
-import NavbarCartButton from '@/components/NavbarCartButton';
+import Navbar from '@/components/Navbar';
+import TemplatePreviewCanvas from '@/components/TemplatePreviewCanvas';
+import DualPricingSelector from '@/components/DualPricingSelector';
+import CallToAction from '@/components/CallToAction';
+import Footer from '@/components/Footer';
+import { Template, TEMPLATES } from '@/data/templates';
 
 interface TemplateDetailViewProps {
   template: Template;
 }
 
 export default function TemplateDetailView({ template }: TemplateDetailViewProps) {
-  const router = useRouter();
-  const { addItem, toggleSetupService, items } = useCart();
-  const [includeSetup, setIncludeSetup] = useState(false);
+  const [activeTab, setActiveTab] = useState<'overview' | 'launch'>('overview');
 
-  const existingInCart = items.find(i => i.template.id === template.id);
-
-  const handleAddToCart = () => {
-    addItem(template);
-    if (includeSetup && (!existingInCart || !existingInCart.setupService)) {
-      toggleSetupService(template.id);
-    }
-    router.push('/cart');
-  };
+  // Select 4 other templates to recommend
+  const otherTemplates = TEMPLATES.filter((t) => t.slug !== template.slug).slice(0, 4);
 
   return (
-    <div className="page-wrapper">
-      {/* Header */}
-      <header id="top" className="header">
-        <div className="site-top">
-          <div className="header-wrapper">
-            <div data-animation="over-left" data-collapse="medium" data-duration="400" data-easing="ease" data-easing2="ease" role="banner" className="hdr w-nav">
-              <div className="hdr-in">
-                <div className="w-layout-blockcontainer container-large w-container">
-                  <div className="navbar-wrapper">
-                    <Link href="/" className="hdr-logo w-inline-block">
-                      <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="logo" />
-                    </Link>
-                    <nav role="navigation" className="nav-menu-wrapper w-nav-menu">
-                      <ul role="list" className="nav-menu w-list-unstyled">
-                        <li className="mobile-logo">
-                          <Link href="/" className="hdr-logo w-inline-block">
-                            <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="logo" />
-                          </Link>
-                        </li>
-                        <li>
-                          <div data-delay="0" data-hover="false" className="nav-dropdown w-dropdown">
-                            <div className="dropdown w-dropdown-toggle">
-                              <div>Templates</div>
-                              <div className="nav-dropdown-icon w-icon-dropdown-toggle"></div>
-                            </div>
-                            <nav className="nav-dropdown-list w-dropdown-list">
-                              <div className="w-layout-blockcontainer container-large w-container">
-                                <div className="nav-dropdown-flex">
-                                  <div className="nav-content-wrapper">
-                                    <div className="nav-category-text">Templates by Industry</div>
-                                    <div className="nav-content-block">
-                                      <div className="w-dyn-list">
-                                        <div role="list" className="nav-list-category w-dyn-items">
-                                          <div role="listitem" className="w-dyn-item">
-                                            <Link href="/shop" className="nav-link-block w-inline-block">
-                                              <div>All Templates (8)</div>
-                                            </Link>
-                                          </div>
-                                          <div role="listitem" className="w-dyn-item">
-                                            <Link href="/shop?category=ecommerce" className="nav-link-block w-inline-block">
-                                              <div>E-Commerce &amp; Retail</div>
-                                            </Link>
-                                          </div>
-                                          <div role="listitem" className="w-dyn-item">
-                                            <Link href="/shop?category=real-estate" className="nav-link-block w-inline-block">
-                                              <div>Real Estate &amp; PropTech</div>
-                                            </Link>
-                                          </div>
-                                          <div role="listitem" className="w-dyn-item">
-                                            <Link href="/shop?category=corporate" className="nav-link-block w-inline-block">
-                                              <div>Corporate &amp; Agency</div>
-                                            </Link>
-                                          </div>
-                                          <div role="listitem" className="w-dyn-item">
-                                            <Link href="/shop?category=saas" className="nav-link-block w-inline-block">
-                                              <div>Tech Startups &amp; SaaS</div>
-                                            </Link>
-                                          </div>
-                                          <div role="listitem" className="w-dyn-item">
-                                            <Link href="/shop?category=hospitality" className="nav-link-block w-inline-block">
-                                              <div>Hospitality &amp; Dining</div>
-                                            </Link>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="best-collection-flex">
-                                    <div className="best-collection-wrapper">
-                                      <Link href="/shop" className="best-collection-link w-inline-block" style={{ textDecoration: 'none' }}>
-                                        <div style={{ padding: '24px', background: 'linear-gradient(135deg, #18181b 0%, #09090b 100%)', borderRadius: '14px', color: '#fff', display: 'flex', flexDirection: 'column', gap: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                                          <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#60A5FA' }}>2026 Collection</span>
-                                          <h4 style={{ margin: 0, fontSize: '17px', fontWeight: 700, color: '#fff' }}>Production-Ready Digital Flagships</h4>
-                                          <p style={{ margin: 0, fontSize: '12px', color: '#a1a1aa', lineHeight: '1.5' }}>modern web standards, bespoke responsive styling, customized turnkey for your brand.</p>
-                                          <span style={{ fontSize: '12px', fontWeight: 600, color: '#38BDF8', marginTop: '6px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>Browse Catalog →</span>
-                                        </div>
-                                      </Link>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </nav>
-                          </div>
-                        </li>
-                        <li><Link href="/shop" className="hdr-nav-a">Templates</Link></li>
-                        <li><Link href="/about-us" className="hdr-nav-a">About</Link></li>
-                        <li><Link href="/blog" className="hdr-nav-a">Insights</Link></li>
-                        <li><Link href="/contact-us" className="hdr-nav-a">Contact</Link></li>
-                        <li className="mobile-button">
-                          <Link href="/shop" className="primary-button w-inline-block">
-                            <div className="button-text-wrapper">
-                              <div className="button-text-block">
-                                <div className="link-text is-1">Explore Templates</div>
-                                <div className="link-text is-2">Explore Templates</div>
-                              </div>
-                            </div>
-                          </Link>
-                        </li>
-                      </ul>
-                    </nav>
-                    <div className="hdr-acts">
-                      <NavbarCartButton />
-                      <div className="cart-devider"></div>
-                      <Link href="/shop" className="primary-button w-inline-block">
-                        <div className="button-text-wrapper">
-                          <div className="button-text-block">
-                            <div className="link-text is-1">Explore Templates</div>
-                            <div className="link-text is-2">Explore Templates</div>
-                          </div>
-                        </div>
-                      </Link>
-                    </div>
-                    <div className="offcanvas-button-wrapper">
-                      <NavbarCartButton />
-                      <div className="cart-devider"></div>
-                      <div className="menu-button w-nav-button"><div className="w-icon-nav-menu"></div></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+    <>
+      <div className="page-wrapper">
+        <Navbar />
 
-      {/* Main Content */}
-      <div className="main-wrapper">
-        {/* Breadcrumb */}
-        <section className="section-breadcrumb" style={{ padding: '24px 0 16px' }}>
-          <div className="w-layout-blockcontainer container-large w-container">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#71717a' }}>
-              <Link href="/" style={{ color: '#71717a', textDecoration: 'none' }}>Home</Link>
-              <span>/</span>
-              <Link href="/shop" style={{ color: '#71717a', textDecoration: 'none' }}>Templates</Link>
-              <span>/</span>
-              <span style={{ color: '#09090b', fontWeight: 600 }}>{template.name}</span>
-            </div>
-          </div>
-        </section>
-
-        {/* Product Details Section */}
-        <section style={{ padding: '20px 0 80px' }}>
-          <div className="w-layout-blockcontainer container-large w-container">
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-              gap: '48px',
-              alignItems: 'start'
-            }}>
-              {/* Left Column: Visual Preview */}
-              <div>
-                <div style={{
-                  position: 'relative',
-                  borderRadius: '16px',
-                  overflow: 'hidden',
-                  border: '1px solid #e4e4e7',
-                  backgroundColor: '#f4f4f5',
-                  boxShadow: '0 12px 30px rgba(0,0,0,0.06)'
-                }}>
-                  {template.badge && (
-                    <span style={{
-                      position: 'absolute',
-                      top: '16px',
-                      left: '16px',
-                      backgroundColor: template.badgeColor || '#18181b',
-                      color: '#fff',
-                      fontSize: '11px',
-                      fontWeight: 700,
-                      padding: '4px 10px',
-                      borderRadius: '6px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                      zIndex: 2
-                    }}>
-                      {template.badge}
-                    </span>
-                  )}
-                  <img
-                    src={template.image}
-                    alt={template.name}
-                    style={{
-                      width: '100%',
-                      height: 'auto',
-                      display: 'block',
-                      objectFit: 'cover'
-                    }}
+        <div className="main-wrapper">
+          {/* Main Studio Section: 70/30 Interactive Split */}
+          <section className="section-product-details" style={{ paddingTop: '104px', paddingBottom: '48px' }}>
+            <div className="w-layout-blockcontainer container-large w-container">
+              <div className="product-studio-grid">
+                {/* 70% Column: Interactive Live Preview Studio */}
+                <div className="product-studio-preview">
+                  <TemplatePreviewCanvas
+                    demoUrl={template.demoUrl}
+                    fallbackImage={template.image}
+                    templateName={template.name}
                   />
                 </div>
 
-                {/* Stack Badges */}
-                <div style={{ marginTop: '20px' }}>
-                  <div style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#71717a', marginBottom: '8px' }}>
-                    Engineered With
-                  </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {template.stack.map(s => (
-                      <span
-                        key={s}
-                        style={{
-                          fontSize: '12px',
-                          fontWeight: 600,
-                          padding: '6px 12px',
-                          backgroundColor: '#f4f4f5',
-                          borderRadius: '8px',
-                          color: '#27272a',
-                          border: '1px solid #e4e4e7'
-                        }}
-                      >
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                {/* 30% Column: Purchase & Customization Sidebar */}
+                <div className="product-studio-sidebar">
+                  <div fade-in="true" className="pd-info" style={{ width: '100%', maxWidth: '100%' }}>
+                    {/* Category Label */}
+                    <div className="w-dyn-list">
+                      <div role="list" className="w-dyn-items">
+                        <div role="listitem" className="w-dyn-item">
+                          <p className="pd-cat">{template.categoryLabel}</p>
+                        </div>
+                      </div>
+                    </div>
 
-                {/* What's Included Box */}
-                <div style={{
-                  marginTop: '28px',
-                  padding: '24px',
-                  backgroundColor: '#fafafa',
-                  borderRadius: '14px',
-                  border: '1px solid #e4e4e7'
-                }}>
-                  <h4 style={{ margin: '0 0 14px', fontSize: '15px', fontWeight: 700, color: '#18181b' }}>
-                    What You Get Upon Checkout:
-                  </h4>
-                  <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '13px', color: '#52525b', lineHeight: '1.8' }}>
-                    <li><strong>Full Source Code:</strong> Complete, unminified modern web standards &amp; bespoke responsive styling codebase.</li>
-                    <li><strong>Complete Brand Customization:</strong> Tailored with your business logo, custom color palette, and bespoke copy.</li>
-                    <li><strong>Dedicated Launch Support:</strong> We configure your custom domain, connect your business email, and deploy your live site.</li>
-                    <li><strong>Step-by-Step Setup Guide:</strong> Full launch guide and dedicated setup assistance for your domain.</li>
-                    <li><strong>Commercial License:</strong> Lifetime usage for your business with zero recurring template fees.</li>
-                  </ul>
+                    {/* Template Title */}
+                    <h2 className="pd-name" style={{ fontSize: '28px', lineHeight: '1.25', marginTop: '4px' }}>
+                      {template.name}
+                    </h2>
+
+                    {/* Adaptation Notice (Not locked to single industry) */}
+                    <div
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '6px 12px',
+                        backgroundColor: '#f0fdf4',
+                        border: '1px solid #bbf7d0',
+                        borderRadius: '8px',
+                        marginTop: '12px',
+                      }}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="m9 12 2 2 4-4"></path>
+                      </svg>
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#166534' }}>
+                        Adapts to Any Business - {template.categoryLabel} theme is sample only
+                      </span>
+                    </div>
+
+                    {/* Description */}
+                    <p
+                      className="pd-desc"
+                      style={{ marginTop: '10px', fontSize: '14px', lineHeight: '1.55', color: '#4b5563' }}
+                    >
+                      {template.description}{' '}
+                      <strong style={{ color: '#111827' }}>Fully customized for your specific brand and industry.</strong>
+                    </p>
+
+                    {/* Dual Pricing Selector: Monthly or Outright */}
+                    <DualPricingSelector
+                      templateName={template.name}
+                      templateSlug={template.slug}
+                      monthlyPrice={template.monthlyNgn || 5000}
+                      setupFee={template.setupFeeNgn || 15000}
+                      outrightPrice={template.outrightNgn || 50000}
+                      standardMonthlyPrice={template.standardMonthlyNgn || 10000}
+                      standardSetupFee={template.standardSetupFeeNgn || 30000}
+                      standardOutrightPrice={template.standardOutrightNgn || 100000}
+                      whatsappNumber="2348123456789"
+                    />
+
+                    {/* Value & Delivery Trust Items */}
+                    <div className="pd-trust" style={{ marginTop: '26px' }}>
+                      <div className="pd-trust-it">
+                        <div className="product-icon w-embed">
+                          <svg fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                            <rect x="1" y="3" width="15" height="13"></rect>
+                            <path d="M16 8h4l3 3v5h-7V8z"></path>
+                            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="pd-trust-it-b">
+                            <strong>1-Year Custom Domain Included </strong>(.com.ng, .online, .store, .site &amp; more) + SSL
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="pd-trust-it">
+                        <div className="product-icon w-embed">
+                          <svg fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="pd-trust-it-b">
+                            <strong>Personalized business email </strong>&amp; direct WhatsApp routing
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="pd-trust-it">
+                        <div className="product-icon w-embed">
+                          <svg fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="pd-trust-it-b">
+                            <strong>Live in &lt; 36 hours </strong>fully customized for your brand
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
+            </div>
+          </section>
 
-              {/* Right Column: Template Info & Checkout */}
-              <div>
-                <span style={{
-                  display: 'inline-block',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.06em',
-                  color: '#2563EB',
-                  backgroundColor: '#eff6ff',
-                  padding: '4px 10px',
-                  borderRadius: '6px',
-                  marginBottom: '12px'
-                }}>
-                  {template.categoryLabel}
-                </span>
+          {/* Information Tabs Section: Clean 2 Tabs (Overview & Launch) */}
+          <section className="product-details-info" style={{ backgroundColor: 'var(--bistro-white, #ede8e1)', paddingTop: '80px', paddingBottom: '40px' }}>
+            <div className="w-layout-blockcontainer container-large w-container">
+                <div fade-in="true" className="w-tabs">
+                  <div className="pd-tabs-nav w-tab-menu" style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('overview')}
+                      className={`pd-tab-btnon w-inline-block w-tab-link ${activeTab === 'overview' ? 'w--current' : ''}`}
+                      style={{
+                        padding: '12px 24px',
+                        borderRadius: '100px',
+                        cursor: 'pointer',
+                        border: 'none',
+                        backgroundColor: activeTab === 'overview' ? '#111827' : '#f3f4f6',
+                        color: activeTab === 'overview' ? '#ffffff' : '#4b5563',
+                        fontWeight: 600,
+                        fontSize: '14px',
+                        transition: 'all 0.2s ease',
+                      }}
+                    >
+                      <div>What&apos;s Included &amp; Overview</div>
+                    </button>
 
-                <h1 style={{ fontSize: '32px', fontWeight: 800, color: '#09090b', margin: '0 0 8px', letterSpacing: '-0.02em', lineHeight: '1.2' }}>
-                  {template.name}
-                </h1>
-
-                <p style={{ fontSize: '16px', color: '#52525b', margin: '0 0 16px', lineHeight: '1.5' }}>
-                  {template.tagline}
-                </p>
-
-                {/* Rating */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px', fontSize: '14px' }}>
-                  <div style={{ color: '#eab308', letterSpacing: '2px', fontWeight: 700 }}>★★★★★</div>
-                  <span style={{ fontWeight: 700, color: '#18181b' }}>{template.rating.toFixed(1)}</span>
-                  <span style={{ color: '#71717a' }}>({template.reviews} founder reviews)</span>
-                </div>
-
-                {/* Price Display */}
-                <div style={{
-                  padding: '20px 24px',
-                  backgroundColor: '#f8fafc',
-                  borderRadius: '14px',
-                  border: '1px solid #e2e8f0',
-                  marginBottom: '24px'
-                }}>
-                  <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    One-Time Purchase Price
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('launch')}
+                      className={`pd-tab-btnon w-inline-block w-tab-link ${activeTab === 'launch' ? 'w--current' : ''}`}
+                      style={{
+                        padding: '12px 24px',
+                        borderRadius: '100px',
+                        cursor: 'pointer',
+                        border: 'none',
+                        backgroundColor: activeTab === 'launch' ? '#111827' : '#f3f4f6',
+                        color: activeTab === 'launch' ? '#ffffff' : '#4b5563',
+                        fontWeight: 600,
+                        fontSize: '14px',
+                        transition: 'all 0.2s ease',
+                      }}
+                    >
+                      <div>How We Launch Your Site</div>
+                    </button>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', marginTop: '4px' }}>
-                    <div style={{ fontSize: '32px', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em' }}>
-                      ₦{template.priceNgn.toLocaleString()}
-                    </div>
-                    <div style={{ fontSize: '15px', color: '#64748b', fontWeight: 500 }}>
-                      (≈ ${template.priceUsd} USD)
-                    </div>
-                  </div>
-                  <p style={{ margin: '8px 0 0', fontSize: '12px', color: '#64748b' }}>
-                    Lifetime commercial license · 0 monthly platform tax · Full source ownership
-                  </p>
-                </div>
 
-                {/* Description */}
-                <p style={{ fontSize: '15px', color: '#3f3f46', lineHeight: '1.7', marginBottom: '24px' }}>
-                  {template.description}
-                </p>
+                  {/* Tab 1: Overview & Deliverables */}
+                  {activeTab === 'overview' && (
+                    <div className="w-tab-content">
+                      <div className="pd-panel">
+                        <div className="pdd-intro">
+                          <div className="product-dtails-subtitle">
+                            <div className="subtitle-dot"></div>
+                            <p className="pd-ey">01 - What&apos;s Included</p>
+                          </div>
+                          <div className="product-overview-details w-richtext">
+                            <h2>Everything Your Business Needs to Launch Online.</h2>
+                            <p>
+                              While shown here with a sample theme, this design foundation is{' '}
+                              <strong>never locked to a single industry</strong>. Whether you operate a clinic, real estate
+                              agency, corporate consultancy, legal practice, luxury spa, or retail boutique, our team fully
+                              adapts the typography, colors, imagery, content, and booking flows to match your exact business.
+                            </p>
+                          </div>
+                        </div>
 
-                {/* Key Features List */}
-                <div style={{ marginBottom: '28px' }}>
-                  <div style={{ fontSize: '13px', fontWeight: 700, color: '#18181b', marginBottom: '10px' }}>
-                    Key Architecture Highlights:
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px' }}>
-                    {template.features.map(f => (
-                      <div key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#3f3f46' }}>
-                        <span style={{ color: '#16a34a', fontWeight: 800 }}>✓</span>
-                        <span>{f}</span>
+                        {/* Deliverables Grid */}
+                        <div className="pdd-cards" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginTop: '32px' }}>
+                          <div className="pdd-card">
+                            <div className="pdd-ic pdd-card-span">
+                              <div className="p-icon w-embed">
+                                <svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
+                                  <circle cx="12" cy="12" r="10"></circle>
+                                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                                </svg>
+                              </div>
+                            </div>
+                            <div className="product-details w-richtext">
+                              <h3>Custom 1-Year Domain Included</h3>
+                              <p>We register and configure your branded domain (.com.ng, .name.ng, .store, .online, .site &amp; more) with automated HTTPS SSL security certificates.</p>
+                            </div>
+                          </div>
+
+                          <div className="pdd-card">
+                            <div className="pdd-ic pdd-card-span">
+                              <div className="p-icon w-embed">
+                                <svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
+                                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                  <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                              </div>
+                            </div>
+                            <div className="product-details w-richtext">
+                              <h3>Personalized Business Domain Email</h3>
+                              <p>Professional email addresses (e.g. info@yourbusiness.com.ng) connected directly to your staff devices.</p>
+                            </div>
+                          </div>
+
+                          <div className="pdd-card">
+                            <div className="pdd-ic pdd-card-span">
+                              <div className="p-icon w-embed">
+                                <svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
+                                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                              </div>
+                            </div>
+                            <div className="product-details w-richtext">
+                              <h3>Contact Forms &amp; Direct WhatsApp Routing</h3>
+                              <p>Direct leads into your front-desk inbox and WhatsApp for immediate speed-to-lead response under 5 minutes.</p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                </div>
+                    </div>
+                  )}
 
-                {/* Turnkey Deployment Add-On */}
-                <div
-                  onClick={() => setIncludeSetup(!includeSetup)}
-                  style={{
-                    padding: '16px',
-                    borderRadius: '12px',
-                    border: includeSetup ? '1.5px solid #2563EB' : '1px dashed #cbd5e1',
-                    backgroundColor: includeSetup ? '#eff6ff' : '#fff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    cursor: 'pointer',
-                    marginBottom: '24px',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <input
-                      type="checkbox"
-                      checked={includeSetup}
-                      onChange={() => {}}
-                      style={{ cursor: 'pointer', width: '18px', height: '18px' }}
-                    />
-                    <div>
-                      <div style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b' }}>
-                        Add Turnkey Live Domain Launch &amp; Domain Setup
-                      </div>
-                      <div style={{ fontSize: '11px', color: '#64748b' }}>
-                        Our engineering team configures your custom domain, SSL certificate, and deployment within days.
+                  {/* Tab 2: How We Launch Your Site */}
+                  {activeTab === 'launch' && (
+                    <div className="w-tab-content">
+                      <div className="pd-panel">
+                        <div className="pds">
+                          <div className="pds-head">
+                            <div className="product-dtails-subtitle">
+                              <div className="subtitle-dot"></div>
+                              <p className="pd-ey">02 - Fast Launch Flow</p>
+                            </div>
+                            <h3 className="pd-panel-h3">From Selection to Live in Less Than 36 Hours.</h3>
+                            <p className="pd-panel-p">
+                              We handle the technical setup, asset insertion, domain linking, and hosting optimization so you can focus on running your business.
+                            </p>
+                          </div>
+
+                          <div className="pds-flow">
+                            <div className="pds-step">
+                              <div className="pds-ic pds-step-span">
+                                <div className="p-icon w-embed">
+                                  <svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
+                                    <path d="M12 2a5 5 0 0 1 5 5c0 3-2.5 4.5-5 9-2.5-4.5-5-6-5-9a5 5 0 0 1 5-5z"></path>
+                                    <circle cx="12" cy="7" r="1.6"></circle>
+                                  </svg>
+                                </div>
+                              </div>
+                              <p className="pds-step-b">1. Pick Design</p>
+                              <p className="pds-step-span">Choose your preferred design foundation.</p>
+                            </div>
+
+                            <div className="pds-arrow">
+                              <div className="p-icon d4baa0 w-embed">
+                                <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                  <path d="M5 12h14M13 6l6 6-6 6"></path>
+                                </svg>
+                              </div>
+                            </div>
+
+                            <div className="pds-step">
+                              <div className="pds-ic pds-step-span">
+                                <div className="p-icon w-embed">
+                                  <svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
+                                    <rect x="1" y="3" width="15" height="13"></rect>
+                                    <path d="M16 8h4l3 3v5h-7V8z"></path>
+                                    <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                                    <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                                  </svg>
+                                </div>
+                              </div>
+                              <p className="pds-step-b">2. Send Assets</p>
+                              <p className="pds-step-span">Send your logo, brand colors &amp; services.</p>
+                            </div>
+
+                            <div className="pds-arrow">
+                              <div className="p-icon d4baa0 w-embed">
+                                <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                  <path d="M5 12h14M13 6l6 6-6 6"></path>
+                                </svg>
+                              </div>
+                            </div>
+
+                            <div className="pds-step">
+                              <div className="pds-ic pds-step-span">
+                                <div className="p-icon w-embed">
+                                  <svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                  </svg>
+                                </div>
+                              </div>
+                              <p className="pds-step-b">3. We Customize</p>
+                              <p className="pds-step-span">We assemble copy, link domain &amp; SSL.</p>
+                            </div>
+
+                            <div className="pds-arrow">
+                              <div className="p-icon d4baa0 w-embed">
+                                <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                  <path d="M5 12h14M13 6l6 6-6 6"></path>
+                                </svg>
+                              </div>
+                            </div>
+
+                            <div className="pds-step">
+                              <div className="pds-ic pds-step-span">
+                                <div className="p-icon w-embed">
+                                  <svg fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                  </svg>
+                                </div>
+                              </div>
+                              <p className="pds-step-b">4. Live &amp; Handed Over</p>
+                              <p className="pds-step-span">Live in &lt; 36 hours with full ownership.</p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
+                  )}
+                </div>
+              </div>
+            </section>
+
+          {/* Real Website Templates: Explore More Website Foundations */}
+          <section className="section-products" style={{ backgroundColor: 'var(--bistro-white, #ede8e1)', paddingTop: '40px' }}>
+            <div className="w-layout-blockcontainer container-large w-container">
+              <div className="section-heading-flex">
+                <div className="section-heading-block">
+                  <div className="section-subtitle-block">
+                    <div summary="true" className="subtitle-text">02 - More Designs</div>
                   </div>
-                  <div style={{ fontSize: '14px', fontWeight: 800, color: '#1e293b', whiteSpace: 'nowrap' }}>
-                    +₦50,000
+                  <div className="section-title-block">
+                    <h2 className="heading-style-h2">Explore More Website Foundations</h2>
                   </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <button
-                    onClick={handleAddToCart}
-                    style={{
-                      width: '100%',
-                      padding: '16px',
-                      backgroundColor: '#09090b',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: '10px',
-                      fontSize: '15px',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      boxShadow: '0 4px 14px rgba(0,0,0,0.1)'
-                    }}
-                  >
-                    Get Template &amp; Source Code →
-                  </button>
-
-                  <Link
-                    href="/shop"
-                    style={{
-                      width: '100%',
-                      padding: '14px',
-                      backgroundColor: '#f4f4f5',
-                      color: '#18181b',
-                      borderRadius: '10px',
-                      fontSize: '14px',
-                      fontWeight: 600,
-                      textAlign: 'center',
-                      textDecoration: 'none',
-                      border: '1px solid #e4e4e7'
-                    }}
-                  >
-                    ← Browse All Templates
+                <div fade-in="true" className="section-left-button-wrapper">
+                  <Link href="/shop" className="primary-button w-inline-block">
+                    <div className="button-text-wrapper">
+                      <div className="button-text-block">
+                        <div className="link-text is-1">View All Foundations</div>
+                        <div className="link-text is-2">View All Foundations</div>
+                      </div>
+                      <div className="button-arrow-block">
+                        <div className="link-icon is-1 w-embed">
+                          <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
+                            <path d="M7 17 17 7M7 7h10v10"></path>
+                          </svg>
+                        </div>
+                        <div className="link-icon is-2 w-embed">
+                          <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
+                            <path d="M7 17 17 7M7 7h10v10"></path>
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
                   </Link>
                 </div>
+              </div>
 
-                {/* Trust Footer */}
-                <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid #f4f4f5', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '12px', color: '#71717a' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span>🔒</span>
-                    <span>Secure Paystack checkout (Cards, USSD, Bank Transfer, Apple Pay)</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span>⚡</span>
-                    <span>Immediate website codebase access upon payment confirmation</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span>🛡️</span>
-                    <span>100% Clean Code Guarantee · Handcrafted in Nigeria for scale</span>
-                  </div>
+              {/* Working Real Website Cards */}
+              <div className="w-dyn-list">
+                <div
+                  fade-in="true"
+                  role="list"
+                  className="products-content w-dyn-items"
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                    gap: '24px',
+                    marginTop: '32px',
+                  }}
+                >
+                  {otherTemplates.map((other) => (
+                    <div role="listitem" className="w-dyn-item" key={other.id}>
+                      <article className="products-single-item" style={{ overflow: 'hidden' }}>
+                        {other.badge && (
+                          <p
+                            style={{ backgroundColor: other.badgeColor || '#111827' }}
+                            className="product-badge pb-best"
+                          >
+                            {other.badge}
+                          </p>
+                        )}
+                        <div className="products-image-wrapper">
+                          <Link href={`/product/${other.slug}`} className="peoduct-image-link w-inline-block">
+                            <img
+                              loading="lazy"
+                              alt={other.name}
+                              src={other.image}
+                              className="products-image"
+                              style={{ width: '100%', height: '240px', objectFit: 'cover' }}
+                            />
+                          </Link>
+                        </div>
+                        <div className="product-content-wrapper" style={{ padding: '16px 20px 20px' }}>
+                          <div className="product-rating-block">
+                            <div className="prate-i">{other.categoryLabel}</div>
+                          </div>
+                          <Link
+                            href={`/product/${other.slug}`}
+                            className="product-title"
+                            style={{
+                              fontSize: '18px',
+                              fontWeight: 600,
+                              textDecoration: 'none',
+                              color: '#111827',
+                              marginTop: '6px',
+                              display: 'block',
+                            }}
+                          >
+                            {other.name}
+                          </Link>
+                          <div
+                            className="pft"
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              marginTop: '16px',
+                            }}
+                          >
+                            <div className="pprice">
+                              <p className="ppr" style={{ fontSize: '17px', fontWeight: 700, color: '#111827', margin: 0 }}>
+                                ₦{other.outrightNgn.toLocaleString()}
+                              </p>
+                            </div>
+                            <Link
+                              href={`/product/${other.slug}`}
+                              className="primary-button"
+                              style={{
+                                padding: '8px 16px',
+                                fontSize: '13px',
+                                fontWeight: 600,
+                                textDecoration: 'none',
+                                borderRadius: '100px',
+                                backgroundColor: '#111827',
+                                color: '#ffffff',
+                              }}
+                            >
+                              View Foundation →
+                            </Link>
+                          </div>
+                        </div>
+                      </article>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+
+          {/* Standardized Global Call to Action with Unified Warm Beige Background */}
+          <CallToAction bgColor="var(--bistro-white, #ede8e1)" />
+        </div>
+
+        {/* Standardized Global Footer */}
+        <Footer />
       </div>
 
-      {/* Footer */}
-      <section className="footer">
-        <div className="w-layout-blockcontainer container-large w-container">
-          <div className="fh-in">
-            <div className="fh-main">
-              <div className="fh-brand">
-                <Link href="/" className="fh-logo w-inline-block">
-                  <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="footer-logo" />
-                </Link>
-                <p className="fh-statement">
-                  Production-ready website designs and bespoke web engineering built for ambitious Nigerian and African businesses.
-                </p>
-              </div>
-              <div className="fh-col">
-                <p className="fh-col-h">Templates</p>
-                <Link href="/shop" className="fh-lk">All Templates</Link>
-                <Link href="/shop?category=ecommerce" className="fh-lk">E-Commerce</Link>
-                <Link href="/shop?category=real-estate" className="fh-lk">Real Estate</Link>
-                <Link href="/shop?category=corporate" className="fh-lk">Corporate</Link>
-                <Link href="/shop?category=saas" className="fh-lk">SaaS &amp; Tech</Link>
-              </div>
-              <div className="fh-col">
-                <p className="fh-col-h">Company</p>
-                <Link href="/" className="fh-lk">Home</Link>
-                <Link href="/about-us" className="fh-lk">About Us</Link>
-                <Link href="/contact-us" className="fh-lk">Contact Us</Link>
-                <Link href="/blog" className="fh-lk">Insights</Link>
-                <Link href="/cart" className="fh-lk">Your Cart</Link>
-              </div>
-            </div>
-            <div className="footer-border v2"></div>
-            <div className="footer-border"></div>
-          </div>
-          <div className="fh-bot">
-            <div className="fh-bot-in">
-              <p className="fh-copy">© 2026 aB Labs — Production-Ready Web Flagships</p>
-              <a href="#top" className="fh-top-top w-inline-block">
-                <div>Back to top</div>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+      <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.1/dist/lenis.css" />
+    </>
   );
 }

@@ -1,5 +1,5 @@
 /**
- * aB Labs Studio — 100% Clean-Room Native JavaScript Interaction Engine
+ * aB Labs Studio - 100% Clean-Room Native JavaScript Interaction Engine
  * Zero Third-Party Builder Runtime • Pure Vanilla ES6, GSAP & Lenis
  * Matches Live ab-labs.cv Interaction Physics with Single-Pixel Precision
  */
@@ -353,7 +353,7 @@ function initABLabs(force = false) {
     document.documentElement.classList.add('ab-labs-ready', 'choroo-ready');
 
     // ScrollTrigger Character Split for Section Headings
-    const sectionHeadings = document.querySelectorAll('.heading-style-h2:not(.story-title)');
+    const sectionHeadings = document.querySelectorAll('.heading-style-h2:not(.story-title):not(.cta-title)');
     sectionHeadings.forEach((h2) => {
       try {
         if (typeof SplitText !== 'undefined') {

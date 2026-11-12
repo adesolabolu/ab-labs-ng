@@ -277,7 +277,7 @@ export default function CartView() {
                   <span>✓ Step-by-Step Docs</span>
                 </div>
 
-                {/* Turnkey Deployment Add-On Option */}
+                {/* Complete Setup &amp; Domain Add-On */}
                 <div style={{
                   padding: '12px',
                   borderRadius: '8px',
@@ -300,7 +300,7 @@ export default function CartView() {
                     />
                     <div>
                       <div style={{ fontSize: '13px', fontWeight: 600, color: '#1e293b' }}>
-                        Turnkey Live Domain Launch &amp; Domain Setup
+                        Complete Live Launch &amp; Domain Setup
                       </div>
                       <div style={{ fontSize: '11px', color: '#64748b' }}>
                         Our engineers deploy and connect your custom domain within 24 hours.
