@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import crypto from 'crypto';
 import { setAdminSessionCookie, clearAdminSessionCookie, verifyAdminToken } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
@@ -8,9 +9,16 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { password } = body;
 
-    const expectedPassword = process.env.ADMIN_PASSWORD || 'ablabs2026admin';
+    const expectedPassword = process.env.ADMIN_PASSWORD;
 
-    if (!password || password !== expectedPassword) {
+    if (!expectedPassword || !password) {
+      return NextResponse.json({ success: false, error: 'Invalid admin credentials' }, { status: 401 });
+    }
+
+    const inputBuf = Buffer.from(String(password));
+    const expectedBuf = Buffer.from(String(expectedPassword));
+
+    if (inputBuf.length !== expectedBuf.length || !crypto.timingSafeEqual(inputBuf, expectedBuf)) {
       return NextResponse.json({ success: false, error: 'Invalid admin credentials' }, { status: 401 });
     }
 

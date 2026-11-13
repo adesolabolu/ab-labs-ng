@@ -10,7 +10,7 @@ import type { Metadata } from 'next';
 const rawUrl =
   process.env.NEXT_PUBLIC_APP_URL ||
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '') ||
-  'http://localhost:3005';
+  'https://ng.ab-labs.cv';
 
 /** Normalized absolute site origin with no trailing slash. */
 export const SITE_URL = rawUrl.replace(/\/+$/, '');
@@ -24,7 +24,7 @@ export const SITE_TAGLINE = 'Premium Website Templates & Web Agency';
 
 export const SITE_LOCALE = 'en_NG';
 
-export const SITE_EMAIL = 'hello@ablabs.ng';
+export const SITE_EMAIL = 'hello@ab-labs.cv';
 
 export const SITE_TWITTER = '@ablabs_ng';
 

@@ -67,7 +67,7 @@ export async function sendClientCredentialsEmail(options: SendCredentialsOptions
 
           <div class="footer">
             &copy; ${new Date().getFullYear()} aB Labs &middot; Lagos, Nigeria<br>
-            Direct Support: <a href="mailto:hello@ablabs.ng" style="color: #a1a1aa;">hello@ablabs.ng</a>
+            Direct Support: <a href="mailto:hello@ab-labs.cv" style="color: #a1a1aa;">hello@ab-labs.cv</a>
           </div>
         </div>
       </body>
@@ -88,7 +88,7 @@ export async function sendClientCredentialsEmail(options: SendCredentialsOptions
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'aB Labs <hello@ablabs.ng>',
+        from: 'aB Labs <hello@ab-labs.cv>',
         to: [to],
         subject: `Welcome to aB Labs: Your ${templateName} build is underway!`,
         html,

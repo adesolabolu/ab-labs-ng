@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import crypto from 'crypto';
 import sql from '@/lib/db';
 import { generateFriendlyPassword, hashPassword, setClientSessionCookie } from '@/lib/auth';
 import { sendClientCredentialsEmail } from '@/lib/email';
@@ -27,20 +28,32 @@ export async function POST(req: Request) {
 
     const order = orders[0];
 
-    // If live Paystack key is set, verify with Paystack API
+    // Verify payment with Paystack API
     const paystackSecretKey = process.env.PAYSTACK_SECRET_KEY;
-    const isLiveKeyAvailable = paystackSecretKey && !paystackSecretKey.includes('placeholder');
+    if (!paystackSecretKey || paystackSecretKey.includes('placeholder')) {
+      return NextResponse.json({
+        success: false,
+        error: 'Payment gateway configuration is incomplete. Please contact support.',
+      }, { status: 503 });
+    }
 
-    if (isLiveKeyAvailable) {
-      const verifyRes = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
-        headers: {
-          Authorization: `Bearer ${paystackSecretKey}`,
-        },
-      });
-      const verifyData = await verifyRes.json();
-      if (!verifyData.status || verifyData.data.status !== 'success') {
-        return NextResponse.json({ success: false, error: 'Payment verification failed at Paystack' }, { status: 400 });
-      }
+    const verifyRes = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, {
+      headers: {
+        Authorization: `Bearer ${paystackSecretKey}`,
+      },
+    });
+    const verifyData = await verifyRes.json();
+    if (!verifyData.status || verifyData.data?.status !== 'success') {
+      return NextResponse.json({ success: false, error: 'Payment verification failed at Paystack' }, { status: 400 });
+    }
+
+    // Verify currency and amount matches (Paystack amount is in kobo)
+    const expectedKobo = Number(order.amount_paid_ngn) * 100;
+    if (verifyData.data.amount < expectedKobo) {
+      return NextResponse.json({
+        success: false,
+        error: 'Paid amount does not match expected order total',
+      }, { status: 400 });
     }
 
     // 1. Mark Order as Success
@@ -60,9 +73,9 @@ export async function POST(req: Request) {
     }
 
     // 3. AUTOMATED ACCOUNT PROVISIONING:
-    // Generate secure client ID, portal access token, and initial password
-    const clientId = `cli_${Math.random().toString(36).substring(2, 10)}`;
-    const portalAccessToken = `token_${Math.random().toString(36).substring(2, 14)}`;
+    // Generate cryptographically secure client ID, portal access token, and initial password
+    const clientId = `cli_${crypto.randomBytes(4).toString('hex')}`;
+    const portalAccessToken = `token_${crypto.randomBytes(12).toString('hex')}`;
     const tempPassword = generateFriendlyPassword();
     const passwordHash = hashPassword(tempPassword);
 
@@ -140,7 +153,6 @@ export async function POST(req: Request) {
         businessName: order.business_name,
         domainName: order.requested_domain,
         portalAccessToken,
-        temporaryPassword: tempPassword,
         domainExpiryDate: expiryDate.toISOString(),
       },
       orderId: order.id,

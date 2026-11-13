@@ -21,9 +21,9 @@ export function verifyPassword(password: string, storedHash: string): boolean {
 }
 
 export function generateFriendlyPassword(): string {
-  const digits = Math.floor(1000 + Math.random() * 9000);
+  const digits = crypto.randomInt(1000, 10000);
   const words = ['Launch', 'Build', 'Ready', 'Fast', 'Apex', 'Nova', 'Pulse'];
-  const word = words[Math.floor(Math.random() * words.length)];
+  const word = words[crypto.randomInt(0, words.length)];
   return `Ab-${digits}-${word}`;
 }
 

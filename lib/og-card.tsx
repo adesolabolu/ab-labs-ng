@@ -145,7 +145,7 @@ export function OgCard() {
           color: '#9c958a',
         }}
       >
-        <div style={{ display: 'flex' }}>ablabs.ng</div>
+        <div style={{ display: 'flex' }}>ng.ab-labs.cv</div>
         <div style={{ display: 'flex', gap: 28 }}>
           <div style={{ display: 'flex' }}>Website Templates</div>
           <div style={{ display: 'flex', color: '#ff8a3d' }}>Bespoke Builds</div>
