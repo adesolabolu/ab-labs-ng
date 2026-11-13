@@ -19,6 +19,6 @@
   },
   "vars": {
     "NEXT_PUBLIC_APP_URL": "https://ng.ab-labs.cv",
-    "NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY": "pk_test_placeholder"
+    "NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY": "pk_live_01d66aa74bb05cf68d3a7ecd795c034ede4bba2e"
   }
 }
