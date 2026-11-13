@@ -427,14 +427,6 @@ export default function TemplateDetailView({
                   {otherTemplates.map((other) => (
                     <div role="listitem" className="site-dyn-item" key={other.id}>
                       <article className="products-single-item" style={{ overflow: 'hidden' }}>
-                        {other.badge && (
-                          <p
-                            style={{ backgroundColor: other.badgeColor || '#111827' }}
-                            className="product-badge pb-best"
-                          >
-                            {other.badge}
-                          </p>
-                        )}
                         <div className="products-image-wrapper">
                           <Link href={`/product/${other.slug}`} className="peoduct-image-link inline-block">
                             <img
@@ -474,8 +466,11 @@ export default function TemplateDetailView({
                             }}
                           >
                             <div className="pprice">
-                              <p className="ppr" style={{ fontSize: '17px', fontWeight: 700, color: '#111827', margin: 0 }}>
-                                ₦{other.outrightNgn.toLocaleString()}
+                              <p className="ppr" style={{ fontSize: '15px', fontWeight: 800, color: '#111827', margin: 0 }}>
+                                ₦{other.monthlyNgn.toLocaleString()}/mo <span style={{ fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>+ ₦{(other.setupFeeNgn / 1000).toFixed(0)}k setup</span>
+                              </p>
+                              <p style={{ fontSize: '11px', color: '#78716c', margin: '2px 0 0' }}>
+                                or <strong>₦{other.outrightNgn.toLocaleString()}</strong> outright
                               </p>
                             </div>
                             <Link

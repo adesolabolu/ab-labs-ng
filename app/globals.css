@@ -8891,6 +8891,17 @@ figcaption {
   padding-bottom: 0;
   padding-left: 0;
   display: flex;
+  list-style: none !important;
+  list-style-type: none !important;
+}
+
+.nav-menu li,
+.nav-menu-wrapper ul,
+.nav-menu-wrapper li,
+.list-unstyled {
+  list-style: none !important;
+  list-style-type: none !important;
+  padding-left: 0 !important;
 }
 
 .mobile-button, .mobile-logo {
@@ -12941,6 +12952,28 @@ option { color: #000 !important; }
     width: 100%;
   }
 }
+/* ── Shop: 3-column Catalog Grid ────────────────────────────────── */
+.shop-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-bottom: 60px;
+}
+
+@media (max-width: 1024px) {
+  .shop-catalog-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .shop-catalog-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
 /* ── Shop: how it works ──────────────────────────────────────────── */
 html.site-mod-js:not(.ab-labs-ready) .abtm {
   opacity: 0;

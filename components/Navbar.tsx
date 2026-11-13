@@ -64,7 +64,7 @@ export default function Navbar() {
                       className={`nav-menu-wrapper nav-menu-list ${isMobileMenuOpen ? 'nav-menu-open' : ''}`}
                       style={isMobileMenuOpen ? { display: 'block' } : undefined}
                     >
-                      <ul role="list" className="nav-menu list-unstyled">
+                      <ul role="list" className="nav-menu site-list-unstyled list-unstyled" style={{ listStyle: 'none', paddingLeft: 0, margin: 0 }}>
                         <li className="mobile-logo">
                           <Link href="/" className="hdr-logo inline-block">
                             <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="logo" />

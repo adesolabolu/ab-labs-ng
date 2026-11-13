@@ -177,12 +177,7 @@ export default function ShopCatalog({ templates }: ShopCatalogProps) {
           </button>
         </div>
       ) : (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-          gap: '28px',
-          marginBottom: '60px'
-        }}>
+        <div className="shop-catalog-grid">
           {filteredTemplates.map((template) => (
             <article
               key={template.id}
@@ -222,27 +217,6 @@ export default function ShopCatalog({ templates }: ShopCatalogProps) {
                     }}
                   />
                 </Link>
-
-                {/* Badge Top-Left */}
-                {template.badge && (
-                  <span
-                    style={{
-                      position: 'absolute',
-                      top: '12px',
-                      left: '12px',
-                      backgroundColor: template.badgeColor || '#111',
-                      color: '#fff',
-                      fontSize: '11px',
-                      fontWeight: 700,
-                      padding: '4px 10px',
-                      borderRadius: '100px',
-                      letterSpacing: '0.04em',
-                      textTransform: 'uppercase'
-                    }}
-                  >
-                    {template.badge}
-                  </span>
-                )}
 
                 {/* Category Pill Top-Right */}
                 <span
@@ -334,23 +308,21 @@ export default function ShopCatalog({ templates }: ShopCatalogProps) {
                   gap: '12px'
                 }}>
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', flexWrap: 'wrap' }}>
                       <span style={{ fontSize: '18px', fontWeight: 800, color: '#111827', letterSpacing: '-0.02em' }}>
-                        ₦{template.outrightNgn.toLocaleString()}
+                        ₦{template.monthlyNgn.toLocaleString()}/mo
                       </span>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#4b5563' }}>
+                        + {formatShortNgn(template.setupFeeNgn)} setup
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '11.5px', color: '#6b7280', marginTop: '3px' }}>
+                      or <strong>₦{template.outrightNgn.toLocaleString()}</strong> outright
                       {template.standardOutrightNgn > template.outrightNgn && (
-                        <span style={{ fontSize: '12px', color: '#9ca3af', textDecoration: 'line-through' }}>
+                        <span style={{ fontSize: '11px', color: '#9ca3af', textDecoration: 'line-through', marginLeft: '8px' }}>
                           ₦{template.standardOutrightNgn.toLocaleString()}
                         </span>
                       )}
-                      {discountPct(template.standardOutrightNgn, template.outrightNgn) > 0 && (
-                        <span style={{ fontSize: '10px', fontWeight: 700, color: '#047857', backgroundColor: '#ecfdf5', padding: '1px 6px', borderRadius: '4px' }}>
-                          {discountPct(template.standardOutrightNgn, template.outrightNgn)}% OFF
-                        </span>
-                      )}
-                    </div>
-                    <div style={{ fontSize: '11px', color: '#4b5563', marginTop: '2px' }}>
-                      or <strong>{formatShortNgn(template.monthlyNgn)}/mo</strong> + {formatShortNgn(template.setupFeeNgn)} setup
                     </div>
                   </div>
 
