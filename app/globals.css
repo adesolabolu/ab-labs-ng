@@ -13254,3 +13254,161 @@ html.site-mod-js:not(.ab-labs-ready) .abtm {
     opacity: 1 !important;
   }
 }
+
+/* ==========================================================================
+   Mobile navigation drawer (React-controlled)
+   ========================================================================== */
+.nav-close-btn {
+  display: none;
+}
+
+.nav-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(12, 11, 10, 0.45);
+  z-index: 999;
+}
+
+@media screen and (max-width: 991px) {
+  .site-nav[data-nav-collapse="medium"] .nav-menu-list.nav-menu-open,
+  .nav-menu-wrapper.nav-menu-open {
+    display: flex !important;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: auto;
+    bottom: auto;
+    left: 0;
+    width: min(86vw, 360px);
+    max-width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    margin: 0;
+    padding: 18px 24px 32px;
+    background-color: var(--milk-jug, #f9f6f1);
+    box-shadow: 0 24px 60px rgba(12, 11, 10, 0.22);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    z-index: 1002;
+    transform: none;
+    animation: nav-drawer-in 0.22s ease-out both;
+  }
+
+  .nav-menu-wrapper.nav-menu-open .nav-close-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-end;
+    width: 38px;
+    height: 38px;
+    margin: 0 0 10px;
+    padding: 0;
+    border: 1px solid rgba(12, 11, 10, 0.14);
+    border-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.75);
+    color: #1c1917;
+    cursor: pointer;
+  }
+
+  .nav-menu-wrapper.nav-menu-open .nav-menu {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    width: 100%;
+  }
+
+  .nav-menu-wrapper.nav-menu-open .nav-menu li {
+    width: 100%;
+  }
+
+  .nav-menu-wrapper.nav-menu-open .nav-menu .hdr-nav-a {
+    display: block;
+    width: 100%;
+    padding: 12px 4px;
+    font-size: 18px;
+    border-bottom: 1px solid rgba(12, 11, 10, 0.07);
+  }
+
+  .nav-menu-wrapper.nav-menu-open .mobile-logo {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .nav-menu-wrapper.nav-menu-open .mobile-button {
+    display: block;
+    margin-top: 20px;
+    width: 100%;
+  }
+
+  .nav-menu-wrapper.nav-menu-open .mobile-button .primary-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@keyframes nav-drawer-in {
+  from {
+    transform: translateX(-12px);
+    opacity: 0.4;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   Floating WhatsApp button
+   ========================================================================== */
+.whatsapp-fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 9999;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #25d366;
+  color: #ffffff;
+  box-shadow: 0 10px 26px rgba(18, 140, 76, 0.38);
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.whatsapp-fab:hover {
+  background-color: #1ebe5b;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 14px 32px rgba(18, 140, 76, 0.45);
+}
+
+.whatsapp-fab:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.whatsapp-fab:focus-visible {
+  outline: 3px solid rgba(37, 211, 102, 0.5);
+  outline-offset: 3px;
+}
+
+@media screen and (max-width: 767px) {
+  .whatsapp-fab {
+    right: 16px;
+    bottom: 16px;
+    width: 52px;
+    height: 52px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-fab,
+  .whatsapp-fab:hover,
+  .whatsapp-fab:active {
+    transition: none;
+    transform: none;
+  }
+}

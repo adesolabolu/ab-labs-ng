@@ -38,6 +38,7 @@ env.local
 # Debug logs and temporary captures
 *.log
 *.png
+!public/assets/favicon/*.png
 .thumb-backup/
 
 

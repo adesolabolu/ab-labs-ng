@@ -83,7 +83,30 @@ export default function ContactUsPage() {
                       <div>
                         <div className="ct-method-k">Direct WhatsApp &amp; Support</div>
                         <div className="ct-method-v">
-                          <a href="https://wa.me/2348000000000" target="_blank" className="ct-method-v-a">+234 (0) 800 aB-LABS</a>
+                          <a
+                            href="https://wa.me/2349036193817?text=Hi%20aB%20Labs%2C%20I%20would%20like%20to%20know%20more%20about%20your%20website%20templates."
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="ct-method-v-a"
+                          >
+                            +234 903 619 3817
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="ct-method">
+                      <div className="ct-method-ic">
+                        <div className="social-icon-20px site-embed">
+                          <svg fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                          </svg>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="ct-method-k">Call or WhatsApp us</div>
+                        <div className="ct-method-v">
+                          <a href="tel:+2349036193817" className="ct-method-v-a">0903 619 3817</a>
                         </div>
                       </div>
                     </div>
@@ -107,7 +130,7 @@ export default function ContactUsPage() {
                         </svg>
                       </div>
                     </a>
-                    <a href="https://wa.me/2348000000000" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer" className="ct-si">
+                    <a href="https://wa.me/2349036193817" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer" className="ct-si">
                       <div className="social-icon site-embed">
                         <svg fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                           <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"></path>

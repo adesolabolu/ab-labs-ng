@@ -234,7 +234,7 @@ export default function OneLinkCheckoutPage() {
           )}
 
           <a
-            href={`https://wa.me/2348123456789?text=${encodeURIComponent(`Hi aB Labs, I just completed payment for reference ${paymentSuccess.reference} (${paymentSuccess.client.name}). Looking forward to the onboarding!`)}`}
+            href={`https://wa.me/2349036193817?text=${encodeURIComponent(`Hi aB Labs, I just completed payment for reference ${paymentSuccess.reference} (${paymentSuccess.client.name}). Looking forward to the onboarding!`)}`}
             target="_blank"
             rel="noopener noreferrer"
             style={{

@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import ClientInitializer from '@/components/ClientInitializer';
 import ScrollToTop from '@/components/ScrollToTop';
+import WhatsAppFab from '@/components/WhatsAppFab';
 import { CartProvider } from '@/context/CartContext';
 import {
   SITE_URL,
@@ -62,8 +63,13 @@ export const metadata: Metadata = {
     }
   },
   icons: {
-    icon: '/assets/6abc9a73889258d54f8515ca_Favicon%20(256x256).png',
-    apple: '/assets/6abc9a733a9ac776108332dd_Favicon%20(256x256).png'
+    icon: [
+      { url: '/assets/favicon/favicon-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/assets/favicon/favicon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/assets/favicon/favicon-512.png', sizes: '512x512', type: 'image/png' }
+    ],
+    shortcut: '/assets/favicon/favicon-32.png',
+    apple: '/assets/favicon/apple-touch-icon.png'
   }
 };
 
@@ -86,6 +92,7 @@ export default function RootLayout({
         <CartProvider>
           {children}
           <ScrollToTop />
+          <WhatsAppFab />
           <ClientInitializer />
         </CartProvider>
       </body>

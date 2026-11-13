@@ -26,6 +26,16 @@ export default function Navbar() {
     }
   }, [isSearchOpen]);
 
+  // Lock body scroll while the mobile drawer is open
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isMobileMenuOpen]);
+
   // Handle escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -48,7 +58,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header id="top" className="header">
+      <header id="top" className="header" data-react-nav="true">
         <div className="site-top">
           <div className="header-wrapper">
             <div data-nav-animation="over-left" data-nav-collapse="medium" data-nav-duration="400" data-anim-easing="ease" data-anim-easing2="ease" role="banner" className="hdr site-nav">
@@ -61,9 +71,21 @@ export default function Navbar() {
 
                     <nav
                       role="navigation"
+                      id="mobile-nav-menu"
+                      aria-label="Main navigation"
                       className={`nav-menu-wrapper nav-menu-list ${isMobileMenuOpen ? 'nav-menu-open' : ''}`}
-                      style={isMobileMenuOpen ? { display: 'block' } : undefined}
                     >
+                      <button
+                        type="button"
+                        className="nav-close-btn"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        aria-label="Close navigation menu"
+                      >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                          <line x1="18" y1="6" x2="6" y2="18" />
+                          <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      </button>
                       <ul role="list" className="nav-menu site-list-unstyled list-unstyled" style={{ listStyle: 'none', paddingLeft: 0, margin: 0 }}>
                         <li className="mobile-logo">
                           <Link href="/" className="hdr-logo inline-block">
@@ -158,14 +180,17 @@ export default function Navbar() {
 
                     {/* MOBILE HAMBURGER BUTTON */}
                     <div className="offcanvas-button-wrapper">
-                      <div
+                      <button
+                        type="button"
                         className={`menu-button nav-toggle-btn ${isMobileMenuOpen ? 'is-open' : ''}`}
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        aria-label="Toggle navigation menu"
+                        onClick={() => setIsMobileMenuOpen((open) => !open)}
+                        aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+                        aria-expanded={isMobileMenuOpen}
+                        aria-controls="mobile-nav-menu"
                         style={{ cursor: 'pointer' }}
                       >
-                        <div className="icon-nav-menu"></div>
-                      </div>
+                        <span className="icon-nav-menu" aria-hidden="true"></span>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -236,6 +261,13 @@ export default function Navbar() {
             onClick={() => setIsSearchOpen(false)}
             style={{ display: isSearchOpen ? 'block' : 'none' }}
           ></div>
+          {isMobileMenuOpen && (
+            <div
+              className="nav-backdrop"
+              onClick={() => setIsMobileMenuOpen(false)}
+              aria-hidden="true"
+            ></div>
+          )}
         </div>
       </header>
     </>

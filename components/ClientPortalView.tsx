@@ -166,7 +166,7 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
           </div>
 
           <a
-            href={`https://wa.me/2348123456789?text=${encodeURIComponent(`Hi aB Labs, I am checking in from my portal for ${client.business_name || client.name} (${client.id}).`)}`}
+            href={`https://wa.me/2349036193817?text=${encodeURIComponent(`Hi aB Labs, I am checking in from my portal for ${client.business_name || client.name} (${client.id}).`)}`}
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -526,7 +526,7 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
                 You never have to worry about complicated web portals. You can send pictures, logos, and voice notes directly to our WhatsApp hotline anytime.
               </p>
               <a
-                href="https://wa.me/2348123456789"
+                href="https://wa.me/2349036193817"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{

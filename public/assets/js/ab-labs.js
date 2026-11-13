@@ -755,7 +755,8 @@ function initABLabs(force = false) {
   const navMenu = document.querySelector('.nav-menu, .nav-menu-list, .site-nav-menu');
   const navOverlay = document.querySelector('.nav-overlay-pane, .site-nav-overlay');
 
-  if (menuBtn && navMenu) {
+  // Skip when the nav is React-controlled; the component owns drawer state and scroll lock
+  if (menuBtn && navMenu && !navMenu.closest('[data-react-nav]')) {
     menuBtn.addEventListener('click', (e) => {
       e.preventDefault();
       const isOpen = navMenu.classList.contains('is-open');

@@ -103,7 +103,7 @@ export default function TemplateDetailView({
                       standardMonthlyPrice={template.standardMonthlyNgn || 10000}
                       standardSetupFee={template.standardSetupFeeNgn || 30000}
                       standardOutrightPrice={template.standardOutrightNgn || 100000}
-                      whatsappNumber="2348123456789"
+                      whatsappNumber="2349036193817"
                     />
 
                     {/* Value & Delivery Trust Items */}

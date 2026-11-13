@@ -23,7 +23,7 @@ export default function DualPricingSelector({
   standardMonthlyPrice = 10000,
   standardSetupFee = 30000,
   standardOutrightPrice = 100000,
-  whatsappNumber = '2348123456789',
+  whatsappNumber = '2349036193817',
 }: DualPricingSelectorProps) {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'outright'>('monthly');
 
