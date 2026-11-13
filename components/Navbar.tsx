@@ -75,47 +75,51 @@ export default function Navbar() {
                       aria-label="Main navigation"
                       className={`nav-menu-wrapper nav-menu-list ${isMobileMenuOpen ? 'nav-menu-open' : ''}`}
                     >
-                      <button
-                        type="button"
-                        className="nav-close-btn"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        aria-label="Close navigation menu"
-                      >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-                          <line x1="18" y1="6" x2="6" y2="18" />
-                          <line x1="6" y1="6" x2="18" y2="18" />
-                        </svg>
-                      </button>
+                      <div className="mobile-drawer-header">
+                        <Link href="/" className="hdr-logo inline-block" onClick={() => setIsMobileMenuOpen(false)}>
+                          <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="logo" />
+                        </Link>
+                        <button
+                          type="button"
+                          className="nav-close-btn"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          aria-label="Close navigation menu"
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                          </svg>
+                        </button>
+                      </div>
+
                       <ul role="list" className="nav-menu site-list-unstyled list-unstyled" style={{ listStyle: 'none', paddingLeft: 0, margin: 0 }}>
-                        <li className="mobile-logo">
-                          <Link href="/" className="hdr-logo inline-block">
-                            <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="logo" />
+                        <li>
+                          <Link href="/" className={`hdr-nav-a ${pathname === '/' ? 'is-current' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
+                            <span>Home</span>
+                            <span className="mobile-nav-arrow">→</span>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="/shop" className={`hdr-nav-a ${pathname.startsWith('/shop') ? 'is-current' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
+                            <span>Templates &amp; Shop</span>
+                            <span className="mobile-nav-arrow">→</span>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="/blog" className={`hdr-nav-a ${pathname.startsWith('/blog') ? 'is-current' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
+                            <span>Guides &amp; Blog</span>
+                            <span className="mobile-nav-arrow">→</span>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="/contact-us" className={`hdr-nav-a ${pathname === '/contact-us' ? 'is-current' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
+                            <span>Contact Us</span>
+                            <span className="mobile-nav-arrow">→</span>
                           </Link>
                         </li>
 
-                        <li>
-                          <Link href="/" className={`hdr-nav-a ${pathname === '/' ? 'is-current' : ''}`}>
-                            Home
-                          </Link>
-                        </li>
-                        <li>
-                          <Link href="/shop" className={`hdr-nav-a ${pathname.startsWith('/shop') ? 'is-current' : ''}`}>
-                            Shop
-                          </Link>
-                        </li>
-                        <li>
-                          <Link href="/blog" className={`hdr-nav-a ${pathname.startsWith('/blog') ? 'is-current' : ''}`}>
-                            Blog
-                          </Link>
-                        </li>
-                        <li>
-                          <Link href="/contact-us" className={`hdr-nav-a ${pathname === '/contact-us' ? 'is-current' : ''}`}>
-                            Contact
-                          </Link>
-                        </li>
-
-                        <li className="mobile-button">
-                          <Link href="/shop" className="primary-button inline-block">
+                        <li className="mobile-drawer-footer">
+                          <Link href="/shop" className="primary-button inline-block mobile-drawer-cta" onClick={() => setIsMobileMenuOpen(false)}>
                             <div className="button-text-wrapper">
                               <div className="button-text-block">
                                 <div className="link-text is-1">Explore Templates</div>
@@ -135,6 +139,22 @@ export default function Navbar() {
                               </div>
                             </div>
                           </Link>
+
+                          <div className="mobile-contact-card">
+                            <p className="mobile-contact-title">Direct Engineering Line</p>
+                            <a
+                              href="https://wa.me/2349036193817?text=Hi%20aB%20Labs%2C%20I%20would%20like%20to%20inquire%20about%20a%20website%20template."
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="mobile-contact-link"
+                            >
+                              <span className="mobile-contact-dot"></span>
+                              <span>WhatsApp: +234 903 619 3817</span>
+                            </a>
+                            <a href="mailto:hello@ab-labs.cv" className="mobile-contact-link-sub">
+                              hello@ab-labs.cv
+                            </a>
+                          </div>
                         </li>
                       </ul>
                     </nav>

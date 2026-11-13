@@ -166,24 +166,18 @@ export default function HeroStageSlider() {
 
       {/* Dynamic Floating Template Card with Smooth Crossfade */}
       <div className="hero-card hero-floating-card">
-        <p className="hero-card-name" key={active.name}>
-          {active.name}
-        </p>
-        <div className="hero-card-rule"></div>
-        <div className="hero-card-meta">
-          <p className="hero-card-meta-small">Industry</p>
-          <span>{active.category}</span>
-        </div>
-        <div className="hero-card-meta">
-          <p className="hero-card-meta-small">Performance</p>
-          <span style={{ color: active.metricColor, fontWeight: 700 }}>
-            {active.metric}
-          </span>
+        <div className="hero-card-info-group">
+          <div className="hero-card-meta">
+            <span className="hero-card-category-tag">{active.category}</span>
+          </div>
+          <p className="hero-card-name" key={active.name}>
+            {active.name}
+          </p>
         </div>
         <Link href={`/product/${active.slug}`} className="hero-card-link inline-block">
-          <div>Preview Template</div>
+          <span>Preview Template</span>
           <div className="readmore-button-icon site-embed">
-            <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
+            <svg fill="none" width="13" height="13" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
               <path d="M7 17 17 7M7 7h10v10"></path>
             </svg>
           </div>
