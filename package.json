@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev -p 3005",
     "build": "next build",
+    "build:cloudflare": "open-next-cloudflare build --dangerouslyUseUnsupportedNextVersion",
     "start": "next start -p 3005",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
@@ -18,9 +19,11 @@
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.20.6",
     "@types/node": "^20",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.138.0"
   }
 }
