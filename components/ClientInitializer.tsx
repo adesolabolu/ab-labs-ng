@@ -64,7 +64,7 @@ export default function ClientInitializer() {
         strategy="beforeInteractive"
       />
       <Script
-        src="/assets/js/ab-labs.js"
+        src="/assets/js/ab-labs.js?v=3"
         strategy="afterInteractive"
       />
     </>

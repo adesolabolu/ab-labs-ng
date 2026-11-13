@@ -12942,6 +12942,11 @@ option { color: #000 !important; }
   }
 }
 /* ── Shop: how it works ──────────────────────────────────────────── */
+html.site-mod-js:not(.ab-labs-ready) .abtm {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
 .abtm {
   width: 100%;
   max-width: 920px;
@@ -13208,8 +13213,11 @@ option { color: #000 !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .abtm,
   .abtm * {
     animation: none !important;
     transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
   }
 }

@@ -297,9 +297,11 @@ function initABLabs(force = false) {
       const innerSub = document.querySelector('.hero-subtitle-block');
       const innerSummary = document.querySelector('.hero-summary');
       const innerTags = document.querySelectorAll('.ab-flow-tag');
+      const innerAbtm = document.querySelector('.abtm');
 
       if (innerSub) gsap.set(innerSub, { opacity: 0, y: 16 });
       if (innerTags.length > 0) gsap.set(innerTags, { opacity: 0, y: 16 });
+      if (innerAbtm) gsap.set(innerAbtm, { opacity: 0, y: 24 });
 
       let splitInnerChars = null;
       if (typeof SplitText !== 'undefined') {
@@ -346,6 +348,9 @@ function initABLabs(force = false) {
       }
       if (innerTags.length > 0) {
         innerTl.to(innerTags, { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power1.out' }, 1.2);
+      }
+      if (innerAbtm) {
+        innerTl.to(innerAbtm, { opacity: 1, y: 0, duration: 0.75, ease: 'power2.out' }, 1.05);
       }
     }
 
