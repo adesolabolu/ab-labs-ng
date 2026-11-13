@@ -11,6 +11,11 @@
 /.next/
 /out/
 
+# OpenNext / Wrangler build output
+/.open-next/
+/.wrangler/
+/tmp_build/
+
 # Production
 /build
 
