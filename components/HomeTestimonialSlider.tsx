@@ -165,6 +165,7 @@ export default function HomeTestimonialSlider() {
 
                       <Link
                         href={`/product/${item.productSlug}`}
+                        scroll={true}
                         className="ab-testimonial-product-link"
                       >
                         <span>{item.productName}</span>

@@ -25,12 +25,30 @@ function initABLabs(force = false) {
   // =========================================================================
   let lenis;
   if (typeof Lenis !== 'undefined') {
+    if (window.lenisInstance) {
+      try {
+        window.lenisInstance.destroy();
+      } catch (e) {}
+    }
+
     lenis = new Lenis({
       duration: 0.9,
       easing: (t) => 1 - Math.pow(1 - t, 3),
       smoothWheel: true,
       wheelMultiplier: 1.1
     });
+
+    window.lenisInstance = lenis;
+    window.lenis = lenis;
+
+    if (force) {
+      try {
+        lenis.scrollTo(0, { immediate: true });
+      } catch (e) {}
+      window.scrollTo(0, 0);
+      if (document.documentElement) document.documentElement.scrollTop = 0;
+      if (document.body) document.body.scrollTop = 0;
+    }
 
     if (typeof ScrollTrigger !== 'undefined' && typeof gsap !== 'undefined') {
       lenis.on('scroll', () => {

@@ -22,6 +22,18 @@ export default function TemplateDetailView({
 }: TemplateDetailViewProps) {
   const [activeTab, setActiveTab] = useState<'overview' | 'launch'>('overview');
 
+  // Ensure landing on this template page always starts at the top
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as any });
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+    if (typeof window !== 'undefined' && (window as any).lenisInstance) {
+      try {
+        (window as any).lenisInstance.scrollTo(0, { immediate: true });
+      } catch (e) {}
+    }
+  }, [template.slug]);
+
   // Select 4 other templates to recommend
   const otherTemplates = relatedTemplates
     .filter((t) => t.slug !== template.slug)

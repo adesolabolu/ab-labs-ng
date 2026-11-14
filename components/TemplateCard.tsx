@@ -28,7 +28,7 @@ export default function TemplateCard({ template, priority = false, ctaText = 'Ex
     <article className="shop-template-card">
       {/* Image & Category Tag */}
       <div className="shop-template-thumb-wrap">
-        <Link href={`/product/${template.slug}`} className="shop-template-img-link">
+        <Link href={`/product/${template.slug}`} scroll={true} className="shop-template-img-link">
           <img
             src={template.image}
             alt={template.name}
@@ -48,6 +48,7 @@ export default function TemplateCard({ template, priority = false, ctaText = 'Ex
         {/* Title */}
         <Link
           href={`/product/${template.slug}`}
+          scroll={true}
           className="shop-template-title"
         >
           {template.name}
@@ -81,6 +82,7 @@ export default function TemplateCard({ template, priority = false, ctaText = 'Ex
 
           <Link
             href={`/product/${template.slug}`}
+            scroll={true}
             className="shop-card-cta"
           >
             <span>{ctaText}</span>
