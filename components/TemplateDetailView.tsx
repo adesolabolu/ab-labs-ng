@@ -8,6 +8,7 @@ import DualPricingSelector from '@/components/DualPricingSelector';
 import CallToAction from '@/components/CallToAction';
 import Footer from '@/components/Footer';
 import { Template, TEMPLATES } from '@/data/templates';
+import TemplateCard from '@/components/TemplateCard';
 
 interface TemplateDetailViewProps {
   template: Template;
@@ -409,88 +410,10 @@ export default function TemplateDetailView({
               </div>
 
               {/* Working Real Website Cards */}
-              <div className="site-dyn-list">
-                <div
-                  fade-in="true"
-                  role="list"
-                  className="products-content site-dyn-items"
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                    gap: '24px',
-                    marginTop: '32px',
-                  }}
-                >
-                  {otherTemplates.map((other) => (
-                    <div role="listitem" className="site-dyn-item" key={other.id}>
-                      <article className="products-single-item" style={{ overflow: 'hidden' }}>
-                        <div className="products-image-wrapper">
-                          <Link href={`/product/${other.slug}`} className="peoduct-image-link inline-block">
-                            <img
-                              loading="lazy"
-                              alt={other.name}
-                              src={other.image}
-                              className="products-image"
-                              style={{ width: '100%', height: '240px', objectFit: 'cover' }}
-                            />
-                          </Link>
-                        </div>
-                        <div className="product-content-wrapper" style={{ padding: '16px 20px 20px' }}>
-                          <div className="product-rating-block">
-                            <div className="prate-i">{other.categoryLabel}</div>
-                          </div>
-                          <Link
-                            href={`/product/${other.slug}`}
-                            className="product-title"
-                            style={{
-                              fontSize: '18px',
-                              fontWeight: 600,
-                              textDecoration: 'none',
-                              color: '#111827',
-                              marginTop: '6px',
-                              display: 'block',
-                            }}
-                          >
-                            {other.name}
-                          </Link>
-                          <div
-                            className="pft"
-                            style={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
-                              marginTop: '16px',
-                            }}
-                          >
-                            <div className="pprice">
-                              <p className="ppr" style={{ fontSize: '15px', fontWeight: 800, color: '#111827', margin: 0 }}>
-                                ₦{other.monthlyNgn.toLocaleString()}/mo <span style={{ fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>+ ₦{(other.setupFeeNgn / 1000).toFixed(0)}k setup</span>
-                              </p>
-                              <p style={{ fontSize: '11px', color: '#78716c', margin: '2px 0 0' }}>
-                                or <strong>₦{other.outrightNgn.toLocaleString()}</strong> outright
-                              </p>
-                            </div>
-                            <Link
-                              href={`/product/${other.slug}`}
-                              className="primary-button"
-                              style={{
-                                padding: '8px 16px',
-                                fontSize: '13px',
-                                fontWeight: 600,
-                                textDecoration: 'none',
-                                borderRadius: '100px',
-                                backgroundColor: '#111827',
-                                color: '#ffffff',
-                              }}
-                            >
-                              View Foundation →
-                            </Link>
-                          </div>
-                        </div>
-                      </article>
-                    </div>
-                  ))}
-                </div>
+              <div className="shop-catalog-grid" style={{ marginTop: '32px' }}>
+                {otherTemplates.map((other) => (
+                  <TemplateCard key={other.id} template={other} ctaText="View Foundation" />
+                ))}
               </div>
             </div>
           </section>

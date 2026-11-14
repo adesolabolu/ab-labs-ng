@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { CATEGORIES, Template } from '@/data/templates';
+import TemplateCard from '@/components/TemplateCard';
 
 /** Compact money label for tight card footers (₦5k, ₦15k, ₦35,500). */
 function formatShortNgn(value: number): string {
@@ -227,89 +228,7 @@ export default function ShopCatalog({ templates }: ShopCatalogProps) {
       ) : (
         <div className="shop-catalog-grid">
           {filteredTemplates.map((template) => (
-            <article
-              key={template.id}
-              className="shop-template-card"
-            >
-              {/* Image & Category Tag */}
-              <div className="shop-template-thumb-wrap">
-                <Link href={`/product/${template.slug}`} className="shop-template-img-link">
-                  <img
-                    src={template.image}
-                    alt={template.name}
-                    loading="lazy"
-                    className="shop-template-img"
-                  />
-                </Link>
-
-                {/* Category Pill Top-Right */}
-                <span className="shop-template-cat-badge">
-                  {template.categoryLabel}
-                </span>
-              </div>
-
-              {/* Content Body */}
-              <div className="shop-template-body">
-                {/* Launch speed & Tech Stack Badges (NO fake rating) */}
-                <div className="shop-template-meta-row">
-                  <span className="shop-template-speed-badge">
-                    <span className="speed-dot"></span>
-                    <span>Live in &lt; 36h</span>
-                  </span>
-
-                  <div className="shop-template-stack-list">
-                    {template.stack.slice(0, 2).map((s) => (
-                      <span key={s} className="shop-template-stack-pill">
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Title */}
-                <Link
-                  href={`/product/${template.slug}`}
-                  className="shop-template-title"
-                >
-                  {template.name}
-                </Link>
-
-                {/* Description */}
-                <p className="shop-template-desc">
-                  {template.description}
-                </p>
-
-                {/* Footer with Dual Launch Pricing and CTA (Zero-Collision Mobile Layout) */}
-                <div className="shop-card-footer">
-                  <div className="shop-card-price-group">
-                    <div className="shop-card-price-monthly">
-                      <span className="shop-card-price-mo">
-                        ₦{(template.monthlyNgn || 5000).toLocaleString()}/mo
-                      </span>
-                      <span className="shop-card-price-setup">
-                        + {formatShortNgn(template.setupFeeNgn || 50000)} setup
-                      </span>
-                    </div>
-                    <div className="shop-card-price-outright">
-                      or <strong>₦{(template.outrightNgn || template.priceNgn).toLocaleString()}</strong> outright
-                      {template.standardOutrightNgn > template.outrightNgn && (
-                        <span className="shop-card-price-strike">
-                          ₦{template.standardOutrightNgn.toLocaleString()}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <Link
-                    href={`/product/${template.slug}`}
-                    className="shop-card-cta"
-                  >
-                    <span>Order this design</span>
-                    <span aria-hidden="true">→</span>
-                  </Link>
-                </div>
-              </div>
-            </article>
+            <TemplateCard key={template.id} template={template} ctaText="Order this design" />
           ))}
         </div>
       )}
