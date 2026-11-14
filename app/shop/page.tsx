@@ -8,8 +8,9 @@ import StepsTileMarker from '@/components/StepsTileMarker';
 import { applyPricingOverrides } from '@/lib/template-pricing';
 import { pageMetadata } from '@/lib/site';
 
-// Prices are editable from the admin portal, so refresh the cached page.
-export const revalidate = 60;
+// Authoritative database pricing: Always serve fresh data directly from Neon DB.
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const metadata = pageMetadata({
   title: 'Website Templates Catalog',

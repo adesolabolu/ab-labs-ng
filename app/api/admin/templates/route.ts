@@ -16,18 +16,25 @@ function revalidateStorefront() {
   revalidatePath('/checkout', 'page');
 }
 
-/** Every catalog template merged with any saved price override. */
+/** Every catalog template directly from the database single source of truth. */
 export async function GET() {
   try {
     const templates = await applyPricingOverrides();
-    return NextResponse.json({ success: true, templates });
+    return NextResponse.json(
+      { success: true, templates },
+      {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        },
+      }
+    );
   } catch (error: any) {
     console.error('Error fetching template pricing:', error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
 
-/** Saves a price override for one template slug. */
+/** Saves template pricing and attributes directly into Neon DB. */
 export async function PATCH(req: Request) {
   try {
     const body = await req.json();
@@ -38,14 +45,18 @@ export async function PATCH(req: Request) {
     }
 
     const hasPrice = Object.prototype.hasOwnProperty.call(body, 'priceNgn');
+    const hasOutright = Object.prototype.hasOwnProperty.call(body, 'outrightNgn');
     const hasSetup = Object.prototype.hasOwnProperty.call(body, 'setupFeeNgn');
     const hasMonthly = Object.prototype.hasOwnProperty.call(body, 'monthlyNgn');
+    const hasDemo = Object.prototype.hasOwnProperty.call(body, 'demoUrl');
+    const hasName = Object.prototype.hasOwnProperty.call(body, 'name');
+    const hasDesc = Object.prototype.hasOwnProperty.call(body, 'description');
 
-    if (!hasPrice && !hasSetup && !hasMonthly) {
+    if (!hasPrice && !hasOutright && !hasSetup && !hasMonthly && !hasDemo && !hasName && !hasDesc) {
       return NextResponse.json({ success: false, error: 'Nothing to update' }, { status: 400 });
     }
 
-    for (const field of ['priceNgn', 'setupFeeNgn', 'monthlyNgn'] as const) {
+    for (const field of ['priceNgn', 'outrightNgn', 'setupFeeNgn', 'monthlyNgn'] as const) {
       if (!Object.prototype.hasOwnProperty.call(body, field)) continue;
       const raw = body[field];
       if (raw === '' || raw === null) continue;
@@ -60,9 +71,13 @@ export async function PATCH(req: Request) {
 
     const pricing = await savePricingOverride({
       slug,
-      priceNgn: hasPrice ? body.priceNgn : undefined,
+      priceNgn: hasPrice ? body.priceNgn : (hasOutright ? body.outrightNgn : undefined),
+      outrightNgn: hasOutright ? body.outrightNgn : (hasPrice ? body.priceNgn : undefined),
       setupFeeNgn: hasSetup ? body.setupFeeNgn : undefined,
       monthlyNgn: hasMonthly ? body.monthlyNgn : undefined,
+      demoUrl: hasDemo ? body.demoUrl : undefined,
+      name: hasName ? body.name : undefined,
+      description: hasDesc ? body.description : undefined,
     });
 
     revalidateStorefront();

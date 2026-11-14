@@ -13,7 +13,7 @@ type PricedTemplate = Template & {
 };
 
 export default function AdminPortalPage() {
-  const [activeTab, setActiveTab] = useState<'links' | 'clients' | 'orders' | 'templates' | 'inquiries' | 'users'>('links');
+  const [activeTab, setActiveTab] = useState<'links' | 'clients' | 'orders' | 'templates' | 'inquiries' | 'users' | 'blogs'>('links');
   
   // Data States
   const [loading, setLoading] = useState(true);
@@ -21,6 +21,13 @@ export default function AdminPortalPage() {
   const [clients, setClients] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [inquiries, setInquiries] = useState<any[]>([]);
+  const [blogs, setBlogs] = useState<any[]>([]);
+  const [editingBlogSlug, setEditingBlogSlug] = useState<string | null>(null);
+  const [editBlogTitle, setEditBlogTitle] = useState('');
+  const [editBlogCategory, setEditBlogCategory] = useState('');
+  const [editBlogExcerpt, setEditBlogExcerpt] = useState('');
+  const [savingBlog, setSavingBlog] = useState(false);
+  const [editPriceDemoUrl, setEditPriceDemoUrl] = useState('');
   const [userAnalytics, setUserAnalytics] = useState<{
     activeOnlineCount: number;
     activeClientsCount: number;
@@ -80,13 +87,14 @@ export default function AdminPortalPage() {
   const fetchAdminData = async () => {
     setLoading(true);
     try {
-      const [linksRes, clientsRes, ordersRes, templatesRes, inquiriesRes, usersRes] = await Promise.all([
+      const [linksRes, clientsRes, ordersRes, templatesRes, inquiriesRes, usersRes, blogsRes] = await Promise.all([
         fetch('/api/admin/links').then(r => r.json()),
         fetch('/api/admin/clients').then(r => r.json()),
         fetch('/api/admin/orders').then(r => r.json()),
         fetch('/api/admin/templates').then(r => r.json()).catch(() => null),
         fetch('/api/admin/inquiries').then(r => r.json()).catch(() => null),
         fetch('/api/admin/users').then(r => r.json()).catch(() => null),
+        fetch('/api/admin/blogs').then(r => r.json()).catch(() => null),
       ]);
 
       if (linksRes.success) {
@@ -104,6 +112,9 @@ export default function AdminPortalPage() {
       }
       if (inquiriesRes?.success && Array.isArray(inquiriesRes.inquiries)) {
         setInquiries(inquiriesRes.inquiries);
+      }
+      if (blogsRes?.success && Array.isArray(blogsRes.posts)) {
+        setBlogs(blogsRes.posts);
       }
       if (usersRes?.success) {
         setUserAnalytics({
@@ -281,6 +292,7 @@ export default function AdminPortalPage() {
     setEditPriceOutright(String(template.outrightNgn ?? template.priceNgn ?? 0));
     setEditPriceSetup(String(template.setupFeeNgn ?? 0));
     setEditPriceMonthly(String(template.monthlyNgn ?? 0));
+    setEditPriceDemoUrl(template.demoUrl || '');
   };
 
   const cancelEditingPrice = () => {
@@ -288,6 +300,7 @@ export default function AdminPortalPage() {
     setEditPriceOutright('');
     setEditPriceSetup('');
     setEditPriceMonthly('');
+    setEditPriceDemoUrl('');
   };
 
   const saveTemplatePrice = async (slug: string) => {
@@ -299,8 +312,10 @@ export default function AdminPortalPage() {
         body: JSON.stringify({
           slug,
           priceNgn: Number(editPriceOutright) || 0,
+          outrightNgn: Number(editPriceOutright) || 0,
           setupFeeNgn: Number(editPriceSetup) || 0,
           monthlyNgn: Number(editPriceMonthly) || 0,
+          demoUrl: editPriceDemoUrl,
         }),
       });
       const data = await res.json();
@@ -315,9 +330,10 @@ export default function AdminPortalPage() {
             ? {
                 ...t,
                 priceNgn: saved.priceNgn,
-                outrightNgn: saved.priceNgn,
+                outrightNgn: saved.outrightNgn ?? saved.priceNgn,
                 setupFeeNgn: saved.setupFeeNgn,
                 monthlyNgn: saved.monthlyNgn,
+                demoUrl: saved.demoUrl,
                 pricingOverride: true,
               }
             : t
@@ -328,6 +344,73 @@ export default function AdminPortalPage() {
       alert(`Pricing update failed: ${err.message}`);
     } finally {
       setSavingPrice(false);
+    }
+  };
+
+  // Blog Management Handlers
+  const startEditingBlog = (post: any) => {
+    setEditingBlogSlug(post.slug);
+    setEditBlogTitle(post.title || '');
+    setEditBlogCategory(post.category || '');
+    setEditBlogExcerpt(post.excerpt || '');
+  };
+
+  const cancelEditingBlog = () => {
+    setEditingBlogSlug(null);
+    setEditBlogTitle('');
+    setEditBlogCategory('');
+    setEditBlogExcerpt('');
+  };
+
+  const saveBlog = async (slug: string) => {
+    setSavingBlog(true);
+    try {
+      const res = await fetch('/api/admin/blogs', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slug,
+          title: editBlogTitle,
+          category: editBlogCategory,
+          excerpt: editBlogExcerpt,
+        }),
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Failed to update editorial guide');
+      setBlogs(prev =>
+        prev.map(p =>
+          p.slug === slug
+            ? { ...p, title: editBlogTitle, category: editBlogCategory, excerpt: editBlogExcerpt }
+            : p
+        )
+      );
+      cancelEditingBlog();
+    } catch (err: any) {
+      alert(`Guide update failed: ${err.message}`);
+    } finally {
+      setSavingBlog(false);
+    }
+  };
+
+  const toggleBlogPublish = async (slug: string, currentPublished: boolean) => {
+    try {
+      const res = await fetch('/api/admin/blogs', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slug,
+          published: !currentPublished,
+        }),
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Failed to update status');
+      setBlogs(prev =>
+        prev.map(p =>
+          p.slug === slug ? { ...p, published: !currentPublished } : p
+        )
+      );
+    } catch (err: any) {
+      alert(`Status toggle failed: ${err.message}`);
     }
   };
 
@@ -1113,6 +1196,26 @@ export default function AdminPortalPage() {
               <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: userAnalytics.activeOnlineCount > 0 ? '#10b981' : '#71717a' }} />
               <span>Live Users ({userAnalytics.activeOnlineCount} Online / {clients.length} Accounts)</span>
             </button>
+
+            <button
+              onClick={() => setActiveTab('blogs')}
+              style={{
+                padding: '7px 16px',
+                borderRadius: '7px',
+                fontSize: '13px',
+                fontWeight: 600,
+                border: 'none',
+                cursor: 'pointer',
+                backgroundColor: activeTab === 'blogs' ? '#27272a' : 'transparent',
+                color: activeTab === 'blogs' ? '#ffffff' : '#71717a',
+                transition: 'all 0.15s ease',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+              }}
+            >
+              <span>Editorial Guides ({blogs.length})</span>
+            </button>
           </div>
 
           {/* Quick Search Field */}
@@ -1732,6 +1835,31 @@ export default function AdminPortalPage() {
                               </label>
                             ))}
                           </div>
+
+                          <label style={{ display: 'block' }}>
+                            <span style={{ display: 'block', fontSize: '10px', fontWeight: 600, color: '#71717a', marginBottom: '4px' }}>
+                              Live Demo URL
+                            </span>
+                            <input
+                              type="text"
+                              placeholder="https://lumina-demo.ab-labs.cv"
+                              value={editPriceDemoUrl}
+                              onChange={(e) => setEditPriceDemoUrl(e.target.value)}
+                              disabled={savingPrice}
+                              style={{
+                                width: '100%',
+                                padding: '7px 8px',
+                                backgroundColor: '#18181b',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                borderRadius: '6px',
+                                color: '#ffffff',
+                                fontSize: '12px',
+                                boxSizing: 'border-box',
+                                outline: 'none',
+                                colorScheme: 'dark',
+                              }}
+                            />
+                          </label>
 
                           <div style={{ display: 'flex', gap: '8px' }}>
                             <button
@@ -2600,6 +2728,273 @@ export default function AdminPortalPage() {
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Tab 7: Editorial Guides & Blog Posts (Neon DB Single Source of Truth) */}
+        {activeTab === 'blogs' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: '16px 20px',
+              backgroundColor: '#121215',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '12px',
+            }}>
+              <div>
+                <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#f4f4f5', margin: 0 }}>
+                  Editorial Business Guides &amp; Insights
+                </h3>
+                <p style={{ fontSize: '12.5px', color: '#71717a', margin: '3px 0 0' }}>
+                  Managed directly in Neon PostgreSQL. Every post update updates the live site instantly without code changes.
+                </p>
+              </div>
+
+              <span style={{
+                fontSize: '11px',
+                fontWeight: 700,
+                color: '#38bdf8',
+                backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                padding: '4px 10px',
+                borderRadius: '6px',
+                border: '1px solid rgba(56, 189, 248, 0.25)',
+              }}>
+                Neon DB Sync Active
+              </span>
+            </div>
+
+            {/* Guides Table */}
+            <div style={{
+              backgroundColor: '#121215',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '14px',
+              overflow: 'hidden',
+            }}>
+              {blogs.length === 0 ? (
+                <div style={{ padding: '60px 20px', textAlign: 'center', color: '#71717a', fontSize: '14px' }}>
+                  No editorial guides found in database. Initializing table...
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {blogs
+                    .filter((p) => {
+                      if (!searchQuery) return true;
+                      const q = searchQuery.toLowerCase();
+                      return (
+                        p.title.toLowerCase().includes(q) ||
+                        p.category.toLowerCase().includes(q) ||
+                        p.slug.toLowerCase().includes(q)
+                      );
+                    })
+                    .map((post) => (
+                      <div
+                        key={post.slug}
+                        style={{
+                          padding: '18px 20px',
+                          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '12px',
+                        }}
+                      >
+                        {editingBlogSlug === post.slug ? (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '10px' }}>
+                              <label style={{ display: 'block' }}>
+                                <span style={{ display: 'block', fontSize: '10.5px', color: '#71717a', marginBottom: '4px', fontWeight: 600 }}>
+                                  Article Title
+                                </span>
+                                <input
+                                  type="text"
+                                  value={editBlogTitle}
+                                  onChange={(e) => setEditBlogTitle(e.target.value)}
+                                  disabled={savingBlog}
+                                  style={{
+                                    width: '100%',
+                                    padding: '8px 10px',
+                                    backgroundColor: '#18181b',
+                                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                                    borderRadius: '6px',
+                                    color: '#ffffff',
+                                    fontSize: '13px',
+                                    boxSizing: 'border-box',
+                                  }}
+                                />
+                              </label>
+
+                              <label style={{ display: 'block' }}>
+                                <span style={{ display: 'block', fontSize: '10.5px', color: '#71717a', marginBottom: '4px', fontWeight: 600 }}>
+                                  Category Label
+                                </span>
+                                <input
+                                  type="text"
+                                  value={editBlogCategory}
+                                  onChange={(e) => setEditBlogCategory(e.target.value)}
+                                  disabled={savingBlog}
+                                  style={{
+                                    width: '100%',
+                                    padding: '8px 10px',
+                                    backgroundColor: '#18181b',
+                                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                                    borderRadius: '6px',
+                                    color: '#ffffff',
+                                    fontSize: '13px',
+                                    boxSizing: 'border-box',
+                                  }}
+                                />
+                              </label>
+                            </div>
+
+                            <label style={{ display: 'block' }}>
+                              <span style={{ display: 'block', fontSize: '10.5px', color: '#71717a', marginBottom: '4px', fontWeight: 600 }}>
+                                Lead Excerpt
+                              </span>
+                              <textarea
+                                rows={2}
+                                value={editBlogExcerpt}
+                                onChange={(e) => setEditBlogExcerpt(e.target.value)}
+                                disabled={savingBlog}
+                                style={{
+                                  width: '100%',
+                                  padding: '8px 10px',
+                                  backgroundColor: '#18181b',
+                                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                                  borderRadius: '6px',
+                                  color: '#ffffff',
+                                  fontSize: '12.5px',
+                                  boxSizing: 'border-box',
+                                }}
+                              />
+                            </label>
+
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                              <button
+                                onClick={() => saveBlog(post.slug)}
+                                disabled={savingBlog}
+                                style={{
+                                  fontSize: '12px',
+                                  fontWeight: 600,
+                                  color: '#052e16',
+                                  backgroundColor: '#34d399',
+                                  border: 'none',
+                                  borderRadius: '6px',
+                                  padding: '6px 14px',
+                                  cursor: savingBlog ? 'wait' : 'pointer',
+                                }}
+                              >
+                                {savingBlog ? 'Saving…' : 'Save Guide'}
+                              </button>
+                              <button
+                                onClick={cancelEditingBlog}
+                                disabled={savingBlog}
+                                style={{
+                                  fontSize: '12px',
+                                  fontWeight: 600,
+                                  color: '#a1a1aa',
+                                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                                  borderRadius: '6px',
+                                  padding: '6px 12px',
+                                  cursor: 'pointer',
+                                }}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1, minWidth: 0 }}>
+                              {post.image && (
+                                <img
+                                  src={post.image}
+                                  alt={post.title}
+                                  style={{ width: '64px', height: '48px', borderRadius: '6px', objectFit: 'cover', flexShrink: 0 }}
+                                />
+                              )}
+                              <div style={{ minWidth: 0 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                                  <span style={{
+                                    fontSize: '10.5px',
+                                    fontWeight: 700,
+                                    textTransform: 'uppercase',
+                                    padding: '2px 6px',
+                                    borderRadius: '4px',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                                    color: '#d4d4d8',
+                                  }}>
+                                    {post.category}
+                                  </span>
+                                  <span style={{ fontSize: '11.5px', color: '#71717a' }}>{post.readTime}</span>
+                                  <span style={{ fontSize: '11.5px', color: '#71717a' }}>&bull; {post.date}</span>
+                                </div>
+                                <h4 style={{ fontSize: '14.5px', fontWeight: 700, color: '#f4f4f5', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                  {post.title}
+                                </h4>
+                                <div style={{ fontSize: '11.5px', color: '#71717a', marginTop: '2px' }}>
+                                  By {post.author?.name || 'aB Labs'} &bull; Slug: <code style={{ color: '#a1a1aa' }}>/blog/{post.slug}</code>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+                              <button
+                                onClick={() => toggleBlogPublish(post.slug, post.published !== false)}
+                                style={{
+                                  fontSize: '11.5px',
+                                  fontWeight: 700,
+                                  padding: '4px 10px',
+                                  borderRadius: '6px',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  backgroundColor: post.published !== false ? 'rgba(16, 185, 129, 0.15)' : 'rgba(234, 179, 8, 0.15)',
+                                  color: post.published !== false ? '#34d399' : '#facc15',
+                                }}
+                              >
+                                {post.published !== false ? '● Published' : '○ Draft'}
+                              </button>
+
+                              <button
+                                onClick={() => startEditingBlog(post)}
+                                style={{
+                                  fontSize: '11.5px',
+                                  fontWeight: 600,
+                                  padding: '5px 12px',
+                                  borderRadius: '6px',
+                                  backgroundColor: 'rgba(255, 255, 255, 0.06)',
+                                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                                  color: '#ffffff',
+                                  cursor: 'pointer',
+                                }}
+                              >
+                                Edit
+                              </button>
+
+                              <Link
+                                href={`/blog/${post.slug}`}
+                                target="_blank"
+                                style={{
+                                  fontSize: '11.5px',
+                                  fontWeight: 600,
+                                  padding: '5px 12px',
+                                  borderRadius: '6px',
+                                  backgroundColor: '#ffffff',
+                                  color: '#09090b',
+                                  textDecoration: 'none',
+                                }}
+                              >
+                                View Live ↗
+                              </Link>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
                 </div>
               )}
             </div>

@@ -3,11 +3,14 @@ import Link from 'next/link';
 import { Template } from '@/data/templates';
 
 function formatShortNgn(num: number): string {
+  if (!Number.isFinite(num) || num <= 0) return '₦0';
   if (num >= 1000000) {
-    return `₦${(num / 1000000).toFixed(num % 1000000 === 0 ? 0 : 1)}M`;
+    const val = num / 1000000;
+    return `₦${val % 1 === 0 ? val : val.toFixed(1)}M`;
   }
   if (num >= 1000) {
-    return `₦${(num / 1000).toFixed(0)}k`;
+    const val = num / 1000;
+    return `₦${val % 1 === 0 ? val : val.toFixed(1)}k`;
   }
   return `₦${num.toLocaleString()}`;
 }
@@ -19,9 +22,9 @@ interface TemplateCardProps {
 }
 
 export default function TemplateCard({ template, priority = false, ctaText = 'Explore Design' }: TemplateCardProps) {
-  const monthly = template.monthlyNgn || 5000;
-  const setup = template.setupFeeNgn || 50000;
-  const outright = template.outrightNgn || template.priceNgn;
+  const monthly = template.monthlyNgn ?? 5000;
+  const setup = template.setupFeeNgn ?? 15000;
+  const outright = template.outrightNgn ?? template.priceNgn ?? 50000;
   const standardOutright = template.standardOutrightNgn || 0;
 
   return (

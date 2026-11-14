@@ -3,8 +3,13 @@ import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
 import React from 'react';
 import Link from 'next/link';
-import { BLOG_POSTS, BLOG_CATEGORIES } from '@/data/blogs';
+import { BLOG_CATEGORIES } from '@/data/blogs';
+import { getBlogPostsFromDb } from '@/lib/blogs-db';
 import { pageMetadata } from '@/lib/site';
+
+// Single source of truth: Always query latest editorial guides from Neon DB.
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const metadata = pageMetadata({
   title: 'Guides & Tips to Grow Your Business Online',
@@ -13,9 +18,10 @@ export const metadata = pageMetadata({
   path: '/blog',
 });
 
-export default function BlogPage() {
-  const featured = BLOG_POSTS[0];
-  const listPosts = BLOG_POSTS.slice(1);
+export default async function BlogPage() {
+  const posts = await getBlogPostsFromDb();
+  const featured = posts[0];
+  const listPosts = posts.slice(1);
 
   return (
     <>
