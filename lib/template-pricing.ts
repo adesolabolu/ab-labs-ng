@@ -106,6 +106,25 @@ export async function applyPricingOverrides(): Promise<TemplateWithPricing[]> {
   });
 }
 
+/** Returns a single template with current database pricing applied. */
+export async function getTemplateWithPricing(slug: string): Promise<TemplateWithPricing | null> {
+  const templates = await applyPricingOverrides();
+  const clean = String(slug || '').trim();
+  return templates.find((t) => t.slug === clean || t.id === clean) || null;
+}
+
+/** Single source of truth calculation for initial payment due today */
+export function calculateAmountDue(
+  template: { setupFeeNgn?: number; outrightNgn?: number; priceNgn?: number },
+  plan: 'monthly' | 'outright' | string
+): number {
+  if (String(plan).toLowerCase() === 'outright') {
+    return Number(template.outrightNgn || template.priceNgn || 50000);
+  }
+  // For monthly launch: customer pays JUST the setup fee first to start the build
+  return Number(template.setupFeeNgn || 15000);
+}
+
 export interface PricingInput {
   slug: string;
   priceNgn?: number | string;

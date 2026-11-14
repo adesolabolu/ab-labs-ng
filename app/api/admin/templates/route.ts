@@ -13,6 +13,7 @@ function revalidateStorefront() {
   revalidatePath('/', 'page');
   revalidatePath('/shop', 'page');
   revalidatePath('/product/[slug]', 'page');
+  revalidatePath('/checkout', 'page');
 }
 
 /** Every catalog template merged with any saved price override. */

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import sql from '@/lib/db';
+import { getTemplateWithPricing, calculateAmountDue } from '@/lib/template-pricing';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,8 +20,23 @@ export async function POST(req: Request) {
       callbackUrl,
     } = body;
 
-    if (!customerEmail || !customerName || !amountNgn) {
+    if (!customerEmail || !customerName) {
       return NextResponse.json({ success: false, error: 'Missing required customer details' }, { status: 400 });
+    }
+
+    // Single source of truth: authoritative pricing from DB if template is specified
+    let finalAmount = Number(amountNgn || 0);
+    let matchedTemplate = null;
+
+    if (templateSlug) {
+      matchedTemplate = await getTemplateWithPricing(templateSlug);
+      if (matchedTemplate) {
+        finalAmount = calculateAmountDue(matchedTemplate, planType || 'MONTHLY');
+      }
+    }
+
+    if (!finalAmount || finalAmount <= 0) {
+      return NextResponse.json({ success: false, error: 'Invalid order amount' }, { status: 400 });
     }
 
     const paystackSecretKey = process.env.PAYSTACK_SECRET_KEY;
@@ -50,7 +66,7 @@ export async function POST(req: Request) {
         ${linkId || null},
         ${templateSlug || 'custom'},
         ${planType || 'MONTHLY'},
-        ${Number(amountNgn)},
+        ${finalAmount},
         ${customerName},
         ${customerEmail},
         ${customerPhone || null},
@@ -58,7 +74,13 @@ export async function POST(req: Request) {
         ${requestedDomain || null},
         ${reference},
         'pending',
-        ${JSON.stringify({ initiatedAt: new Date().toISOString() })}
+        ${JSON.stringify({
+          initiatedAt: new Date().toISOString(),
+          setupFeeNgn: matchedTemplate?.setupFeeNgn,
+          monthlyNgn: matchedTemplate?.monthlyNgn,
+          outrightNgn: matchedTemplate?.outrightNgn,
+          billedModel: planType?.toUpperCase() === 'OUTRIGHT' ? 'OUTRIGHT_PURCHASE' : 'SETUP_FEE_ONLY',
+        })}
       )
     `;
 
@@ -72,7 +94,7 @@ export async function POST(req: Request) {
         },
         body: JSON.stringify({
           email: customerEmail,
-          amount: Number(amountNgn) * 100, // Paystack expects kobo
+          amount: finalAmount * 100, // Paystack expects kobo
           reference,
           callback_url: callbackUrl || undefined,
           metadata: {
@@ -84,6 +106,7 @@ export async function POST(req: Request) {
             linkId,
             templateSlug,
             planType,
+            finalAmount,
           },
         }),
       });

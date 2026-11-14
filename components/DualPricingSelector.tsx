@@ -115,7 +115,7 @@ export default function DualPricingSelector({
             </div>
 
             <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#6b7280', lineHeight: 1.45 }}>
-              ⚡ <strong>{monthlyDiscountPct > 0 ? `${monthlyDiscountPct}% launch discount` : 'Launch pricing'}</strong> active for 3 months. Includes 1-year domain (.com.ng, .online, .store, .site &amp; more), hosting &amp; full management.
+              ⚡ Pay only <strong>{formatNgn(setupFee)} setup fee</strong> today to start your build. Monthly {formatNgn(monthlyPrice)}/mo maintenance begins only after your website is completed, approved, and live.
             </p>
           </div>
         </div>
@@ -242,8 +242,8 @@ export default function DualPricingSelector({
           }}
         >
           {selectedPlan === 'monthly'
-            ? `Pay & Start Build (${formatNgn(setupFee + monthlyPrice)})`
-            : `Pay & Start Build (${formatNgn(outrightPrice)})`}
+            ? `Pay & Start Build (${formatNgn(setupFee)} setup fee)`
+            : `Pay & Start Build (${formatNgn(outrightPrice)} outright)`}
         </Link>
 
         <button
