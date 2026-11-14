@@ -55,6 +55,8 @@ export default function DualPricingSelector({
           onClick={() => setSelectedPlan('monthly')}
           role="button"
           tabIndex={0}
+          data-umami-event="Pricing Selector - Selected Monthly Plan"
+          data-umami-event-template={templateSlug}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') setSelectedPlan('monthly');
           }}
@@ -122,6 +124,8 @@ export default function DualPricingSelector({
           onClick={() => setSelectedPlan('outright')}
           role="button"
           tabIndex={0}
+          data-umami-event="Pricing Selector - Selected Outright Plan"
+          data-umami-event-template={templateSlug}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') setSelectedPlan('outright');
           }}
@@ -201,6 +205,9 @@ export default function DualPricingSelector({
         <a
           href={`/contact-us?template=${templateSlug}&plan=${selectedPlan}`}
           className="primary-button"
+          data-umami-event={`Pricing Selector - Clicked Start Build (${selectedPlan})`}
+          data-umami-event-template={templateSlug}
+          data-umami-event-plan={selectedPlan}
           style={{
             display: 'flex',
             justifyContent: 'center',
@@ -228,6 +235,8 @@ export default function DualPricingSelector({
           type="button"
           onClick={() => setShowDemoModal(true)}
           className="demo-request-btn"
+          data-umami-event="Pricing Selector - Clicked Request Free Demo"
+          data-umami-event-template={templateSlug}
           style={{
             display: 'flex',
             justifyContent: 'center',

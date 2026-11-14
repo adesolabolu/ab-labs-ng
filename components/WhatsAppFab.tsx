@@ -24,6 +24,7 @@ export default function WhatsAppFab() {
       rel="noopener noreferrer"
       className="whatsapp-fab"
       aria-label={`Chat with aB Labs on WhatsApp at ${WHATSAPP_DISPLAY}`}
+      data-umami-event="WhatsApp FAB - Clicked Chat"
     >
       <svg
         width="30"

@@ -174,7 +174,13 @@ export default function HeroStageSlider() {
             {active.name}
           </p>
         </div>
-        <Link href={`/product/${active.slug}`} scroll={true} className="hero-card-link inline-block">
+        <Link
+          href={`/product/${active.slug}`}
+          scroll={true}
+          data-umami-event="Hero Stage - Clicked Preview Template"
+          data-umami-event-template={active.slug}
+          className="hero-card-link inline-block"
+        >
           <span>Preview Template</span>
           <div className="readmore-button-icon site-embed">
             <svg fill="none" width="13" height="13" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">

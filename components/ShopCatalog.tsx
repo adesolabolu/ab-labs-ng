@@ -93,6 +93,8 @@ export default function ShopCatalog({ templates }: ShopCatalogProps) {
                 key={cat.id}
                 type="button"
                 aria-pressed={isActive}
+                data-umami-event="Shop - Selected Category"
+                data-umami-event-category={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
                 className={`abfilter-pill${isActive ? ' is-active' : ''}`}
               >
@@ -146,6 +148,7 @@ export default function ShopCatalog({ templates }: ShopCatalogProps) {
               <select
                 id="price-range-select"
                 value={priceRange}
+                data-umami-event="Shop - Changed Price Range"
                 onChange={(e) => setPriceRange(e.target.value as PriceRangeId)}
                 aria-label="Filter templates by budget"
               >
@@ -165,6 +168,7 @@ export default function ShopCatalog({ templates }: ShopCatalogProps) {
               <select
                 id="sort-by-select"
                 value={sortBy}
+                data-umami-event="Shop - Changed Sort Order"
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
                 aria-label="Sort templates"
               >
@@ -196,6 +200,7 @@ export default function ShopCatalog({ templates }: ShopCatalogProps) {
             <button
               type="button"
               className="abfilter-reset"
+              data-umami-event="Shop - Reset Filters"
               onClick={handleResetFilters}
             >
               Reset filters

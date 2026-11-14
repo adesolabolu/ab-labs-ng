@@ -98,6 +98,13 @@ export default function DemoRequestModal({
 
       const data = await res.json();
       if (res.ok && data.success) {
+        if (typeof window !== 'undefined' && (window as any).umami) {
+          (window as any).umami.track('Demo Modal - Successfully Submitted', {
+            template: templateSlug || templateName,
+            plan: planPreference,
+            business: formData.businessName || 'N/A'
+          });
+        }
         setStatus('success');
       } else {
         setStatus('error');
@@ -312,6 +319,9 @@ export default function DemoRequestModal({
                   href={`https://wa.me/${whatsappNumber}?text=${encodedWhatsapp}`}
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-umami-event="Demo Modal - Clicked WhatsApp Fast-Track"
+                  data-umami-event-template={templateSlug || templateName}
+                  data-umami-event-plan={planPreference}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -346,7 +356,13 @@ export default function DemoRequestModal({
               </div>
 
               {/* Option 2 Form */}
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <form
+                onSubmit={handleSubmit}
+                data-umami-event="Demo Modal - Submitted Form"
+                data-umami-event-template={templateSlug || templateName}
+                data-umami-event-plan={planPreference}
+                style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
+              >
                 {/* Name & Phone Grid */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   <div>

@@ -38,6 +38,11 @@ export default function ContactForm() {
       const data = await res.json();
 
       if (res.ok && data.success) {
+        if (typeof window !== 'undefined' && (window as any).umami) {
+          (window as any).umami.track('Contact Form - Successfully Sent', {
+            topic: formData.field || 'General Inquiry',
+          });
+        }
         setStatus('success');
         setFormData({ firstName: '', lastName: '', email: '', field: '', message: '' });
       } else {
@@ -68,7 +73,7 @@ export default function ContactForm() {
           </button>
         </div>
       ) : (
-        <form id="contact-form" onSubmit={handleSubmit}>
+        <form id="contact-form" onSubmit={handleSubmit} data-umami-event="Contact Form - Submitted">
           <h3 data-summary="true" className="ct-form-h">Send us a message</h3>
           <p data-summary="true" className="ct-form-sub">Fill in the form and we&apos;ll get back to you shortly.</p>
 

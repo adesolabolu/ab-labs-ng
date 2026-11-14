@@ -166,6 +166,8 @@ export default function HomeTestimonialSlider() {
                       <Link
                         href={`/product/${item.productSlug}`}
                         scroll={true}
+                        data-umami-event="Testimonial - Clicked Foundation Link"
+                        data-umami-event-template={item.productSlug}
                         className="ab-testimonial-product-link"
                       >
                         <span>{item.productName}</span>

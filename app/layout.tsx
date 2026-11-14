@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import './globals.css';
 import ClientInitializer from '@/components/ClientInitializer';
 import ScrollToTop from '@/components/ScrollToTop';
@@ -86,6 +87,18 @@ export default function RootLayout({
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
           rel="stylesheet"
+        />
+        {/* Umami Analytics — Telemetry & Traffic */}
+        <Script
+          src={`${process.env.NEXT_PUBLIC_UMAMI_HOST_URL || 'https://umami-tracker-8hgi.vercel.app'}/script.js`}
+          data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID || 'dcd3a1e0-7b7b-42aa-bdbb-59ac022198c2'}
+          strategy="afterInteractive"
+        />
+        {/* Umami Analytics — 100% Session Replay Capture */}
+        <Script
+          src={`${process.env.NEXT_PUBLIC_UMAMI_HOST_URL || 'https://umami-tracker-8hgi.vercel.app'}/recorder.js`}
+          data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID || 'dcd3a1e0-7b7b-42aa-bdbb-59ac022198c2'}
+          strategy="afterInteractive"
         />
       </head>
       <body>

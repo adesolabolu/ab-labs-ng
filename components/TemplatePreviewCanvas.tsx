@@ -117,6 +117,8 @@ const handleRefresh = () => {
             <button
               type="button"
               onClick={() => setViewport('desktop')}
+              data-umami-event="Preview Canvas - Switched Viewport"
+              data-umami-event-viewport="desktop"
               className={`tpc-btn ${viewport === 'desktop' ? 'active' : ''}`}
               title="Desktop View (1440px True Desktop Canvas)"
             >
@@ -131,6 +133,8 @@ const handleRefresh = () => {
             <button
               type="button"
               onClick={() => setViewport('tablet')}
+              data-umami-event="Preview Canvas - Switched Viewport"
+              data-umami-event-viewport="tablet"
               className={`tpc-btn ${viewport === 'tablet' ? 'active' : ''}`}
               title="Tablet View (768px)"
             >
@@ -144,6 +148,8 @@ const handleRefresh = () => {
             <button
               type="button"
               onClick={() => setViewport('mobile')}
+              data-umami-event="Preview Canvas - Switched Viewport"
+              data-umami-event-viewport="mobile"
               className={`tpc-btn ${viewport === 'mobile' ? 'active' : ''}`}
               title="Mobile View (390px)"
             >

@@ -71,7 +71,7 @@ export default function Navbar() {
               <div className="hdr-in">
                 <div className="site-blockcontainer container-large site-container">
                   <div className="navbar-wrapper">
-                    <Link href="/" className={`hdr-logo inline-block ${pathname === '/' ? 'is-current' : ''}`}>
+                    <Link href="/" data-umami-event="Navbar - Clicked Logo" className={`hdr-logo inline-block ${pathname === '/' ? 'is-current' : ''}`}>
                       <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="logo" />
                     </Link>
 
@@ -84,22 +84,22 @@ export default function Navbar() {
                     >
                       <ul role="list" className="nav-menu site-list-unstyled list-unstyled" style={{ listStyle: 'none', paddingLeft: 0, margin: 0 }}>
                         <li>
-                          <Link href="/" className={`hdr-nav-a ${pathname === '/' ? 'is-current' : ''}`}>
+                          <Link href="/" data-umami-event="Navbar - Clicked Home" className={`hdr-nav-a ${pathname === '/' ? 'is-current' : ''}`}>
                             <span>Home</span>
                           </Link>
                         </li>
                         <li>
-                          <Link href="/shop" className={`hdr-nav-a ${pathname.startsWith('/shop') ? 'is-current' : ''}`}>
+                          <Link href="/shop" data-umami-event="Navbar - Clicked Templates & Shop" className={`hdr-nav-a ${pathname.startsWith('/shop') ? 'is-current' : ''}`}>
                             <span>Templates &amp; Shop</span>
                           </Link>
                         </li>
                         <li>
-                          <Link href="/blog" className={`hdr-nav-a ${pathname.startsWith('/blog') ? 'is-current' : ''}`}>
+                          <Link href="/blog" data-umami-event="Navbar - Clicked Guides & Blog" className={`hdr-nav-a ${pathname.startsWith('/blog') ? 'is-current' : ''}`}>
                             <span>Guides &amp; Blog</span>
                           </Link>
                         </li>
                         <li>
-                          <Link href="/contact-us" className={`hdr-nav-a ${pathname === '/contact-us' ? 'is-current' : ''}`}>
+                          <Link href="/contact-us" data-umami-event="Navbar - Clicked Contact Us" className={`hdr-nav-a ${pathname === '/contact-us' ? 'is-current' : ''}`}>
                             <span>Contact Us</span>
                           </Link>
                         </li>
@@ -114,6 +114,7 @@ export default function Navbar() {
                         style={{ cursor: 'pointer' }}
                         role="button"
                         aria-label="Open search"
+                        data-umami-event="Navbar - Opened Search"
                       >
                         <div className="search-icon site-embed">
                           <svg className="nav__search-ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" strokeWidth="2px" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -123,7 +124,7 @@ export default function Navbar() {
                         </div>
                       </div>
 
-                      <Link href="/shop" className="primary-button inline-block">
+                      <Link href="/shop" data-umami-event="Navbar - Clicked Explore Templates CTA" className="primary-button inline-block">
                         <div className="button-text-wrapper">
                           <div className="button-text-block">
                             <div className="link-text is-1">Explore Templates</div>
@@ -154,6 +155,7 @@ export default function Navbar() {
                         aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
                         aria-expanded={isMobileMenuOpen}
                         aria-controls="mobile-nav-menu"
+                        data-umami-event={isMobileMenuOpen ? 'Mobile Drawer - Closed' : 'Mobile Drawer - Opened'}
                         style={{ cursor: 'pointer' }}
                       >
                         <span className="icon-nav-menu" aria-hidden="true"></span>
@@ -326,6 +328,7 @@ export default function Navbar() {
                   <Link
                     href="/"
                     onClick={() => setIsMobileMenuOpen(false)}
+                    data-umami-event="Mobile Drawer - Clicked Home"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -347,6 +350,7 @@ export default function Navbar() {
                   <Link
                     href="/shop"
                     onClick={() => setIsMobileMenuOpen(false)}
+                    data-umami-event="Mobile Drawer - Clicked Templates & Shop"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -368,6 +372,7 @@ export default function Navbar() {
                   <Link
                     href="/blog"
                     onClick={() => setIsMobileMenuOpen(false)}
+                    data-umami-event="Mobile Drawer - Clicked Guides & Blog"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -389,6 +394,7 @@ export default function Navbar() {
                   <Link
                     href="/contact-us"
                     onClick={() => setIsMobileMenuOpen(false)}
+                    data-umami-event="Mobile Drawer - Clicked Contact Us"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -413,6 +419,7 @@ export default function Navbar() {
                 <Link
                   href="/shop"
                   onClick={() => setIsMobileMenuOpen(false)}
+                  data-umami-event="Mobile Drawer - Clicked Explore Templates CTA"
                   className="primary-button inline-block"
                   style={{
                     width: '100%',
@@ -441,6 +448,7 @@ export default function Navbar() {
                     href="https://wa.me/2349036193817?text=Hi%20aB%20Labs%2C%20I%20would%20like%20to%20inquire%20about%20a%20website%20template."
                     target="_blank"
                     rel="noopener noreferrer"
+                    data-umami-event="Mobile Drawer - Clicked Direct WhatsApp"
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
