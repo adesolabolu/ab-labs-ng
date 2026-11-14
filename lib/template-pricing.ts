@@ -328,16 +328,22 @@ export async function getPricingOverrides(): Promise<Record<string, TemplatePric
   return map;
 }
 
-/** Calculates the authoritative amount due today: Setup fee for monthly, full price for outright. */
+/** Calculates the authoritative amount due today: Setup fee only, full monthly package (setup + 1st month), or full price for outright. */
 export function calculateAmountDue(
-  template: { setupFeeNgn?: number; outrightNgn?: number; priceNgn?: number },
+  template: { setupFeeNgn?: number; outrightNgn?: number; priceNgn?: number; monthlyNgn?: number },
   planType: string
 ): number {
-  const isMonthly = String(planType || '').toUpperCase() === 'MONTHLY';
-  if (isMonthly) {
-    return Number(template.setupFeeNgn ?? 15000);
+  const cleanPlan = String(planType || '').toUpperCase();
+  if (cleanPlan === 'OUTRIGHT') {
+    return Number(template.outrightNgn ?? template.priceNgn ?? 50000);
   }
-  return Number(template.outrightNgn ?? template.priceNgn ?? 50000);
+  if (cleanPlan === 'MONTHLY_PACKAGE' || cleanPlan === 'MONTHLY_FULL' || cleanPlan === 'MONTHLY_ALL') {
+    const setup = Number(template.setupFeeNgn ?? 15000);
+    const monthly = Number(template.monthlyNgn ?? 5000);
+    return setup + monthly;
+  }
+  // Default monthly: setup fee only
+  return Number(template.setupFeeNgn ?? 15000);
 }
 
 /** Drop-in replacement aliases for existing callers. */

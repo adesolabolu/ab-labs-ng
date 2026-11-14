@@ -79,7 +79,12 @@ export async function POST(req: Request) {
           setupFeeNgn: matchedTemplate?.setupFeeNgn,
           monthlyNgn: matchedTemplate?.monthlyNgn,
           outrightNgn: matchedTemplate?.outrightNgn,
-          billedModel: planType?.toUpperCase() === 'OUTRIGHT' ? 'OUTRIGHT_PURCHASE' : 'SETUP_FEE_ONLY',
+          billedModel:
+            planType?.toUpperCase() === 'OUTRIGHT'
+              ? 'OUTRIGHT_PURCHASE'
+              : planType?.toUpperCase() === 'MONTHLY_PACKAGE'
+              ? 'MONTHLY_SETUP_PLUS_FIRST_MONTH'
+              : 'SETUP_FEE_ONLY',
         })}
       )
     `;

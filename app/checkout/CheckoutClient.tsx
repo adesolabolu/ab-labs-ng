@@ -16,6 +16,7 @@ export default function CheckoutClient({
 }: CheckoutClientProps) {
   const router = useRouter();
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'outright'>(initialPlan);
+  const [monthlyOption, setMonthlyOption] = useState<'setup_only' | 'full_package'>('setup_only');
   const [template, setTemplate] = useState<TemplateWithPricing>(initialTemplate);
 
   // Form inputs (Lean, frictionless: Name, Email, WhatsApp, Business)
@@ -32,9 +33,15 @@ export default function CheckoutClient({
   const monthlyPrice = Number(template?.monthlyNgn || 5000);
   const setupFee = Number(template?.setupFeeNgn || 15000);
   const outrightPrice = Number(template?.outrightNgn || template?.priceNgn || 50000);
+  const fullMonthlyPackage = setupFee + monthlyPrice;
 
-  // Amount due today: setup fee only for monthly launch, full price for outright
-  const amountDue = selectedPlan === 'monthly' ? setupFee : outrightPrice;
+  // Amount due today
+  const amountDue =
+    selectedPlan === 'outright'
+      ? outrightPrice
+      : monthlyOption === 'full_package'
+      ? fullMonthlyPackage
+      : setupFee;
   const formatNgn = (val: number) => `₦${Number(val || 0).toLocaleString()}`;
 
   const handlePayNow = async (e: React.FormEvent) => {
@@ -46,12 +53,19 @@ export default function CheckoutClient({
       const origin = typeof window !== 'undefined' ? window.location.origin : '';
       const callbackUrl = `${origin}/pay/callback`;
 
+      const planType =
+        selectedPlan === 'outright'
+          ? 'OUTRIGHT'
+          : monthlyOption === 'full_package'
+          ? 'MONTHLY_PACKAGE'
+          : 'MONTHLY';
+
       const initRes = await fetch('/api/paystack/initialize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           templateSlug: template.slug,
-          planType: selectedPlan.toUpperCase(),
+          planType,
           amountNgn: amountDue,
           customerName,
           customerEmail,
@@ -177,170 +191,271 @@ export default function CheckoutClient({
             boxShadow: '0 12px 36px rgba(12, 11, 10, 0.04)',
           }}
         >
-          {/* Plan Selection: Two Dedicated Boxes (Setup Fee Only vs Full Build Upfront) */}
-          <div style={{ marginBottom: '28px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <label style={{ fontSize: '13.5px', fontWeight: 700, color: '#1c1917' }}>
-                Select Payment Option
-              </label>
+          {/* Plan Selection Box Container */}
+          <div
+            style={{
+              padding: '20px 22px',
+              borderRadius: '16px',
+              backgroundColor: '#fafaf9',
+              border: '1px solid #e7e5e4',
+              marginBottom: '28px',
+            }}
+          >
+            {/* Top Badge & Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span
+                  style={{
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                    color: selectedPlan === 'monthly' ? '#166534' : '#0369a1',
+                    backgroundColor: selectedPlan === 'monthly' ? '#dcfce7' : '#e0f2fe',
+                    padding: '3px 8px',
+                    borderRadius: '6px',
+                  }}
+                >
+                  Plan: {selectedPlan === 'monthly' ? 'Monthly Launch' : '100% Outright Ownership'}
+                </span>
+              </div>
               <span style={{ fontSize: '12px', color: '#78716c' }}>
-                {selectedPlan === 'monthly' ? 'Setup fee model selected' : 'Full build upfront selected'}
+                {selectedPlan === 'monthly'
+                  ? monthlyOption === 'setup_only'
+                    ? 'Setup fee only selected'
+                    : 'Full monthly package selected'
+                  : '100% Outright selected'}
               </span>
             </div>
 
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
-                gap: '12px',
-              }}
-            >
-              {/* BOX 1: Setup Fee Only (Monthly Launch) */}
-              <div
-                onClick={() => setSelectedPlan('monthly')}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') setSelectedPlan('monthly');
-                }}
-                style={{
-                  cursor: 'pointer',
-                  padding: '16px 16px',
-                  borderRadius: '14px',
-                  border: selectedPlan === 'monthly' ? '2px solid #1c1917' : '1px solid #e7e5e4',
-                  backgroundColor: selectedPlan === 'monthly' ? '#ffffff' : '#fafaf9',
-                  boxShadow: selectedPlan === 'monthly' ? '0 4px 14px rgba(0, 0, 0, 0.06)' : 'none',
-                  transition: 'all 0.15s ease',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '10px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div
-                        style={{
-                          width: '18px',
-                          height: '18px',
-                          borderRadius: '50%',
-                          border: selectedPlan === 'monthly' ? '5px solid #1c1917' : '2px solid #d6d3d1',
-                          backgroundColor: '#ffffff',
-                          boxSizing: 'border-box',
-                          flexShrink: 0,
-                        }}
-                      />
-                      <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1c1917' }}>
-                        Setup Fee Only
-                      </span>
+            {selectedPlan === 'monthly' ? (
+              <>
+                {/* Two Selectable Cards for Monthly Launch */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
+                    gap: '12px',
+                    marginBottom: '16px',
+                  }}
+                >
+                  {/* BOX 1: Setup Fee Only */}
+                  <div
+                    onClick={() => setMonthlyOption('setup_only')}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') setMonthlyOption('setup_only');
+                    }}
+                    style={{
+                      cursor: 'pointer',
+                      padding: '16px 16px',
+                      borderRadius: '14px',
+                      border: monthlyOption === 'setup_only' ? '2px solid #1c1917' : '1px solid #d6d3d1',
+                      backgroundColor: '#ffffff',
+                      boxShadow: monthlyOption === 'setup_only' ? '0 4px 14px rgba(0, 0, 0, 0.06)' : 'none',
+                      transition: 'all 0.15s ease',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div
+                            style={{
+                              width: '18px',
+                              height: '18px',
+                              borderRadius: '50%',
+                              border: monthlyOption === 'setup_only' ? '5px solid #1c1917' : '2px solid #d6d3d1',
+                              backgroundColor: '#ffffff',
+                              boxSizing: 'border-box',
+                              flexShrink: 0,
+                            }}
+                          />
+                          <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1c1917' }}>
+                            Setup Fee Only
+                          </span>
+                        </div>
+                        <span
+                          style={{
+                            fontSize: '10px',
+                            fontWeight: 700,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.04em',
+                            color: '#166534',
+                            backgroundColor: '#dcfce7',
+                            padding: '2px 7px',
+                            borderRadius: '4px',
+                          }}
+                        >
+                          Option 1
+                        </span>
+                      </div>
+
+                      <div style={{ marginTop: '4px' }}>
+                        <div style={{ fontSize: '18px', fontWeight: 800, color: '#1c1917', lineHeight: 1.15 }}>
+                          {formatNgn(setupFee)}
+                          <span style={{ fontSize: '12px', fontWeight: 500, color: '#57534e', marginLeft: '4px' }}>
+                            Due Today
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '11.5px', fontWeight: 600, color: '#15803d', marginTop: '3px' }}>
+                          +{formatNgn(monthlyPrice)}/mo after site is live
+                        </div>
+                      </div>
+
+                      <p style={{ margin: '8px 0 0', fontSize: '11.5px', color: '#78716c', lineHeight: 1.45 }}>
+                        Pay only the setup fee today. Your {formatNgn(monthlyPrice)}/mo maintenance begins only after your site is completed, approved, and live.
+                      </p>
                     </div>
-                    <span
-                      style={{
-                        fontSize: '10.5px',
-                        fontWeight: 700,
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.04em',
-                        color: '#166534',
-                        backgroundColor: '#dcfce7',
-                        padding: '2px 7px',
-                        borderRadius: '6px',
-                      }}
-                    >
-                      Monthly Plan
-                    </span>
                   </div>
 
-                  <div style={{ marginTop: '4px' }}>
-                    <div style={{ fontSize: '20px', fontWeight: 800, color: '#1c1917', lineHeight: 1.1 }}>
-                      {formatNgn(setupFee)}
-                      <span style={{ fontSize: '12px', fontWeight: 500, color: '#57534e', marginLeft: '4px' }}>
-                        Due Today
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '12px', fontWeight: 600, color: '#15803d', marginTop: '4px' }}>
-                      + {formatNgn(monthlyPrice)}/mo maintenance
+                  {/* BOX 2: Full Monthly Package Together */}
+                  <div
+                    onClick={() => setMonthlyOption('full_package')}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') setMonthlyOption('full_package');
+                    }}
+                    style={{
+                      cursor: 'pointer',
+                      padding: '16px 16px',
+                      borderRadius: '14px',
+                      border: monthlyOption === 'full_package' ? '2px solid #1c1917' : '1px solid #d6d3d1',
+                      backgroundColor: '#ffffff',
+                      boxShadow: monthlyOption === 'full_package' ? '0 4px 14px rgba(0, 0, 0, 0.06)' : 'none',
+                      transition: 'all 0.15s ease',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div
+                            style={{
+                              width: '18px',
+                              height: '18px',
+                              borderRadius: '50%',
+                              border: monthlyOption === 'full_package' ? '5px solid #1c1917' : '2px solid #d6d3d1',
+                              backgroundColor: '#ffffff',
+                              boxSizing: 'border-box',
+                              flexShrink: 0,
+                            }}
+                          />
+                          <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1c1917' }}>
+                            Full Monthly Package
+                          </span>
+                        </div>
+                        <span
+                          style={{
+                            fontSize: '10px',
+                            fontWeight: 700,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.04em',
+                            color: '#0369a1',
+                            backgroundColor: '#e0f2fe',
+                            padding: '2px 7px',
+                            borderRadius: '4px',
+                          }}
+                        >
+                          Option 2
+                        </span>
+                      </div>
+
+                      <div style={{ marginTop: '4px' }}>
+                        <div style={{ fontSize: '18px', fontWeight: 800, color: '#1c1917', lineHeight: 1.15 }}>
+                          {formatNgn(fullMonthlyPackage)}
+                          <span style={{ fontSize: '12px', fontWeight: 500, color: '#57534e', marginLeft: '4px' }}>
+                            Due Today
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '11.5px', fontWeight: 600, color: '#0369a1', marginTop: '3px' }}>
+                          Setup ({formatNgn(setupFee)}) + 1st Month ({formatNgn(monthlyPrice)})
+                        </div>
+                      </div>
+
+                      <p style={{ margin: '8px 0 0', fontSize: '11.5px', color: '#78716c', lineHeight: 1.45 }}>
+                        Pay setup fee and your first month together upfront. Future billing resumes only on month 2 after your site is live.
+                      </p>
                     </div>
                   </div>
-
-                  <p style={{ margin: '8px 0 0', fontSize: '11.5px', color: '#78716c', lineHeight: 1.45 }}>
-                    Pay only the setup fee today to start your build. Monthly maintenance begins only after your site is completed, approved, and live.
-                  </p>
                 </div>
-              </div>
 
-              {/* BOX 2: Full Build Upfront (Outright Ownership) */}
-              <div
-                onClick={() => setSelectedPlan('outright')}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') setSelectedPlan('outright');
-                }}
-                style={{
-                  cursor: 'pointer',
-                  padding: '16px 16px',
-                  borderRadius: '14px',
-                  border: selectedPlan === 'outright' ? '2px solid #1c1917' : '1px solid #e7e5e4',
-                  backgroundColor: selectedPlan === 'outright' ? '#ffffff' : '#fafaf9',
-                  boxShadow: selectedPlan === 'outright' ? '0 4px 14px rgba(0, 0, 0, 0.06)' : 'none',
-                  transition: 'all 0.15s ease',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                }}
-              >
+                {/* Underlined Switch Link to Outright */}
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '10px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div
-                        style={{
-                          width: '18px',
-                          height: '18px',
-                          borderRadius: '50%',
-                          border: selectedPlan === 'outright' ? '5px solid #1c1917' : '2px solid #d6d3d1',
-                          backgroundColor: '#ffffff',
-                          boxSizing: 'border-box',
-                          flexShrink: 0,
-                        }}
-                      />
-                      <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1c1917' }}>
-                        Full Build Upfront
-                      </span>
-                    </div>
-                    <span
-                      style={{
-                        fontSize: '10.5px',
-                        fontWeight: 700,
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.04em',
-                        color: '#0369a1',
-                        backgroundColor: '#e0f2fe',
-                        padding: '2px 7px',
-                        borderRadius: '6px',
-                      }}
-                    >
-                      100% Outright
+                  <button
+                    type="button"
+                    onClick={() => setSelectedPlan('outright')}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#9a6843',
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      textDecoration: 'underline',
+                      padding: '4px 0',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    Switch to Outright ({formatNgn(outrightPrice)})
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Outright Ownership Card */}
+                <div
+                  style={{
+                    padding: '16px 16px',
+                    borderRadius: '14px',
+                    border: '2px solid #1c1917',
+                    backgroundColor: '#ffffff',
+                    boxShadow: '0 4px 14px rgba(0, 0, 0, 0.06)',
+                    marginBottom: '16px',
+                  }}
+                >
+                  <div style={{ fontSize: '18px', fontWeight: 800, color: '#1c1917', lineHeight: 1.15 }}>
+                    {formatNgn(outrightPrice)}
+                    <span style={{ fontSize: '12px', fontWeight: 500, color: '#57534e', marginLeft: '4px' }}>
+                      Due Today (One-Time Ownership)
                     </span>
                   </div>
-
-                  <div style={{ marginTop: '4px' }}>
-                    <div style={{ fontSize: '20px', fontWeight: 800, color: '#1c1917', lineHeight: 1.1 }}>
-                      {formatNgn(outrightPrice)}
-                      <span style={{ fontSize: '12px', fontWeight: 500, color: '#57534e', marginLeft: '4px' }}>
-                        Due Today
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '12px', fontWeight: 600, color: '#0369a1', marginTop: '4px' }}>
-                      0 recurring monthly fees
-                    </div>
+                  <div style={{ fontSize: '11.5px', fontWeight: 600, color: '#0369a1', marginTop: '3px' }}>
+                    0 recurring monthly fees • Full repository &amp; domain transfer
                   </div>
-
-                  <p style={{ margin: '8px 0 0', fontSize: '11.5px', color: '#78716c', lineHeight: 1.45 }}>
+                  <p style={{ margin: '8px 0 0', fontSize: '12px', color: '#78716c', lineHeight: 1.45 }}>
                     100% full ownership with zero monthly fees. GitHub repository transfer, 1-year custom domain &amp; SSL included.
                   </p>
                 </div>
-              </div>
-            </div>
+
+                {/* Underlined Switch Link back to Monthly Launch */}
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedPlan('monthly')}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#9a6843',
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      textDecoration: 'underline',
+                      padding: '4px 0',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    Switch to Monthly Launch (from {formatNgn(setupFee)} setup fee)
+                  </button>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Error Message */}
@@ -522,7 +637,12 @@ export default function CheckoutClient({
               ) : (
                 <>
                   <span>
-                    Pay {formatNgn(amountDue)} &amp; {selectedPlan === 'monthly' ? 'Start Build (Setup Fee)' : 'Start Full Build'}
+                    Pay {formatNgn(amountDue)} &amp;{' '}
+                    {selectedPlan === 'outright'
+                      ? 'Start Full Build'
+                      : monthlyOption === 'full_package'
+                      ? 'Start Build (Full Monthly Package)'
+                      : 'Start Build (Setup Fee Only)'}
                   </span>
                   <span style={{ fontSize: '18px' }}>&rarr;</span>
                 </>
@@ -574,7 +694,11 @@ export default function CheckoutClient({
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: '#57534e' }}>Selected Model:</span>
                 <span style={{ fontWeight: 600, color: '#1c1917' }}>
-                  {selectedPlan === 'monthly' ? 'Monthly Launch' : '100% Outright Ownership'}
+                  {selectedPlan === 'monthly'
+                    ? monthlyOption === 'full_package'
+                      ? 'Monthly Launch (Full Package)'
+                      : 'Monthly Launch (Setup Fee Only)'
+                    : '100% Outright Ownership'}
                 </span>
               </div>
 
@@ -584,12 +708,29 @@ export default function CheckoutClient({
                     <span style={{ color: '#57534e' }}>Deployment Setup Fee:</span>
                     <span style={{ fontWeight: 600, color: '#1c1917' }}>{formatNgn(setupFee)}</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#57534e' }}>Monthly Maintenance:</span>
-                    <span style={{ fontWeight: 600, color: '#15803d' }}>
-                      {formatNgn(monthlyPrice)}/mo (billed only after live)
-                    </span>
-                  </div>
+                  {monthlyOption === 'full_package' ? (
+                    <>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#57534e' }}>1st Month Maintenance:</span>
+                        <span style={{ fontWeight: 600, color: '#15803d' }}>
+                          {formatNgn(monthlyPrice)} (Paid upfront today)
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#57534e' }}>Month 2+ Maintenance:</span>
+                        <span style={{ fontWeight: 600, color: '#78716c' }}>
+                          {formatNgn(monthlyPrice)}/mo (starts month 2)
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: '#57534e' }}>Monthly Maintenance:</span>
+                      <span style={{ fontWeight: 600, color: '#15803d' }}>
+                        {formatNgn(monthlyPrice)}/mo (billed only after live)
+                      </span>
+                    </div>
+                  )}
                 </>
               ) : (
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
