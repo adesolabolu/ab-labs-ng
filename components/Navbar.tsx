@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -8,10 +9,15 @@ export default function Navbar() {
   const pathname = usePathname() || '/';
   const router = useRouter();
 
+  const [mounted, setMounted] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Close menus on route change
   useEffect(() => {
@@ -69,92 +75,33 @@ export default function Navbar() {
                       <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="logo" />
                     </Link>
 
+                    {/* DESKTOP NAVIGATION BAR */}
                     <nav
                       role="navigation"
-                      id="mobile-nav-menu"
+                      id="desktop-nav-menu"
                       aria-label="Main navigation"
-                      className={`nav-menu-wrapper nav-menu-list ${isMobileMenuOpen ? 'nav-menu-open' : ''}`}
+                      className="nav-menu-wrapper nav-menu-list"
                     >
-                      <div className="mobile-drawer-header">
-                        <Link href="/" className="hdr-logo inline-block" onClick={() => setIsMobileMenuOpen(false)}>
-                          <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" className="logo" />
-                        </Link>
-                        <button
-                          type="button"
-                          className="nav-close-btn"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          aria-label="Close navigation menu"
-                        >
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
-                            <line x1="18" y1="6" x2="6" y2="18" />
-                            <line x1="6" y1="6" x2="18" y2="18" />
-                          </svg>
-                        </button>
-                      </div>
-
                       <ul role="list" className="nav-menu site-list-unstyled list-unstyled" style={{ listStyle: 'none', paddingLeft: 0, margin: 0 }}>
                         <li>
-                          <Link href="/" className={`hdr-nav-a ${pathname === '/' ? 'is-current' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
+                          <Link href="/" className={`hdr-nav-a ${pathname === '/' ? 'is-current' : ''}`}>
                             <span>Home</span>
-                            <span className="mobile-nav-arrow">→</span>
                           </Link>
                         </li>
                         <li>
-                          <Link href="/shop" className={`hdr-nav-a ${pathname.startsWith('/shop') ? 'is-current' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
+                          <Link href="/shop" className={`hdr-nav-a ${pathname.startsWith('/shop') ? 'is-current' : ''}`}>
                             <span>Templates &amp; Shop</span>
-                            <span className="mobile-nav-arrow">→</span>
                           </Link>
                         </li>
                         <li>
-                          <Link href="/blog" className={`hdr-nav-a ${pathname.startsWith('/blog') ? 'is-current' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
+                          <Link href="/blog" className={`hdr-nav-a ${pathname.startsWith('/blog') ? 'is-current' : ''}`}>
                             <span>Guides &amp; Blog</span>
-                            <span className="mobile-nav-arrow">→</span>
                           </Link>
                         </li>
                         <li>
-                          <Link href="/contact-us" className={`hdr-nav-a ${pathname === '/contact-us' ? 'is-current' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
+                          <Link href="/contact-us" className={`hdr-nav-a ${pathname === '/contact-us' ? 'is-current' : ''}`}>
                             <span>Contact Us</span>
-                            <span className="mobile-nav-arrow">→</span>
                           </Link>
-                        </li>
-
-                        <li className="mobile-drawer-footer">
-                          <Link href="/shop" className="primary-button inline-block mobile-drawer-cta" onClick={() => setIsMobileMenuOpen(false)}>
-                            <div className="button-text-wrapper">
-                              <div className="button-text-block">
-                                <div className="link-text is-1">Explore Templates</div>
-                                <div className="link-text is-2">Explore Templates</div>
-                              </div>
-                              <div className="button-arrow-block">
-                                <div className="link-icon is-1 site-embed">
-                                  <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
-                                    <path d="M7 17 17 7M7 7h10v10"></path>
-                                  </svg>
-                                </div>
-                                <div className="link-icon is-2 site-embed">
-                                  <svg fill="none" width="14" height="14" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24">
-                                    <path d="M7 17 17 7M7 7h10v10"></path>
-                                  </svg>
-                                </div>
-                              </div>
-                            </div>
-                          </Link>
-
-                          <div className="mobile-contact-card">
-                            <p className="mobile-contact-title">Direct Engineering Line</p>
-                            <a
-                              href="https://wa.me/2349036193817?text=Hi%20aB%20Labs%2C%20I%20would%20like%20to%20inquire%20about%20a%20website%20template."
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="mobile-contact-link"
-                            >
-                              <span className="mobile-contact-dot"></span>
-                              <span>WhatsApp: +234 903 619 3817</span>
-                            </a>
-                            <a href="mailto:hello@ab-labs.cv" className="mobile-contact-link-sub">
-                              hello@ab-labs.cv
-                            </a>
-                          </div>
                         </li>
                       </ul>
                     </nav>
@@ -276,20 +223,249 @@ export default function Navbar() {
               </div>
             </div>
           </div>
+          {/* Search Backdrop Overlay */}
           <div
             className="search-overlay"
             onClick={() => setIsSearchOpen(false)}
             style={{ display: isSearchOpen ? 'block' : 'none' }}
           ></div>
-          {isMobileMenuOpen && (
-            <div
-              className="nav-backdrop"
-              onClick={() => setIsMobileMenuOpen(false)}
-              aria-hidden="true"
-            ></div>
-          )}
         </div>
       </header>
+
+      {/* REACT PORTAL MOBILE NAVIGATION DRAWER */}
+      {mounted && isMobileMenuOpen && createPortal(
+        <div
+          id="mobile-nav-root"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 99999999,
+          }}
+        >
+          {/* Backdrop (Darkened Blur on Main Page) */}
+          <div
+            className="mobile-nav-backdrop"
+            onClick={() => setIsMobileMenuOpen(false)}
+            aria-hidden="true"
+            style={{
+              position: 'fixed',
+              inset: 0,
+              backgroundColor: 'rgba(12, 11, 10, 0.6)',
+              backdropFilter: 'blur(6px)',
+              WebkitBackdropFilter: 'blur(6px)',
+              animation: 'nav-fade-in 0.22s ease-out both',
+            }}
+          />
+
+          {/* Solid Slide-In Drawer Pane (Above Backdrop, Zero Blur) */}
+          <nav
+            id="mobile-nav-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Main Navigation Menu"
+            style={{
+              position: 'fixed',
+              top: 0,
+              right: 0,
+              bottom: 0,
+              width: 'min(86vw, 360px)',
+              height: '100dvh',
+              backgroundColor: '#ffffff',
+              zIndex: 100000000,
+              boxShadow: '-12px 0 40px rgba(0, 0, 0, 0.25)',
+              borderLeft: '1px solid rgba(12, 11, 10, 0.08)',
+              display: 'flex',
+              flexDirection: 'column',
+              overflowY: 'auto',
+              WebkitOverflowScrolling: 'touch',
+              animation: 'nav-drawer-in-right 0.28s cubic-bezier(0.16, 1, 0.3, 1) both',
+            }}
+          >
+            {/* Drawer Header */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '18px 22px',
+              borderBottom: '1px solid rgba(12, 11, 10, 0.08)',
+              backgroundColor: '#faf8f5',
+            }}>
+              <Link href="/" onClick={() => setIsMobileMenuOpen(false)} style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <img src="/assets/ab-labs-logo.svg" loading="lazy" alt="aB Labs logo" style={{ height: '28px', width: 'auto' }} />
+              </Link>
+              <button
+                type="button"
+                className="drawer-close-btn"
+                onClick={() => setIsMobileMenuOpen(false)}
+                aria-label="Close menu"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '50%',
+                  border: '1px solid rgba(12, 11, 10, 0.12)',
+                  backgroundColor: '#ffffff',
+                  color: '#1c1917',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.15s ease',
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Navigation Links */}
+            <div style={{ flex: 1, padding: '16px 20px 24px', display: 'flex', flexDirection: 'column' }}>
+              <ul role="list" style={{ listStyle: 'none', paddingLeft: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <li>
+                  <Link
+                    href="/"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '14px 16px',
+                      fontSize: '16px',
+                      fontWeight: pathname === '/' ? 700 : 500,
+                      color: pathname === '/' ? '#9a6843' : '#292524',
+                      backgroundColor: pathname === '/' ? 'rgba(154, 104, 67, 0.1)' : 'transparent',
+                      borderRadius: '10px',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <span>Home</span>
+                    <span style={{ fontSize: '16px', color: pathname === '/' ? '#9a6843' : '#a8a29e' }}>→</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/shop"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '14px 16px',
+                      fontSize: '16px',
+                      fontWeight: pathname.startsWith('/shop') ? 700 : 500,
+                      color: pathname.startsWith('/shop') ? '#9a6843' : '#292524',
+                      backgroundColor: pathname.startsWith('/shop') ? 'rgba(154, 104, 67, 0.1)' : 'transparent',
+                      borderRadius: '10px',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <span>Templates &amp; Shop</span>
+                    <span style={{ fontSize: '16px', color: pathname.startsWith('/shop') ? '#9a6843' : '#a8a29e' }}>→</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/blog"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '14px 16px',
+                      fontSize: '16px',
+                      fontWeight: pathname.startsWith('/blog') ? 700 : 500,
+                      color: pathname.startsWith('/blog') ? '#9a6843' : '#292524',
+                      backgroundColor: pathname.startsWith('/blog') ? 'rgba(154, 104, 67, 0.1)' : 'transparent',
+                      borderRadius: '10px',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <span>Guides &amp; Blog</span>
+                    <span style={{ fontSize: '16px', color: pathname.startsWith('/blog') ? '#9a6843' : '#a8a29e' }}>→</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/contact-us"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '14px 16px',
+                      fontSize: '16px',
+                      fontWeight: pathname === '/contact-us' ? 700 : 500,
+                      color: pathname === '/contact-us' ? '#9a6843' : '#292524',
+                      backgroundColor: pathname === '/contact-us' ? 'rgba(154, 104, 67, 0.1)' : 'transparent',
+                      borderRadius: '10px',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <span>Contact Us</span>
+                    <span style={{ fontSize: '16px', color: pathname === '/contact-us' ? '#9a6843' : '#a8a29e' }}>→</span>
+                  </Link>
+                </li>
+              </ul>
+
+              {/* Drawer Footer CTA & Direct Contact Card */}
+              <div style={{ marginTop: 'auto', paddingTop: '20px', borderTop: '1px solid rgba(12, 11, 10, 0.08)', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <Link
+                  href="/shop"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="primary-button inline-block"
+                  style={{
+                    width: '100%',
+                    textAlign: 'center',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '14px 20px',
+                    textDecoration: 'none',
+                    borderRadius: '100px',
+                    backgroundColor: '#1c1917',
+                    color: '#ffffff',
+                    fontWeight: 600,
+                    fontSize: '14px',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                  }}
+                >
+                  <span>Explore Templates →</span>
+                </Link>
+
+                <div style={{ padding: '14px 16px', borderRadius: '12px', backgroundColor: '#f9f6f1', border: '1px solid rgba(12, 11, 10, 0.06)' }}>
+                  <p style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#78716c', margin: '0 0 6px' }}>
+                    Direct Engineering Line
+                  </p>
+                  <a
+                    href="https://wa.me/2349036193817?text=Hi%20aB%20Labs%2C%20I%20would%20like%20to%20inquire%20about%20a%20website%20template."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      color: '#15803d',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#22c55e', display: 'inline-block' }} />
+                    <span>WhatsApp: +234 903 619 3817</span>
+                  </a>
+                  <div style={{ marginTop: '4px' }}>
+                    <a href="mailto:hello@ab-labs.cv" style={{ fontSize: '12px', color: '#78716c', textDecoration: 'none' }}>
+                      hello@ab-labs.cv
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </nav>
+        </div>,
+        document.body
+      )}
     </>
   );
 }
