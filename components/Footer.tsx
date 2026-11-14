@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <section className="footer">
+    <footer className="footer">
       <div className="site-blockcontainer container-large site-container">
         <div className="fh-in">
           <div className="fh-main">
@@ -74,13 +74,28 @@ export default function Footer() {
               <Link href="/contact-us" className="fh-lk a">Contact Us</Link>
               <Link href="/blog" className="fh-lk a">Insights</Link>
             </div>
+            <div className="fh-col">
+              <p className="fh-col-h">Legal &amp; Trust</p>
+              <Link href="/privacy-policy" className="fh-lk a">Privacy Policy</Link>
+              <Link href="/terms-of-service" className="fh-lk a">Terms &amp; Conditions</Link>
+              <Link href="/refund-policy" className="fh-lk a">Refund Policy</Link>
+              <Link href="/portal" className="fh-lk a">Client Portal</Link>
+            </div>
           </div>
           <div className="footer-border v2"></div>
           <div className="footer-border"></div>
         </div>
         <div className="fh-bot">
           <div className="fh-bot-in">
-            <p className="fh-copy">© {new Date().getFullYear()} aB Labs - Production-Ready Web Flagships</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+              <p className="fh-copy" style={{ margin: 0 }}>© {new Date().getFullYear()} aB Labs - Production-Ready Web Flagships</p>
+              <span style={{ color: '#d6d3d1' }}>&bull;</span>
+              <Link href="/privacy-policy" style={{ fontSize: '12px', color: '#8c8782', textDecoration: 'none' }}>Privacy</Link>
+              <span style={{ color: '#d6d3d1' }}>&bull;</span>
+              <Link href="/terms-of-service" style={{ fontSize: '12px', color: '#8c8782', textDecoration: 'none' }}>Terms</Link>
+              <span style={{ color: '#d6d3d1' }}>&bull;</span>
+              <Link href="/refund-policy" style={{ fontSize: '12px', color: '#8c8782', textDecoration: 'none' }}>Refunds</Link>
+            </div>
             <a href="#top" className="fh-top-top inline-block">
               <div>Back to top</div>
               <div className="fh-toptop-span">
@@ -94,6 +109,6 @@ export default function Footer() {
           </div>
         </div>
       </div>
-    </section>
+    </footer>
   );
 }

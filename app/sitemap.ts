@@ -43,6 +43,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.6,
     },
+    {
+      url: absoluteUrl('/privacy-policy'),
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.4,
+    },
+    {
+      url: absoluteUrl('/terms-of-service'),
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.4,
+    },
+    {
+      url: absoluteUrl('/refund-policy'),
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.4,
+    },
   ];
 
   const productRoutes: MetadataRoute.Sitemap = TEMPLATES.map((template) => ({
