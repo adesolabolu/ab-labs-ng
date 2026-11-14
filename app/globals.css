@@ -14416,3 +14416,12 @@ html.site-mod-js:not(.ab-labs-ready) .abtm {
     grid-template-columns: 1fr;
   }
 }
+
+/* Dedicated Checkout Page Responsive Grid */
+@media screen and (max-width: 860px) {
+  .checkout-grid-container {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+}
+

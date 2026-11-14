@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import DemoRequestModal from '@/components/DemoRequestModal';
-import InstantCheckoutModal from '@/components/InstantCheckoutModal';
 
 interface DualPricingSelectorProps {
   templateName?: string;
@@ -29,7 +29,6 @@ export default function DualPricingSelector({
 }: DualPricingSelectorProps) {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'outright'>('monthly');
   const [showDemoModal, setShowDemoModal] = useState(false);
-  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 
   const formatNgn = (val: number) => `₦${val.toLocaleString()}`;
 
@@ -204,19 +203,24 @@ export default function DualPricingSelector({
 
       {/* Action Buttons */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '16px' }}>
-        <button
-          type="button"
-          onClick={() => setShowCheckoutModal(true)}
+        <Link
+          href={`/checkout?template=${templateSlug}&plan=${selectedPlan}`}
           className="primary-button"
-          data-umami-event={`Pricing Selector - Clicked Pay Now (${selectedPlan})`}
-          data-umami-event-template={templateSlug}
-          data-umami-event-plan={selectedPlan}
+          onClick={() => {
+            if (typeof window !== 'undefined' && (window as any).umami) {
+              (window as any).umami.track('Pricing Selector - Clicked Pay Now', {
+                template: templateSlug,
+                plan: selectedPlan,
+              });
+            }
+          }}
           style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             width: '100%',
             minHeight: '48px',
+            textDecoration: 'none',
             fontWeight: 700,
             fontSize: '14.5px',
             borderRadius: '100px',
@@ -240,7 +244,7 @@ export default function DualPricingSelector({
           {selectedPlan === 'monthly'
             ? `Pay & Start Build (${formatNgn(setupFee + monthlyPrice)})`
             : `Pay & Start Build (${formatNgn(outrightPrice)})`}
-        </button>
+        </Link>
 
         <button
           type="button"
@@ -277,19 +281,6 @@ export default function DualPricingSelector({
           <span>Request a Free Brand Demo</span>
         </button>
       </div>
-
-      {/* Instant Paystack Checkout & Automated Portal Provisioning Modal */}
-      <InstantCheckoutModal
-        isOpen={showCheckoutModal}
-        onClose={() => setShowCheckoutModal(false)}
-        templateName={templateName}
-        templateSlug={templateSlug}
-        selectedPlan={selectedPlan}
-        monthlyPrice={monthlyPrice}
-        setupFee={setupFee}
-        outrightPrice={outrightPrice}
-        whatsappNumber={whatsappNumber}
-      />
 
       {/* 2-Option Interactive Demo Request Modal */}
       <DemoRequestModal

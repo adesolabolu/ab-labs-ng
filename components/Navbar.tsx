@@ -144,10 +144,75 @@ export default function Navbar() {
                           </div>
                         </div>
                       </Link>
+
+                      {/* DESKTOP USER PROFILE ICON (FAR RIGHT) */}
+                      <Link
+                        href="/portal"
+                        aria-label="Client Portal & Profile"
+                        title="Client Portal & Profile"
+                        onClick={() => {
+                          if (typeof window !== 'undefined' && (window as any).umami) {
+                            (window as any).umami.track('Navbar - Clicked Desktop Profile Icon');
+                          }
+                        }}
+                        style={{
+                          width: '42px',
+                          height: '42px',
+                          borderRadius: '50%',
+                          backgroundColor: pathname.startsWith('/portal') ? '#1c1917' : '#ffffff',
+                          color: pathname.startsWith('/portal') ? '#ffffff' : '#292524',
+                          border: '1px solid rgba(12, 11, 10, 0.12)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          textDecoration: 'none',
+                          transition: 'all 0.15s ease',
+                          boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
+                          flexShrink: 0,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                      </Link>
                     </div>
 
-                    {/* MOBILE HAMBURGER BUTTON */}
-                    <div className="offcanvas-button-wrapper">
+                    {/* MOBILE HAMBURGER & PROFILE BUTTONS */}
+                    <div className="offcanvas-button-wrapper" style={{ display: undefined }}>
+                      {/* MOBILE USER PROFILE ICON (BESIDE HAMBURGER) */}
+                      <Link
+                        href="/portal"
+                        aria-label="Client Portal & Profile"
+                        title="Client Portal & Profile"
+                        onClick={() => {
+                          if (typeof window !== 'undefined' && (window as any).umami) {
+                            (window as any).umami.track('Navbar - Clicked Mobile Profile Icon');
+                          }
+                        }}
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          borderRadius: '50%',
+                          backgroundColor: pathname.startsWith('/portal') ? '#1c1917' : '#ffffff',
+                          color: pathname.startsWith('/portal') ? '#ffffff' : '#292524',
+                          border: '1px solid rgba(12, 11, 10, 0.12)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          textDecoration: 'none',
+                          boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
+                          flexShrink: 0,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                      </Link>
+
                       <button
                         type="button"
                         className={`menu-button nav-toggle-btn ${isMobileMenuOpen ? 'is-open' : ''}`}
@@ -410,6 +475,34 @@ export default function Navbar() {
                   >
                     <span>Contact Us</span>
                     <span style={{ fontSize: '16px', color: pathname === '/contact-us' ? '#9a6843' : '#a8a29e' }}>→</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/portal"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    data-umami-event="Mobile Drawer - Clicked Client Portal"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '14px 16px',
+                      fontSize: '16px',
+                      fontWeight: pathname.startsWith('/portal') ? 700 : 500,
+                      color: pathname.startsWith('/portal') ? '#9a6843' : '#292524',
+                      backgroundColor: pathname.startsWith('/portal') ? 'rgba(154, 104, 67, 0.1)' : 'transparent',
+                      borderRadius: '10px',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                      <span>Client Portal &amp; Account</span>
+                    </span>
+                    <span style={{ fontSize: '16px', color: pathname.startsWith('/portal') ? '#9a6843' : '#a8a29e' }}>→</span>
                   </Link>
                 </li>
               </ul>

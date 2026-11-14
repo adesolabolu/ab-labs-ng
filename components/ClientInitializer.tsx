@@ -21,6 +21,37 @@ export default function ClientInitializer() {
   const pathname = usePathname();
   const initialLoad = useRef(true);
 
+  // Active Presence Heartbeat for Live Admin Analytics
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    let sessionId = sessionStorage.getItem('ab_presence_session_id');
+    if (!sessionId) {
+      sessionId = `sess_${Math.random().toString(36).substring(2, 10)}_${Date.now().toString(36)}`;
+      sessionStorage.setItem('ab_presence_session_id', sessionId);
+    }
+
+    const sendHeartbeat = () => {
+      try {
+        fetch('/api/presence', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionId,
+            pathname: window.location.pathname,
+          }),
+        }).catch(() => {});
+      } catch (e) {}
+    };
+
+    // Immediate ping on route change
+    sendHeartbeat();
+
+    // Periodic heartbeat every 25 seconds
+    const interval = setInterval(sendHeartbeat, 25000);
+    return () => clearInterval(interval);
+  }, [pathname]);
+
   // Use manual scroll restoration so browsers do not fight Next.js navigation
   useEffect(() => {
     if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {

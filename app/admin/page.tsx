@@ -13,7 +13,7 @@ type PricedTemplate = Template & {
 };
 
 export default function AdminPortalPage() {
-  const [activeTab, setActiveTab] = useState<'links' | 'clients' | 'orders' | 'templates' | 'inquiries'>('links');
+  const [activeTab, setActiveTab] = useState<'links' | 'clients' | 'orders' | 'templates' | 'inquiries' | 'users'>('links');
   
   // Data States
   const [loading, setLoading] = useState(true);
@@ -21,6 +21,21 @@ export default function AdminPortalPage() {
   const [clients, setClients] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [inquiries, setInquiries] = useState<any[]>([]);
+  const [userAnalytics, setUserAnalytics] = useState<{
+    activeOnlineCount: number;
+    activeClientsCount: number;
+    activeGuestsCount: number;
+    totalRegisteredClients: number;
+    activeVisitors: any[];
+    clients: any[];
+  }>({
+    activeOnlineCount: 0,
+    activeClientsCount: 0,
+    activeGuestsCount: 0,
+    totalRegisteredClients: 0,
+    activeVisitors: [],
+    clients: [],
+  });
   const [inquiryFilter, setInquiryFilter] = useState<'ALL' | 'DEMO' | 'CONTACT' | 'NEW'>('ALL');
   const [updatingInquiryId, setUpdatingInquiryId] = useState<number | null>(null);
   const [stats, setStats] = useState({
@@ -65,12 +80,13 @@ export default function AdminPortalPage() {
   const fetchAdminData = async () => {
     setLoading(true);
     try {
-      const [linksRes, clientsRes, ordersRes, templatesRes, inquiriesRes] = await Promise.all([
+      const [linksRes, clientsRes, ordersRes, templatesRes, inquiriesRes, usersRes] = await Promise.all([
         fetch('/api/admin/links').then(r => r.json()),
         fetch('/api/admin/clients').then(r => r.json()),
         fetch('/api/admin/orders').then(r => r.json()),
         fetch('/api/admin/templates').then(r => r.json()).catch(() => null),
         fetch('/api/admin/inquiries').then(r => r.json()).catch(() => null),
+        fetch('/api/admin/users').then(r => r.json()).catch(() => null),
       ]);
 
       if (linksRes.success) {
@@ -88,6 +104,16 @@ export default function AdminPortalPage() {
       }
       if (inquiriesRes?.success && Array.isArray(inquiriesRes.inquiries)) {
         setInquiries(inquiriesRes.inquiries);
+      }
+      if (usersRes?.success) {
+        setUserAnalytics({
+          activeOnlineCount: usersRes.stats?.activeOnlineCount || 0,
+          activeClientsCount: usersRes.stats?.activeClientsCount || 0,
+          activeGuestsCount: usersRes.stats?.activeGuestsCount || 0,
+          totalRegisteredClients: usersRes.stats?.totalRegisteredClients || 0,
+          activeVisitors: usersRes.activeVisitors || [],
+          clients: usersRes.clients || [],
+        });
       }
     } catch (err) {
       console.error('Error loading admin dashboard:', err);
@@ -134,6 +160,25 @@ export default function AdminPortalPage() {
 
   useEffect(() => {
     fetchAdminData();
+
+    // Auto-poll live presence every 10 seconds for real-time online counter
+    const presenceInterval = setInterval(async () => {
+      try {
+        const res = await fetch('/api/admin/users').then(r => r.json());
+        if (res.success && res.stats) {
+          setUserAnalytics(prev => ({
+            ...prev,
+            activeOnlineCount: res.stats.activeOnlineCount,
+            activeClientsCount: res.stats.activeClientsCount,
+            activeGuestsCount: res.stats.activeGuestsCount,
+            totalRegisteredClients: res.stats.totalRegisteredClients,
+            activeVisitors: res.activeVisitors || [],
+          }));
+        }
+      } catch (e) {}
+    }, 10000);
+
+    return () => clearInterval(presenceInterval);
   }, []);
 
   const handleCreateLink = async (e: React.FormEvent) => {
@@ -595,7 +640,7 @@ export default function AdminPortalPage() {
         {/* Unified Integrated Metric Board (Anti-SaaS-Card Polish) */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
           backgroundColor: '#121215',
           border: '1px solid rgba(255, 255, 255, 0.08)',
           borderRadius: '16px',
@@ -603,6 +648,50 @@ export default function AdminPortalPage() {
           marginBottom: '36px',
         }}>
           
+          {/* Stat 0: Active on Site Now (Real-Time Online Tracker) */}
+          <div 
+            onClick={() => setActiveTab('users')}
+            style={{
+              padding: '24px 28px',
+              borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+              cursor: 'pointer',
+              transition: 'background-color 0.15s ease',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#71717a', letterSpacing: '0.02em' }}>
+                Active on Site Now
+              </span>
+              <span style={{
+                fontSize: '10.5px',
+                fontWeight: 700,
+                color: '#10b981',
+                padding: '2px 8px',
+                borderRadius: '100px',
+                backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+              }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10b981' }} />
+                LIVE
+              </span>
+            </div>
+            <div style={{
+              fontSize: '32px',
+              fontWeight: 800,
+              letterSpacing: '-0.03em',
+              color: '#ffffff',
+              fontVariantNumeric: 'tabular-nums',
+            }}>
+              {userAnalytics.activeOnlineCount}
+            </div>
+            <div style={{ fontSize: '12px', color: '#10b981', marginTop: '4px' }}>
+              {userAnalytics.activeClientsCount} signed-in &bull; {userAnalytics.activeGuestsCount} browsing &rarr;
+            </div>
+          </div>
+
           {/* Stat 1: Total Paid Revenue */}
           <div style={{
             padding: '24px 28px',
@@ -1002,6 +1091,27 @@ export default function AdminPortalPage() {
                   {inquiries.filter(i => i.status === 'NEW').length}
                 </span>
               )}
+            </button>
+
+            <button
+              onClick={() => setActiveTab('users')}
+              style={{
+                padding: '7px 16px',
+                borderRadius: '7px',
+                fontSize: '13px',
+                fontWeight: 600,
+                border: 'none',
+                cursor: 'pointer',
+                backgroundColor: activeTab === 'users' ? '#27272a' : 'transparent',
+                color: activeTab === 'users' ? '#ffffff' : '#71717a',
+                transition: 'all 0.15s ease',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+              }}
+            >
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: userAnalytics.activeOnlineCount > 0 ? '#10b981' : '#71717a' }} />
+              <span>Live Users ({userAnalytics.activeOnlineCount} Online / {clients.length} Accounts)</span>
             </button>
           </div>
 
@@ -2248,6 +2358,251 @@ export default function AdminPortalPage() {
                 })}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Tab 6: Live Users & Online Traffic Activity */}
+        {activeTab === 'users' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+            {/* Section 1: Real-Time Active Online Visitors */}
+            <div style={{
+              backgroundColor: '#121215',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '16px',
+              overflow: 'hidden',
+            }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '20px 24px',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+                backgroundColor: 'rgba(255, 255, 255, 0.01)',
+              }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10b981' }} />
+                    <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#f4f4f5', margin: 0 }}>
+                      Live Active Visitors Online Now ({userAnalytics.activeOnlineCount})
+                    </h2>
+                  </div>
+                  <p style={{ fontSize: '12px', color: '#71717a', margin: '4px 0 0' }}>
+                    Heartbeat activity reported across website pages within the last 3 minutes (auto-refreshes every 10s).
+                  </p>
+                </div>
+                <div style={{ fontSize: '11px', color: '#10b981', fontWeight: 600, backgroundColor: 'rgba(16, 185, 129, 0.1)', padding: '4px 10px', borderRadius: '100px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+                  ● Real-Time Presence Active
+                </div>
+              </div>
+
+              {userAnalytics.activeVisitors.length === 0 ? (
+                <div style={{ padding: '36px 24px', textAlign: 'center', color: '#71717a', fontSize: '13.5px' }}>
+                  No active visitors detected in the last 3 minutes. As visitors browse the site, sessions appear here in real-time.
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {userAnalytics.activeVisitors.map((visitor, idx) => {
+                    const elapsedSec = Math.round((Date.now() - visitor.lastSeen) / 1000);
+                    const timeAgo = elapsedSec < 10 ? 'Just now' : `${elapsedSec}s ago`;
+
+                    return (
+                      <div
+                        key={visitor.sessionId || idx}
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1.2fr 1.5fr 1fr 100px',
+                          alignItems: 'center',
+                          padding: '14px 24px',
+                          borderBottom: idx < userAnalytics.activeVisitors.length - 1 ? '1px solid rgba(255, 255, 255, 0.04)' : 'none',
+                          backgroundColor: visitor.isLoggedIn ? 'rgba(16, 185, 129, 0.03)' : 'transparent',
+                        }}
+                      >
+                        {/* Visitor Identity */}
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{
+                              fontSize: '10px',
+                              fontWeight: 700,
+                              textTransform: 'uppercase',
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              backgroundColor: visitor.isLoggedIn ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255, 255, 255, 0.08)',
+                              color: visitor.isLoggedIn ? '#34d399' : '#a1a1aa',
+                            }}>
+                              {visitor.isLoggedIn ? 'Client' : 'Guest'}
+                            </span>
+                            <span style={{ fontSize: '13.5px', fontWeight: 600, color: '#f4f4f5' }}>
+                              {visitor.clientEmail || visitor.clientName || 'Anonymous Visitor'}
+                            </span>
+                          </div>
+                          <span style={{ fontSize: '11px', color: '#52525b', fontFamily: 'monospace', display: 'block', marginTop: '2px' }}>
+                            {visitor.sessionId}
+                          </span>
+                        </div>
+
+                        {/* Active Page */}
+                        <div>
+                          <span style={{ fontSize: '11px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '2px' }}>
+                            Currently Viewing
+                          </span>
+                          <span style={{ fontSize: '13px', color: '#60a5fa', fontWeight: 500, fontFamily: 'monospace' }}>
+                            {visitor.pathname}
+                          </span>
+                        </div>
+
+                        {/* Connection */}
+                        <div>
+                          <span style={{ fontSize: '11px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '2px' }}>
+                            Connection
+                          </span>
+                          <span style={{ fontSize: '12px', color: '#a1a1aa' }}>
+                            {visitor.ip || 'Direct'}
+                          </span>
+                        </div>
+
+                        {/* Last Ping */}
+                        <div style={{ textAlign: 'right' }}>
+                          <span style={{ fontSize: '12px', fontWeight: 600, color: '#10b981' }}>
+                            {timeAgo}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Section 2: All Registered Client Accounts & Users */}
+            <div style={{
+              backgroundColor: '#121215',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '16px',
+              overflow: 'hidden',
+            }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '20px 24px',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+                backgroundColor: 'rgba(255, 255, 255, 0.01)',
+              }}>
+                <div>
+                  <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#f4f4f5', margin: 0 }}>
+                    Registered Client Accounts &amp; Users ({clients.length})
+                  </h2>
+                  <p style={{ fontSize: '12px', color: '#71717a', margin: '4px 0 0' }}>
+                    Clients provisioned with active client portals, domain setups, and build workspaces.
+                  </p>
+                </div>
+                <div style={{ fontSize: '12px', color: '#a1a1aa' }}>
+                  Total Accounts: <strong>{clients.length}</strong>
+                </div>
+              </div>
+
+              {clients.length === 0 ? (
+                <div style={{ padding: '36px 24px', textAlign: 'center', color: '#71717a', fontSize: '13.5px' }}>
+                  No registered client accounts yet. Accounts are automatically provisioned when clients complete checkout.
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {clients.map((client, idx) => (
+                    <div
+                      key={client.id || idx}
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1.4fr 1.2fr 1fr 1fr 140px',
+                        alignItems: 'center',
+                        padding: '16px 24px',
+                        borderBottom: idx < clients.length - 1 ? '1px solid rgba(255, 255, 255, 0.04)' : 'none',
+                      }}
+                    >
+                      {/* Name & Email */}
+                      <div>
+                        <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff' }}>
+                          {client.name}
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#71717a' }}>
+                          {client.email}
+                        </div>
+                        {client.business_name && (
+                          <div style={{ fontSize: '11.5px', color: '#a1a1aa', marginTop: '2px' }}>
+                            🏢 {client.business_name}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Foundation & Plan */}
+                      <div>
+                        <span style={{ fontSize: '11px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block' }}>
+                          Template Foundation
+                        </span>
+                        <span style={{ fontSize: '13px', fontWeight: 600, color: '#e4e4e7' }}>
+                          {client.template_slug || 'Custom'}
+                        </span>
+                        <div style={{ fontSize: '11px', color: '#a1a1aa' }}>
+                          Plan: {client.plan_type || 'MONTHLY'}
+                        </div>
+                      </div>
+
+                      {/* Domain & Expiry */}
+                      <div>
+                        <span style={{ fontSize: '11px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block' }}>
+                          Assigned Domain
+                        </span>
+                        <span style={{ fontSize: '12.5px', fontWeight: 600, color: '#10b981' }}>
+                          {client.domain_name || 'Pending Config'}
+                        </span>
+                        <div style={{ fontSize: '11px', color: '#71717a' }}>
+                          Cycle: 1 Year Active
+                        </div>
+                      </div>
+
+                      {/* Build Phase */}
+                      <div>
+                        <span style={{ fontSize: '11px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block' }}>
+                          Build Status
+                        </span>
+                        <span style={{
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          padding: '3px 8px',
+                          borderRadius: '6px',
+                          backgroundColor: client.build_phase === 3 ? 'rgba(16, 185, 129, 0.15)' : 'rgba(234, 179, 8, 0.15)',
+                          color: client.build_phase === 3 ? '#34d399' : '#facc15',
+                          display: 'inline-block',
+                          marginTop: '2px',
+                        }}>
+                          Phase {client.build_phase || 1}: {client.build_phase === 3 ? 'Live Production' : client.build_phase === 2 ? 'Staging Demo' : 'Asset Intake'}
+                        </span>
+                      </div>
+
+                      {/* 1-Click Access to Portal */}
+                      <div style={{ textAlign: 'right' }}>
+                        <Link
+                          href={`/portal?token=${client.portal_access_token}`}
+                          target="_blank"
+                          style={{
+                            display: 'inline-block',
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                            color: '#ffffff',
+                            fontSize: '12px',
+                            fontWeight: 600,
+                            textDecoration: 'none',
+                            transition: 'all 0.15s ease',
+                          }}
+                        >
+                          Access Portal ↗
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
 
