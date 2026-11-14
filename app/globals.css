@@ -13277,6 +13277,13 @@ html.site-mod-js:not(.ab-labs-ready) .abtm {
   to { opacity: 1; }
 }
 
+/* Desktop default: hide mobile drawer header, footer and arrows */
+.mobile-drawer-header,
+.mobile-drawer-footer,
+.mobile-nav-arrow {
+  display: none !important;
+}
+
 @media screen and (max-width: 991px) {
   .site-nav[data-nav-collapse="medium"] .nav-menu-list.nav-menu-open,
   .nav-menu-wrapper.nav-menu-open {
@@ -13385,6 +13392,7 @@ html.site-mod-js:not(.ab-labs-ready) .abtm {
   }
 
   .mobile-nav-arrow {
+    display: inline-block !important;
     font-size: 16px !important;
     color: #a8a29e !important;
     transition: transform 0.2s !important;
