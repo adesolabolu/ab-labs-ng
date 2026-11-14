@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import DemoRequestModal from '@/components/DemoRequestModal';
 
 interface DualPricingSelectorProps {
   templateName?: string;
@@ -26,6 +27,7 @@ export default function DualPricingSelector({
   whatsappNumber = '2349036193817',
 }: DualPricingSelectorProps) {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'outright'>('monthly');
+  const [showDemoModal, setShowDemoModal] = useState(false);
 
   const formatNgn = (val: number) => `₦${val.toLocaleString()}`;
 
@@ -222,10 +224,9 @@ export default function DualPricingSelector({
             : `Start Build Outright (${formatNgn(outrightPrice)})`}
         </a>
 
-        <a
-          href={`https://wa.me/${whatsappNumber}?text=${encodedWhatsapp}`}
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          type="button"
+          onClick={() => setShowDemoModal(true)}
           className="demo-request-btn"
           style={{
             display: 'flex',
@@ -240,12 +241,35 @@ export default function DualPricingSelector({
             border: '1px solid #e5e7eb',
             backgroundColor: '#ffffff',
             color: '#111827',
+            cursor: 'pointer',
             boxSizing: 'border-box',
+            transition: 'background-color 0.15s ease, border-color 0.15s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#f9fafb';
+            e.currentTarget.style.borderColor = '#d1d5db';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#ffffff';
+            e.currentTarget.style.borderColor = '#e5e7eb';
           }}
         >
           <span>Request a Free Brand Demo</span>
-        </a>
+        </button>
       </div>
+
+      {/* 2-Option Interactive Demo Request Modal */}
+      <DemoRequestModal
+        isOpen={showDemoModal}
+        onClose={() => setShowDemoModal(false)}
+        templateName={templateName}
+        templateSlug={templateSlug}
+        selectedPlan={selectedPlan}
+        monthlyPrice={monthlyPrice}
+        setupFee={setupFee}
+        outrightPrice={outrightPrice}
+        whatsappNumber={whatsappNumber}
+      />
     </div>
   );
 }
