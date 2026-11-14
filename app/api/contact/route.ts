@@ -75,6 +75,9 @@ export async function POST(req: Request) {
     // 2. Dispatch notification email via Resend if API key is configured
     const resendApiKey = process.env.RESEND_API_KEY;
     if (resendApiKey && !resendApiKey.includes('placeholder')) {
+      const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || 'boluwatifeadesola9@gmail.com';
+      const recipients = Array.from(new Set([adminEmail, 'hello@ab-labs.cv']));
+
       const emailHtml = `
         <!DOCTYPE html>
         <html>
@@ -102,7 +105,7 @@ export async function POST(req: Request) {
               </div>
               <div class="field">
                 <div class="label">Email Address</div>
-                <div class="value"><a href="mailto:${contactEmail}" style="color: #ff8a3d;">${contactEmail}</a></div>
+                <div class="value">${contactEmail ? `<a href="mailto:${contactEmail}" style="color: #ff8a3d;">${contactEmail}</a>` : '<span style="color: #a1a1aa;">Not provided (WhatsApp lead)</span>'}</div>
               </div>
               ${phone ? `<div class="field"><div class="label">Phone / WhatsApp</div><div class="value"><a href="https://wa.me/${phone.replace(/[^0-9]/g, '')}" style="color: #22c55e;">${phone}</a></div></div>` : ''}
               ${businessName ? `<div class="field"><div class="label">Business / Brand</div><div class="value">${businessName}</div></div>` : ''}
@@ -122,20 +125,26 @@ export async function POST(req: Request) {
         </html>
       `;
 
-      fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${resendApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from: 'aB Labs Inquiries <inquiries@ab-labs.cv>',
-          to: ['hello@ab-labs.cv'],
-          reply_to: contactEmail || 'hello@ab-labs.cv',
-          subject: isDemo ? `⚡ [Demo Request] ${senderName} — ${targetTemplate || 'Template'}` : `[Lead] ${senderName} — ${inquiryTopic}`,
-          html: emailHtml,
-        }),
-      }).catch((err) => console.error('[Resend Contact Error]:', err));
+      try {
+        const resendRes = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${resendApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: 'aB Labs Inquiries <inquiries@ab-labs.cv>',
+            to: recipients,
+            reply_to: contactEmail || 'hello@ab-labs.cv',
+            subject: isDemo ? `⚡ [Demo Request] ${senderName} — ${targetTemplate || 'Template'}` : `[Lead] ${senderName} — ${inquiryTopic}`,
+            html: emailHtml,
+          }),
+        });
+        const resendData = await resendRes.json();
+        console.log('[Resend Delivery Success]:', resendData);
+      } catch (err) {
+        console.error('[Resend Contact Error]:', err);
+      }
     }
 
     return NextResponse.json({
