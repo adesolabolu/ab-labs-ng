@@ -45,22 +45,6 @@ export default function TemplateCard({ template, priority = false, ctaText = 'Ex
 
       {/* Content Body */}
       <div className="shop-template-body">
-        {/* Launch speed & Tech Stack Badges (Zero fake ratings) */}
-        <div className="shop-template-meta-row">
-          <span className="shop-template-speed-badge">
-            <span className="speed-dot"></span>
-            <span>Live in &lt; 36h</span>
-          </span>
-
-          <div className="shop-template-stack-list">
-            {template.stack.slice(0, 2).map((s) => (
-              <span key={s} className="shop-template-stack-pill">
-                {s}
-              </span>
-            ))}
-          </div>
-        </div>
-
         {/* Title */}
         <Link
           href={`/product/${template.slug}`}

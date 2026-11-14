@@ -14328,3 +14328,24 @@ html.site-mod-js:not(.ab-labs-ready) .abtm {
     line-height: 1.25;
   }
 }
+
+/* ==========================================================================
+   Admin Portal: 3-Column Catalog Inventory Grid
+   ========================================================================== */
+.admin-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+@media (max-width: 1100px) {
+  .admin-catalog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .admin-catalog-grid {
+    grid-template-columns: 1fr;
+  }
+}

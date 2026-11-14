@@ -1399,11 +1399,7 @@ export default function AdminPortalPage() {
         {/* Tab 4: Catalog Foundations Grid */}
         {activeTab === 'templates' && (
           <div>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-              gap: '20px',
-            }}>
+            <div className="admin-catalog-grid">
               {filteredTemplates.map((t) => (
                 <div 
                   key={t.slug}
