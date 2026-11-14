@@ -16,6 +16,7 @@ export async function POST(req: Request) {
       customerPhone,
       businessName,
       requestedDomain,
+      callbackUrl,
     } = body;
 
     if (!customerEmail || !customerName || !amountNgn) {
@@ -73,6 +74,7 @@ export async function POST(req: Request) {
           email: customerEmail,
           amount: Number(amountNgn) * 100, // Paystack expects kobo
           reference,
+          callback_url: callbackUrl || undefined,
           metadata: {
             customerName,
             customerPhone,

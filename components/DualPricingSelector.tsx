@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import DemoRequestModal from '@/components/DemoRequestModal';
+import InstantCheckoutModal from '@/components/InstantCheckoutModal';
 
 interface DualPricingSelectorProps {
   templateName?: string;
@@ -28,6 +29,7 @@ export default function DualPricingSelector({
 }: DualPricingSelectorProps) {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'outright'>('monthly');
   const [showDemoModal, setShowDemoModal] = useState(false);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 
   const formatNgn = (val: number) => `₦${val.toLocaleString()}`;
 
@@ -202,10 +204,11 @@ export default function DualPricingSelector({
 
       {/* Action Buttons */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '16px' }}>
-        <a
-          href={`/contact-us?template=${templateSlug}&plan=${selectedPlan}`}
+        <button
+          type="button"
+          onClick={() => setShowCheckoutModal(true)}
           className="primary-button"
-          data-umami-event={`Pricing Selector - Clicked Start Build (${selectedPlan})`}
+          data-umami-event={`Pricing Selector - Clicked Pay Now (${selectedPlan})`}
           data-umami-event-template={templateSlug}
           data-umami-event-plan={selectedPlan}
           style={{
@@ -214,22 +217,30 @@ export default function DualPricingSelector({
             alignItems: 'center',
             width: '100%',
             minHeight: '48px',
-            textDecoration: 'none',
-            fontWeight: 600,
+            fontWeight: 700,
             fontSize: '14.5px',
             borderRadius: '100px',
             backgroundColor: '#111827',
             color: '#ffffff',
-            boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+            boxShadow: '0 4px 14px rgba(0, 0, 0, 0.15)',
             textAlign: 'center',
             padding: '10px 16px',
             boxSizing: 'border-box',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'background-color 0.15s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#9a6843';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#111827';
           }}
         >
           {selectedPlan === 'monthly'
-            ? `Start Build with Monthly Plan (${formatNgn(setupFee)} + ${formatNgn(monthlyPrice)}/mo)`
-            : `Start Build Outright (${formatNgn(outrightPrice)})`}
-        </a>
+            ? `Pay & Start Build (${formatNgn(setupFee + monthlyPrice)})`
+            : `Pay & Start Build (${formatNgn(outrightPrice)})`}
+        </button>
 
         <button
           type="button"
@@ -266,6 +277,19 @@ export default function DualPricingSelector({
           <span>Request a Free Brand Demo</span>
         </button>
       </div>
+
+      {/* Instant Paystack Checkout & Automated Portal Provisioning Modal */}
+      <InstantCheckoutModal
+        isOpen={showCheckoutModal}
+        onClose={() => setShowCheckoutModal(false)}
+        templateName={templateName}
+        templateSlug={templateSlug}
+        selectedPlan={selectedPlan}
+        monthlyPrice={monthlyPrice}
+        setupFee={setupFee}
+        outrightPrice={outrightPrice}
+        whatsappNumber={whatsappNumber}
+      />
 
       {/* 2-Option Interactive Demo Request Modal */}
       <DemoRequestModal
