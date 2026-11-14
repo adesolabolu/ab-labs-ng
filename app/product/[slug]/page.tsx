@@ -82,15 +82,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             availability: 'https://schema.org/InStock',
             url: productUrl,
           },
-          ...(template.rating
-            ? {
-                aggregateRating: {
-                  '@type': 'AggregateRating',
-                  ratingValue: template.rating,
-                  reviewCount: Math.max(template.reviews, 1),
-                },
-              }
-            : {}),
         },
         {
           '@type': 'BreadcrumbList',

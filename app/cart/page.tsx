@@ -22,10 +22,6 @@ export default function CartPage() {
           <section className="section-breadcrumb">
             <div className="site-blockcontainer container-large site-container">
               <div className="page-heading-block align-center">
-                <div className="hero-subtitle-block">
-                  <div className="subtitle-dot"></div>
-                  <div>02 - Review &amp; Checkout</div>
-                </div>
                 <div className="page-title-block">
                   <h1 className="heading-style-h1">Your Flagship Cart</h1>
                 </div>

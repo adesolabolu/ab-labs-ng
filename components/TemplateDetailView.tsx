@@ -208,7 +208,7 @@ export default function TemplateDetailView({
                         <div className="pdd-intro">
                           <div className="product-dtails-subtitle">
                             <div className="subtitle-dot"></div>
-                            <p className="pd-ey">01 - What&apos;s Included</p>
+                            <p className="pd-ey">What&apos;s Included</p>
                           </div>
                           <div className="product-overview-details site-richtext">
                             <h2>Everything Your Business Needs to Launch Online.</h2>
@@ -280,7 +280,7 @@ export default function TemplateDetailView({
                           <div className="pds-head">
                             <div className="product-dtails-subtitle">
                               <div className="subtitle-dot"></div>
-                              <p className="pd-ey">02 - Fast Launch Flow</p>
+                              <p className="pd-ey">Fast Launch Flow</p>
                             </div>
                             <h3 className="pd-panel-h3">From Selection to Live in Less Than 36 Hours.</h3>
                             <p className="pd-panel-p">
@@ -379,9 +379,6 @@ export default function TemplateDetailView({
             <div className="site-blockcontainer container-large site-container">
               <div className="section-heading-flex">
                 <div className="section-heading-block">
-                  <div className="section-subtitle-block">
-                    <div data-summary="true" className="subtitle-text">02 - More Designs</div>
-                  </div>
                   <div className="section-title-block">
                     <h2 className="heading-style-h2">Explore More Website Foundations</h2>
                   </div>

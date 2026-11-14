@@ -122,8 +122,7 @@ export default function CallToAction({
                 </div>
               </div>
               <p className="ctas-trust-txt">
-                <span className="ctas-trust-stars">★★★★★</span>
-                <span className="ctas-trust-txt-b">4.9/5</span> · Trusted by ambitious brands &amp; founders
+                <span className="ctas-trust-txt-b">Production-Ready Engineering</span> · Handcrafted for ambitious brands
               </p>
             </div>
           </div>

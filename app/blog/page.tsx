@@ -26,10 +26,6 @@ export default function BlogPage() {
           <section className="section-breadcrumb">
             <div className="site-blockcontainer container-large site-container">
               <div className="page-heading-block align-center">
-                <div className="hero-subtitle-block">
-                  <div className="subtitle-dot"></div>
-                  <div>08 - Practical Guides</div>
-                </div>
                 <div className="page-title-block">
                   <h1 className="heading-style-h1">Simple Guides to Grow Your Business Online</h1>
                 </div>

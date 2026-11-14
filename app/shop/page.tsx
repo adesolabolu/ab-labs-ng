@@ -30,10 +30,6 @@ export default async function ShopPage() {
           <section className="section-breadcrumb">
             <div className="site-blockcontainer container-large site-container">
               <div className="page-heading-block align-center">
-                <div className="hero-subtitle-block">
-                  <div className="subtitle-dot"></div>
-                  <div>01 - Ready-Made Templates</div>
-                </div>
                 <div className="page-title-block">
                   <h1 className="heading-style-h1">Website Templates for Your Business</h1>
                 </div>

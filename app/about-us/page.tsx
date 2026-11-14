@@ -98,13 +98,7 @@ export default function AboutUsPage() {
                   </div>
                 </div>
                 <div className="ab-hero-right">
-                  <div className="ab-hero-rate">
-                    <p className="ab-hero-rate-n">4.9</p>
-                    <div>
-                      <p className="ab-hero-rate-s">★★★★★</p>
-                      <p className="ab-hero-rate-l">Rated by 120+ founders &amp; tech leads</p>
-                    </div>
-                  </div>
+                  
                   <img src="/assets/6aa0e1f3d02666b3379f7bfb_About%20Hero%20image%20(1).webp" alt="Engineers building high-performance web flagships at aB Labs" loading="eager" className="ab-hero-media-img" />
                   <div className="ab-hero-tag">
                     <div className="subtitle-dot"></div>
@@ -119,9 +113,7 @@ export default function AboutUsPage() {
           <section className="section-philoshphy">
             <div className="site-blockcontainer container-large site-container">
               <div className="section-heading-block align-center">
-                <div className="section-subtitle-block">
-                  <div className="subtitle-text">02 - Our Philosophy</div>
-                </div>
+                
                 <div className="section-title-block max-width-980px">
                   <h2 className="title-42px text-weight-medium _42px">
                     We Believe Web Software Should Be Accessible, Blazing Fast, and 100% Free of Bloat.
@@ -163,9 +155,7 @@ export default function AboutUsPage() {
               <div className="story-wrapper">
                 <div className="story-left-column">
                   <div className="section-heading-block">
-                    <div className="section-subtitle-block">
-                      <div className="subtitle-text text-color-white">03 - Our Story</div>
-                    </div>
+                    
                     <div className="section-title-block max-width-460px">
                       <h2 className="heading-style-h2 text-color-white">Six Years, One Mission.</h2>
                     </div>
@@ -253,9 +243,7 @@ export default function AboutUsPage() {
                 </div>
                 <div className="ab-stats-top">
                   <div className="section-heading-block align-center">
-                    <div className="section-subtitle-block">
-                      <div className="subtitle-text text-color-white">04 - By the Numbers</div>
-                    </div>
+                    
                     <div className="section-title-block">
                       <h2 className="heading-style-h2 text-color-white">Performance Metrics That Impact Your Bottom Line.</h2>
                     </div>
@@ -287,9 +275,7 @@ export default function AboutUsPage() {
           <section className="section-promise">
             <div className="site-blockcontainer container-large site-container">
               <div className="section-heading-block align-center">
-                <div className="section-subtitle-block">
-                  <div className="subtitle-text">05 - Our Standards</div>
-                </div>
+                
                 <div className="section-title-block">
                   <h2 className="heading-style-h2">Code You Own. Performance You Can Verify.</h2>
                 </div>
@@ -393,9 +379,7 @@ export default function AboutUsPage() {
           <section className="section-him">
             <div className="site-blockcontainer container-large site-container">
               <div className="section-heading-block align-center">
-                <div className="section-subtitle-block">
-                  <div className="subtitle-text">06 - How We Engineer</div>
-                </div>
+                
                 <div className="section-title-block">
                   <h2 className="heading-style-h2">From Design System to Production Deployment.</h2>
                 </div>

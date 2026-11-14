@@ -41,9 +41,6 @@ export default function ContactUsPage() {
               <div className="ct-main-in">
                 <div className="ct-info">
                   <div className="section-heading-block">
-                    <div fade-in="true" className="section-subtitle-block">
-                      <div className="subtitle-text">Get in touch</div>
-                    </div>
                     <div className="section-title-block">
                       <h2 className="heading-style-h2">We’re Here To Help.</h2>
                     </div>
