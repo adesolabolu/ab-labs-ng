@@ -46,6 +46,19 @@ audio:not([controls]) {
   display: none;
 }
 
+/* Accessibility: visually hidden utility for screen readers */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border-width: 0 !important;
+}
+
 a {
   background-color: #0000;
 }
@@ -12875,38 +12888,11 @@ option { color: #000 !important; }
   color: #1c1917;
 }
 
+.abfilter-price-filter,
 .abfilter-sort {
-  display: flex;
-  align-items: center;
-  height: 42px;
-  border: 1px solid #e7e5e4;
-  border-radius: 10px;
-  background: #ffffff;
-  transition: border-color 0.16s ease, box-shadow 0.16s ease;
-}
-
-.abfilter-sort:focus-within {
-  border-color: #9a6843;
-  box-shadow: 0 0 0 3px rgba(154, 104, 67, 0.14);
-}
-
-.abfilter-sort select {
-  appearance: none;
-  -webkit-appearance: none;
-  height: 40px;
-  border: none;
-  border-radius: 10px;
-  background-color: transparent;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2378716c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 13px center;
-  padding: 0 36px 0 14px;
-  font-family: var(--_font-family---font-family-body);
-  font-size: 13px;
-  font-weight: 600;
-  color: #1c1917;
-  cursor: pointer;
-  outline: none;
+  position: relative;
+  flex: 1;
+  min-width: 0;
 }
 
 .abfilter-meta {
@@ -12944,12 +12930,6 @@ option { color: #000 !important; }
 @media (max-width: 640px) {
   .abfilter-search {
     flex-basis: 100%;
-  }
-  .abfilter-sort {
-    width: 100%;
-  }
-  .abfilter-sort select {
-    width: 100%;
   }
 }
 /* ── Shop: 3-column Catalog Grid ────────────────────────────────── */
