@@ -24,17 +24,21 @@ export async function POST(req: Request) {
     } = body;
 
     const senderName = name || [firstName, lastName].filter(Boolean).join(' ') || businessName || 'Prospective Client';
-    const contactEmail = email?.trim().toLowerCase();
+    const contactEmail = email?.trim().toLowerCase() || null;
     const isDemo = inquiry_type === 'DEMO_REQUEST' || Boolean(templateName || templateSlug);
     const resolvedInquiryType = isDemo ? 'DEMO_REQUEST' : 'CONTACT';
     const targetTemplate = templateName || template_interest || templateSlug || null;
     const inquiryTopic = isDemo
       ? `Demo Request: ${targetTemplate || 'Website Foundation'}`
       : (topic || field || 'General Inquiry');
-    const inquiryMessage = message?.trim() || (isDemo ? `Requested interactive brand demo for ${targetTemplate || 'template'} (${plan_type || 'Monthly'} Plan).` : '');
+    const inquiryMessage = message?.trim() || (isDemo ? `Requested free brand demo for ${targetTemplate || 'template'}. Business: ${businessName || 'Not specified'}. Phone: ${phone || 'Not specified'}.` : '');
 
-    if (!contactEmail) {
+    if (!isDemo && !contactEmail) {
       return NextResponse.json({ success: false, error: 'Email address is required' }, { status: 400 });
+    }
+
+    if (isDemo && !phone && !contactEmail) {
+      return NextResponse.json({ success: false, error: 'Please provide your WhatsApp / phone number' }, { status: 400 });
     }
 
     if (!isDemo && !inquiryMessage) {
@@ -127,7 +131,7 @@ export async function POST(req: Request) {
         body: JSON.stringify({
           from: 'aB Labs Inquiries <inquiries@ab-labs.cv>',
           to: ['hello@ab-labs.cv'],
-          reply_to: contactEmail,
+          reply_to: contactEmail || 'hello@ab-labs.cv',
           subject: isDemo ? `⚡ [Demo Request] ${senderName} — ${targetTemplate || 'Template'}` : `[Lead] ${senderName} — ${inquiryTopic}`,
           html: emailHtml,
         }),

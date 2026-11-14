@@ -2109,12 +2109,16 @@ export default function AdminPortalPage() {
                           <span style={{ fontSize: '11px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '2px' }}>
                             Email Address
                           </span>
-                          <a
-                            href={`mailto:${inq.email}?subject=Regarding your aB Labs Demo Request`}
-                            style={{ fontSize: '13px', color: '#60a5fa', textDecoration: 'none', display: 'inline-block' }}
-                          >
-                            ✉️ {inq.email}
-                          </a>
+                          {inq.email ? (
+                            <a
+                              href={`mailto:${inq.email}?subject=Regarding your aB Labs Demo Request`}
+                              style={{ fontSize: '13px', color: '#60a5fa', textDecoration: 'none', display: 'inline-block' }}
+                            >
+                              ✉️ {inq.email}
+                            </a>
+                          ) : (
+                            <span style={{ fontSize: '12.5px', color: '#71717a' }}>— WhatsApp lead</span>
+                          )}
                         </div>
 
                         {/* Phone / WhatsApp */}
