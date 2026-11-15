@@ -79,7 +79,10 @@ export async function POST(req: Request) {
         `;
       }
 
-      // 4. Provision client account if not already created
+      // 4. Provision client account. New customers get fresh credentials.
+      // Existing customers (ON CONFLICT) keep portal_access_token and
+      // password_hash untouched: no rotation, no credential email, no overwrites.
+      const orderEmail = String(order.customer_email || '').toLowerCase().trim();
       const clientId = `cli_${crypto.randomBytes(4).toString('hex')}`;
       const portalAccessToken = `token_${crypto.randomBytes(12).toString('hex')}`;
       const tempPassword = generateFriendlyPassword();
@@ -88,7 +91,7 @@ export async function POST(req: Request) {
       const expiryDate = new Date();
       expiryDate.setDate(expiryDate.getDate() + 365);
 
-      await sql`
+      const upserted = await sql`
         INSERT INTO clients (
           id,
           email,
@@ -106,7 +109,7 @@ export async function POST(req: Request) {
           build_phase
         ) VALUES (
           ${clientId},
-          ${order.customer_email},
+          ${orderEmail},
           ${order.customer_name},
           ${order.customer_phone || null},
           ${order.business_name || null},
@@ -126,24 +129,28 @@ export async function POST(req: Request) {
           template_slug = EXCLUDED.template_slug,
           plan_type = EXCLUDED.plan_type,
           domain_expiry_date = EXCLUDED.domain_expiry_date,
-          portal_access_token = EXCLUDED.portal_access_token,
-          password_hash = COALESCE(clients.password_hash, EXCLUDED.password_hash)
+          monthly_status = 'ACTIVE'
+        RETURNING id, (xmax = 0) AS inserted
       `;
 
-      // 5. Send confirmation email
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ng.ab-labs.cv';
-      const portalUrl = `${baseUrl}/portal?token=${portalAccessToken}`;
-      const templateMatch = TEMPLATES.find((t) => t.slug === order.template_slug);
-      const templateName = templateMatch ? templateMatch.name : (order.template_slug || 'Website Template');
+      const isNewClient = Array.isArray(upserted) && upserted[0] && upserted[0].inserted === true;
 
-      sendClientCredentialsEmail({
-        to: order.customer_email,
-        name: order.customer_name,
-        templateName,
-        temporaryPassword: tempPassword,
-        portalUrl,
-        domainName: order.requested_domain,
-      }).catch((err) => console.error('[Paystack Webhook] Email error:', err));
+      // 5. Send credentials email (new accounts only)
+      if (isNewClient) {
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ng.ab-labs.cv';
+        const portalUrl = `${baseUrl}/portal?token=${portalAccessToken}`;
+        const templateMatch = TEMPLATES.find((t) => t.slug === order.template_slug);
+        const templateName = templateMatch ? templateMatch.name : (order.template_slug || 'Website Template');
+
+        sendClientCredentialsEmail({
+          to: orderEmail,
+          name: order.customer_name,
+          templateName,
+          temporaryPassword: tempPassword,
+          portalUrl,
+          domainName: order.requested_domain,
+        }).catch((err) => console.error('[Paystack Webhook] Email error:', err));
+      }
     }
 
     return NextResponse.json({ received: true });

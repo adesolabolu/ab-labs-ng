@@ -21,10 +21,14 @@ export function verifyPassword(password: string, storedHash: string): boolean {
 }
 
 export function generateFriendlyPassword(): string {
-  const digits = crypto.randomInt(1000, 10000);
-  const words = ['Launch', 'Build', 'Ready', 'Fast', 'Apex', 'Nova', 'Pulse'];
-  const word = words[crypto.randomInt(0, words.length)];
-  return `Ab-${digits}-${word}`;
+  // 900,000 digits x 12 x 12 word pairs: ~130M combinations (was 63,000).
+  const digits = crypto.randomInt(100000, 1000000);
+  const words = [
+    'Launch', 'Build', 'Ready', 'Fast', 'Apex', 'Nova',
+    'Pulse', 'River', 'Harbor', 'Summit', 'Cedar', 'Orbit',
+  ];
+  const pick = () => words[crypto.randomInt(0, words.length)];
+  return `Ab-${digits}-${pick()}${pick()}`;
 }
 
 // --- Signed Session Tokens ---
