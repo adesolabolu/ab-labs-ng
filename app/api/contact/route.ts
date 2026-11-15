@@ -3,6 +3,19 @@ import sql from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
+// Escape user-controlled text before embedding in the admin notification email HTML.
+function escapeHtml(value: unknown): string {
+  return String(value ?? '').replace(/[&<>"']/g, (ch) => {
+    switch (ch) {
+      case '&': return '&amp;';
+      case '<': return '&lt;';
+      case '>': return '&gt;';
+      case '"': return '&quot;';
+      default: return '&#39;';
+    }
+  });
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -32,6 +45,17 @@ export async function POST(req: Request) {
       ? `Demo Request: ${targetTemplate || 'Website Foundation'}`
       : (topic || field || 'General Inquiry');
     const inquiryMessage = message?.trim() || (isDemo ? `Requested free brand demo for ${targetTemplate || 'template'}. Business: ${businessName || 'Not specified'}. Phone: ${phone || 'Not specified'}.` : '');
+
+    // Escaped variants for embedding in the admin notification email HTML
+    const eSenderName = escapeHtml(senderName);
+    const eContactEmail = contactEmail ? escapeHtml(contactEmail) : null;
+    const ePhone = phone ? escapeHtml(phone) : null;
+    const phoneDigits = phone ? String(phone).replace(/[^0-9]/g, '') : '';
+    const eBusinessName = businessName ? escapeHtml(businessName) : null;
+    const eTargetTemplate = targetTemplate ? escapeHtml(targetTemplate) : null;
+    const ePlanType = plan_type ? escapeHtml(plan_type) : null;
+    const eInquiryTopic = escapeHtml(inquiryTopic);
+    const eInquiryMessage = escapeHtml(inquiryMessage);
 
     if (!isDemo && !contactEmail) {
       return NextResponse.json({ success: false, error: 'Email address is required' }, { status: 400 });
@@ -101,23 +125,23 @@ export async function POST(req: Request) {
               <div class="header">${isDemo ? 'New Demo Request' : 'New Inbound Lead'} — aB Labs</div>
               <div class="field">
                 <div class="label">Client Name</div>
-                <div class="value">${senderName}</div>
+                <div class="value">${eSenderName}</div>
               </div>
               <div class="field">
                 <div class="label">Email Address</div>
-                <div class="value">${contactEmail ? `<a href="mailto:${contactEmail}" style="color: #ff8a3d;">${contactEmail}</a>` : '<span style="color: #a1a1aa;">Not provided (WhatsApp lead)</span>'}</div>
+                <div class="value">${eContactEmail ? `<a href="mailto:${eContactEmail}" style="color: #ff8a3d;">${eContactEmail}</a>` : '<span style="color: #a1a1aa;">Not provided (WhatsApp lead)</span>'}</div>
               </div>
-              ${phone ? `<div class="field"><div class="label">Phone / WhatsApp</div><div class="value"><a href="https://wa.me/${phone.replace(/[^0-9]/g, '')}" style="color: #22c55e;">${phone}</a></div></div>` : ''}
-              ${businessName ? `<div class="field"><div class="label">Business / Brand</div><div class="value">${businessName}</div></div>` : ''}
-              ${targetTemplate ? `<div class="field"><div class="label">Template Foundation</div><div class="value"><strong>${targetTemplate}</strong></div></div>` : ''}
-              ${plan_type ? `<div class="field"><div class="label">Plan Preference</div><div class="value">${plan_type}</div></div>` : ''}
+              ${phone ? `<div class="field"><div class="label">Phone / WhatsApp</div><div class="value"><a href="https://wa.me/${phoneDigits}" style="color: #22c55e;">${ePhone}</a></div></div>` : ''}
+              ${businessName ? `<div class="field"><div class="label">Business / Brand</div><div class="value">${eBusinessName}</div></div>` : ''}
+              ${targetTemplate ? `<div class="field"><div class="label">Template Foundation</div><div class="value"><strong>${eTargetTemplate}</strong></div></div>` : ''}
+              ${plan_type ? `<div class="field"><div class="label">Plan Preference</div><div class="value">${ePlanType}</div></div>` : ''}
               <div class="field">
                 <div class="label">Topic / Service</div>
-                <div class="value">${inquiryTopic}</div>
+                <div class="value">${eInquiryTopic}</div>
               </div>
               <div class="field">
                 <div class="label">Message / Details</div>
-                <div class="message-box">${inquiryMessage}</div>
+                <div class="message-box">${eInquiryMessage}</div>
               </div>
               <div class="footer">Received via https://ng.ab-labs.cv • View in Admin Portal: https://ng.ab-labs.cv/admin</div>
             </div>
