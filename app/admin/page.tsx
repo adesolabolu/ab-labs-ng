@@ -2709,7 +2709,7 @@ export default function AdminPortalPage() {
                       {/* 1-Click Access to Portal */}
                       <div style={{ textAlign: 'right' }}>
                         <Link
-                          href={`/portal?token=${client.portal_access_token}`}
+                          href={`/api/admin/clients/${client.id}/portal-link`}
                           target="_blank"
                           style={{
                             display: 'inline-block',

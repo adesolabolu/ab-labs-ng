@@ -23,7 +23,6 @@ export async function GET() {
         template_slug,
         plan_type,
         monthly_status,
-        portal_access_token,
         build_phase,
         created_at
       FROM clients
