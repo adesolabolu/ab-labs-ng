@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import sql from '@/lib/db';
 import { verifyPassword, setClientSessionCookie, clearClientSessionCookie } from '@/lib/auth';
+import { checkRateLimit, resetRateLimit } from '@/lib/rate-limit';
 import { sendClientCredentialsEmail } from '@/lib/email';
 import { TEMPLATES } from '@/data/templates';
 
@@ -35,6 +36,14 @@ export async function POST(req: Request) {
 
     // Case A: User requested a 1-Click Magic Login Link via email
     if (requestMagicLink) {
+      const magicLimit = checkRateLimit(`magic:${cleanEmail}`, 3, 15 * 60 * 1000);
+      if (!magicLimit.allowed) {
+        return NextResponse.json({
+          success: false,
+          error: 'Too many login link requests. Please wait a few minutes and try again.',
+        }, { status: 429 });
+      }
+
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3005';
       const portalUrl = `${baseUrl}/portal?token=${client.portal_access_token}`;
       const templateMatch = TEMPLATES.find((t) => t.slug === client.template_slug);
@@ -60,6 +69,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: 'Please enter your password' }, { status: 400 });
     }
 
+    const loginLimit = checkRateLimit(`login:${cleanEmail}`, 5, 15 * 60 * 1000);
+    if (!loginLimit.allowed) {
+      return NextResponse.json({
+        success: false,
+        error: 'Too many failed login attempts. Please wait a few minutes and try again.',
+        retryAfterSeconds: loginLimit.retryAfterSeconds,
+      }, { status: 429 });
+    }
+
     if (!client.password_hash) {
       return NextResponse.json({
         success: false,
@@ -77,6 +95,7 @@ export async function POST(req: Request) {
 
     // Issue session cookie
     await setClientSessionCookie(client.id, client.email);
+    resetRateLimit(`login:${cleanEmail}`);
 
     return NextResponse.json({
       success: true,

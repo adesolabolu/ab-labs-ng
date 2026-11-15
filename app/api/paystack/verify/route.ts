@@ -71,8 +71,11 @@ export async function POST(req: Request) {
       `;
     }
 
-    // 3. AUTOMATED ACCOUNT PROVISIONING:
-    // Generate cryptographically secure client ID, portal access token, and initial password
+    // 3. AUTOMATED ACCOUNT PROVISIONING
+    // New customers get a fresh account with emailed credentials.
+    // Existing customers (ON CONFLICT) keep portal_access_token and
+    // password_hash untouched - nothing is returned in this unauthenticated response.
+    const orderEmail = String(order.customer_email || '').toLowerCase().trim();
     const clientId = `cli_${crypto.randomBytes(4).toString('hex')}`;
     const portalAccessToken = `token_${crypto.randomBytes(12).toString('hex')}`;
     const tempPassword = generateFriendlyPassword();
@@ -82,8 +85,7 @@ export async function POST(req: Request) {
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + 365);
 
-    // Upsert client account in Neon DB
-    await sql`
+    const upserted = await sql`
       INSERT INTO clients (
         id,
         email,
@@ -101,7 +103,7 @@ export async function POST(req: Request) {
         build_phase
       ) VALUES (
         ${clientId},
-        ${order.customer_email},
+        ${orderEmail},
         ${order.customer_name},
         ${order.customer_phone || null},
         ${order.business_name || null},
@@ -121,12 +123,22 @@ export async function POST(req: Request) {
         template_slug = EXCLUDED.template_slug,
         plan_type = EXCLUDED.plan_type,
         domain_expiry_date = EXCLUDED.domain_expiry_date,
-        portal_access_token = EXCLUDED.portal_access_token,
-        password_hash = COALESCE(clients.password_hash, EXCLUDED.password_hash)
+        monthly_status = 'ACTIVE'
+      RETURNING id, (xmax = 0) AS inserted
     `;
 
-    // 4. Issue authenticated session cookie so customer is logged in immediately upon redirect
-    await setClientSessionCookie(clientId, order.customer_email);
+    const isNewClient = Array.isArray(upserted) && upserted[0] && upserted[0].inserted === true;
+
+    if (!isNewClient) {
+      return NextResponse.json({
+        success: true,
+        message: 'Payment verified. Welcome back - your existing login details are unchanged.',
+        orderId: order.id,
+        portalUrl: '/portal',
+      });
+    }
+    // 4. New account: issue session cookie so customer is logged in immediately upon redirect
+    await setClientSessionCookie(clientId, orderEmail);
 
     // 5. Send Welcome & Credentials Email asynchronously
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3005';
@@ -151,8 +163,6 @@ export async function POST(req: Request) {
         name: order.customer_name,
         businessName: order.business_name,
         domainName: order.requested_domain,
-        temporaryPassword: tempPassword,
-        portalAccessToken,
         domainExpiryDate: expiryDate.toISOString(),
       },
       orderId: order.id,
