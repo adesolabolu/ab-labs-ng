@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import crypto from 'crypto';
 import sql from '@/lib/db';
 import { getTemplateWithPricing, calculateAmountDue } from '@/lib/template-pricing';
 
@@ -42,8 +43,8 @@ export async function POST(req: Request) {
     const paystackSecretKey = process.env.PAYSTACK_SECRET_KEY;
     const isLiveKeyAvailable = paystackSecretKey && !paystackSecretKey.includes('placeholder');
 
-    const orderId = `ord_${Math.random().toString(36).substring(2, 10)}`;
-    const reference = `ab_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const orderId = `ord_${crypto.randomBytes(8).toString('hex')}`;
+    const reference = `ab_${Date.now()}_${crypto.randomBytes(12).toString('hex')}`;
 
     // Create pending order in database
     await sql`
