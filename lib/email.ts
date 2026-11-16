@@ -2,6 +2,19 @@
  * Transactional Email Dispatcher via Resend API
  */
 
+// Escape user-controlled text before embedding in HTML.
+function escapeHtml(value: unknown): string {
+  return String(value ?? '').replace(/[&<>"']/g, (ch) => {
+    switch (ch) {
+      case '&': return '&amp;';
+      case '<': return '&lt;';
+      case '>': return '&gt;';
+      case '"': return '&quot;';
+      default: return '&#39;';
+    }
+  });
+}
+
 interface SendCredentialsOptions {
   to: string;
   name: string;
@@ -14,6 +27,14 @@ interface SendCredentialsOptions {
 export async function sendClientCredentialsEmail(options: SendCredentialsOptions): Promise<boolean> {
   const { to, name, templateName, temporaryPassword, portalUrl, domainName } = options;
   const resendApiKey = process.env.RESEND_API_KEY;
+
+  // Escape anything user/order-controlled before embedding into the HTML.
+  const eTo = escapeHtml(to);
+  const eName = escapeHtml(name);
+  const eTemplateName = escapeHtml(templateName);
+  const eTemporaryPassword = escapeHtml(temporaryPassword);
+  const ePortalUrl = escapeHtml(portalUrl);
+  const eDomainName = domainName ? escapeHtml(domainName) : null;
 
   const html = `
     <!DOCTYPE html>
@@ -40,7 +61,7 @@ export async function sendClientCredentialsEmail(options: SendCredentialsOptions
           <div class="logo">aB Labs</div>
           <h1 class="heading">Payment Confirmed: Your Website Build Has Officially Started!</h1>
           <p class="subtext">
-            Hello <strong>${name}</strong>, thank you for trusting aB Labs. We have received your order for <strong>${templateName}</strong>${domainName ? ` on <strong>${domainName}</strong>` : ''}.
+            Hello <strong>${eName}</strong>, thank you for trusting aB Labs. We have received your order for <strong>${eTemplateName}</strong>${eDomainName ? ` on <strong>${eDomainName}</strong>` : ''}.
           </p>
 
           <div class="sla">
@@ -53,11 +74,11 @@ export async function sendClientCredentialsEmail(options: SendCredentialsOptions
               You can instantly upload your logo, select your color preferences, and view your build progress directly in your portal:
             </p>
             <div class="label">Portal Username (Email)</div>
-            <div class="val">${to}</div>
+            <div class="val">${eTo}</div>
             <div class="label">Temporary Access Password</div>
-            <div class="val-code">${temporaryPassword}</div>
+            <div class="val-code">${eTemporaryPassword}</div>
             <div style="text-align: center; margin-top: 20px;">
-              <a href="${portalUrl}" class="btn">Open Your Client Portal &rarr;</a>
+              <a href="${ePortalUrl}" class="btn">Open Your Client Portal &rarr;</a>
             </div>
           </div>
 
