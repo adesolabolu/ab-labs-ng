@@ -22,9 +22,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No signature provided' }, { status: 400 });
     }
 
-    // Verify Paystack HMAC SHA512 signature
+    // Verify Paystack HMAC SHA512 signature (constant-time compare)
     const hash = crypto.createHmac('sha512', paystackSecretKey).update(rawBody).digest('hex');
-    if (hash !== signature) {
+    const expected = Buffer.from(hash, 'hex');
+    const provided = Buffer.from(signature, 'hex');
+    if (provided.length !== expected.length || !crypto.timingSafeEqual(provided, expected)) {
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }
 
