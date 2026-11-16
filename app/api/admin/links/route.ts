@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import crypto from 'crypto';
 import sql from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
@@ -57,9 +58,8 @@ export async function POST(req: Request) {
 
     const finalTitle = title?.trim() || `${templateName || 'Digital Web Flagship'} Launch Proposal`;
 
-    // Generate unique ID: link_<random8>
-    const randomHex = Math.random().toString(36).substring(2, 10);
-    const id = `link_${randomHex}`;
+    // Generate unique ID: link_<16 hex chars> (CSPRNG)
+    const id = `link_${crypto.randomBytes(8).toString('hex')}`;
 
     // Amount due now: if monthly -> setupFee + first month; if outright -> outright price
     const amountDueNow = planType === 'MONTHLY' 
