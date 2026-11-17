@@ -118,14 +118,15 @@ function PaystackCallbackContent() {
   }
 
   const client = data?.client;
+  const firstName = client?.name ? String(client.name).trim().split(' ')[0] : '';
 
   return (
-    <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', fontFamily: 'sans-serif', backgroundColor: '#faf8f5' }}>
-      <div style={{ maxWidth: '520px', width: '100%', backgroundColor: '#ffffff', padding: '36px 28px', borderRadius: '20px', border: '1px solid rgba(12,11,10,0.08)', boxShadow: '0 16px 40px rgba(12,11,10,0.06)', textAlign: 'center' }}>
+    <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px 16px', fontFamily: 'system-ui, -apple-system, sans-serif', backgroundColor: '#faf8f5' }}>
+      <div style={{ maxWidth: '480px', width: '100%', backgroundColor: '#ffffff', padding: '32px 22px', borderRadius: '18px', border: '1px solid rgba(12,11,10,0.08)', boxShadow: '0 14px 34px rgba(12,11,10,0.06)', textAlign: 'center', boxSizing: 'border-box' }}>
         <div
           style={{
-            width: '60px',
-            height: '60px',
+            width: '54px',
+            height: '54px',
             borderRadius: '50%',
             backgroundColor: '#f0fdf4',
             border: '1px solid #bbf7d0',
@@ -134,81 +135,47 @@ function PaystackCallbackContent() {
             alignItems: 'center',
             justifyContent: 'center',
             margin: '0 auto 16px',
-            boxShadow: '0 6px 18px rgba(22, 163, 74, 0.18)',
           }}
         >
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
         </div>
 
-        <span
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            fontSize: '11px',
-            fontWeight: 700,
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-            color: '#15803d',
-            backgroundColor: '#f0fdf4',
-            border: '1px solid #bbf7d0',
-            padding: '3px 12px',
-            borderRadius: '100px',
-            marginBottom: '10px',
-          }}
-        >
-          <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#22c55e' }}></span>
-          Payment Confirmed &bull; Portal Provisioned
-        </span>
-
-        <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#1c1917', margin: '0 0 6px', letterSpacing: '-0.02em' }}>
-          Welcome, {client?.name || 'Valued Client'}!
+        <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#1c1917', margin: '0 0 8px', letterSpacing: '-0.02em' }}>
+          {firstName ? `Thank you, ${firstName}!` : 'Payment Confirmed!'}
         </h2>
-        <p style={{ color: '#57534e', fontSize: '13.5px', lineHeight: 1.55, margin: '0 0 22px' }}>
-          Your payment has been cleared and your client portal is fully activated. You are already logged in to begin Phase 1 setup.
+        <p style={{ color: '#57534e', fontSize: '14px', lineHeight: 1.55, margin: '0 0 22px' }}>
+          Your payment has been received and your client dashboard is ready. You can share your logo and business details inside.
         </p>
 
-        {/* Credentials Card */}
+        {/* Clean Receipt Summary */}
         <div
           style={{
-            backgroundColor: '#18181b',
-            color: '#f4f4f5',
-            borderRadius: '14px',
-            padding: '20px',
+            backgroundColor: '#fafaf9',
+            borderRadius: '12px',
+            padding: '16px',
             textAlign: 'left',
-            marginBottom: '20px',
-            border: '1px solid #27272a',
-            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
+            marginBottom: '22px',
+            border: '1px solid #e7e5e4',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+            boxSizing: 'border-box',
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#a1a1aa', fontWeight: 700 }}>
-              Client Portal Credentials
-            </span>
-            <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 600 }}>
-              &bull; Instant Session Active
-            </span>
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', paddingBottom: '8px', borderBottom: '1px solid #27272a' }}>
-            <span style={{ color: '#a1a1aa' }}>Login Email:</span>
-            <span style={{ fontWeight: 600, color: '#fafafa' }}>{client?.email}</span>
-          </div>
-
-          {client?.temporaryPassword && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #27272a', fontSize: '13px' }}>
-              <span style={{ color: '#a1a1aa' }}>Initial Password:</span>
-              <code style={{ fontSize: '14px', color: '#34d399', fontWeight: 700, backgroundColor: '#27272a', padding: '2px 8px', borderRadius: '4px' }}>
-                {client.temporaryPassword}
-              </code>
+          {client?.email && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', fontSize: '13px', paddingBottom: '10px', borderBottom: '1px solid #e7e5e4', flexWrap: 'wrap' }}>
+              <span style={{ color: '#78716c', flexShrink: 0 }}>Account Email</span>
+              <span style={{ fontWeight: 600, color: '#1c1917', wordBreak: 'break-word', textAlign: 'right' }}>{client.email}</span>
             </div>
           )}
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', paddingTop: '8px' }}>
-            <span style={{ color: '#a1a1aa' }}>Reference:</span>
-            <span style={{ fontWeight: 600, color: '#fafafa', fontFamily: 'monospace' }}>{reference}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', fontSize: '13px', flexWrap: 'wrap' }}>
+            <span style={{ color: '#78716c', flexShrink: 0 }}>Payment Reference</span>
+            <span style={{ fontWeight: 600, color: '#1c1917', fontFamily: 'monospace', fontSize: '12px', wordBreak: 'break-all', textAlign: 'right' }}>
+              {reference}
+            </span>
           </div>
         </div>
 
@@ -222,24 +189,23 @@ function PaystackCallbackContent() {
               justifyContent: 'center',
               gap: '8px',
               width: '100%',
-              padding: '14px',
+              padding: '14px 16px',
               backgroundColor: '#1c1917',
               color: '#ffffff',
-              borderRadius: '12px',
-              fontSize: '14.5px',
+              borderRadius: '10px',
+              fontSize: '14px',
               fontWeight: 700,
               textDecoration: 'none',
-              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.2)',
               boxSizing: 'border-box',
             }}
           >
-            <span>Enter Client Portal &amp; Upload Brand Assets</span>
+            <span>Open Your Client Dashboard</span>
             <span>&rarr;</span>
           </Link>
 
           <a
             href={`https://wa.me/2349036193817?text=${encodeURIComponent(
-              `Hi aB Labs, I just completed payment for reference ${reference} (${client?.name || 'Client'}). I am ready for Phase 1 setup!`
+              `Hi aB Labs, I just completed my payment (Reference: ${reference}). Ready to get my website started!`
             )}`}
             target="_blank"
             rel="noopener noreferrer"
@@ -249,10 +215,10 @@ function PaystackCallbackContent() {
               justifyContent: 'center',
               gap: '8px',
               width: '100%',
-              padding: '12px',
+              padding: '12px 16px',
               backgroundColor: '#f0fdf4',
               color: '#15803d',
-              borderRadius: '12px',
+              borderRadius: '10px',
               fontSize: '13.5px',
               fontWeight: 600,
               textDecoration: 'none',
@@ -263,7 +229,7 @@ function PaystackCallbackContent() {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.28-1.38c1.44.79 3.06 1.2 4.76 1.2h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm0 18.13h-.01c-1.52 0-3.01-.41-4.31-1.18l-.31-.18-3.2.84.85-3.12-.2-.32a8.19 8.19 0 0 1-1.26-4.36c0-4.54 3.7-8.23 8.24-8.23 2.2 0 4.27.86 5.82 2.41a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23z" />
             </svg>
-            <span>Notify Engineering Desk on WhatsApp</span>
+            <span>Message Us on WhatsApp</span>
           </a>
         </div>
       </div>

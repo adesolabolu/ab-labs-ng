@@ -80,45 +80,16 @@ export default function ClientLoginPage() {
         borderRadius: '18px',
         padding: '32px 28px',
         boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+        boxSizing: 'border-box',
       }}>
-        
-        {/* Mode Selector Tabs */}
-        <div style={{ display: 'flex', backgroundColor: '#1b1e24', borderRadius: '8px', padding: '3px', marginBottom: '24px' }}>
-          <button
-            type="button"
-            onClick={() => { setMode('password'); setErrorMessage(''); setSuccessMessage(''); }}
-            style={{
-              flex: 1,
-              padding: '8px',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '12px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              backgroundColor: mode === 'password' ? '#2e3440' : 'transparent',
-              color: mode === 'password' ? '#ffffff' : '#9ca3af',
-            }}
-          >
-            Sign In with Password
-          </button>
-          <button
-            type="button"
-            onClick={() => { setMode('magic-link'); setErrorMessage(''); setSuccessMessage(''); }}
-            style={{
-              flex: 1,
-              padding: '8px',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '12px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              backgroundColor: mode === 'magic-link' ? '#2e3440' : 'transparent',
-              color: mode === 'magic-link' ? '#ffffff' : '#9ca3af',
-            }}
-          >
-            Email Me a Login Link
-          </button>
-        </div>
+        <h1 style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff', margin: '0 0 6px' }}>
+          {mode === 'password' ? 'Sign in to your account' : 'Reset or get a login link'}
+        </h1>
+        <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '0 0 22px', lineHeight: 1.5 }}>
+          {mode === 'password'
+            ? 'Enter the email and password from your confirmation email.'
+            : 'Enter your checkout email and we will send a sign-in link to your inbox.'}
+        </p>
 
         {errorMessage && (
           <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', border: '1px solid #ef4444', color: '#f87171', padding: '12px', borderRadius: '8px', fontSize: '13px', marginBottom: '18px', lineHeight: 1.4 }}>
@@ -135,13 +106,13 @@ export default function ClientLoginPage() {
         <form onSubmit={handleSubmit}>
           {/* Email */}
           <div style={{ marginBottom: '18px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#d4d4d8', marginBottom: '6px' }}>
-              Email Used at Checkout
+            <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 600, color: '#d4d4d8', marginBottom: '6px' }}>
+              Email Address
             </label>
             <input
               type="email"
               required
-              placeholder="e.g. founder@company.ng"
+              placeholder="you@yourbusiness.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               style={{
@@ -161,13 +132,13 @@ export default function ClientLoginPage() {
           {mode === 'password' && (
             <div style={{ marginBottom: '22px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 700, color: '#d4d4d8' }}>
-                  Portal Password (sent to your email after payment)
+                <label style={{ fontSize: '12.5px', fontWeight: 600, color: '#d4d4d8' }}>
+                  Password
                 </label>
                 <button
                   type="button"
-                  onClick={() => setMode('magic-link')}
-                  style={{ background: 'none', border: 'none', color: '#34d399', fontSize: '11px', fontWeight: 600, cursor: 'pointer', padding: 0 }}
+                  onClick={() => { setMode('magic-link'); setErrorMessage(''); setSuccessMessage(''); }}
+                  style={{ background: 'none', border: 'none', color: '#34d399', fontSize: '12px', fontWeight: 600, cursor: 'pointer', padding: 0 }}
                 >
                   Forgot password?
                 </button>
@@ -208,8 +179,27 @@ export default function ClientLoginPage() {
               opacity: submitting ? 0.7 : 1,
             }}
           >
-            {submitting ? 'Authenticating...' : (mode === 'password' ? 'Sign In to Portal' : 'Send 1-Click Login Link')}
+            {submitting ? 'Signing in...' : (mode === 'password' ? 'Sign In' : 'Send Login Link to Email')}
           </button>
+
+          {mode === 'magic-link' && (
+            <button
+              type="button"
+              onClick={() => { setMode('password'); setErrorMessage(''); setSuccessMessage(''); }}
+              style={{
+                width: '100%',
+                marginTop: '12px',
+                background: 'none',
+                border: 'none',
+                color: '#a1a1aa',
+                fontSize: '12.5px',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              &larr; Back to password sign in
+            </button>
+          )}
         </form>
 
         <div style={{ marginTop: '24px', paddingTop: '18px', borderTop: '1px solid #23272e', textAlign: 'center', fontSize: '13px', color: '#71717a' }}>

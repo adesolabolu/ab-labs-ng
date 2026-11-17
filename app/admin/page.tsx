@@ -1530,7 +1530,12 @@ export default function AdminPortalPage() {
                       >
                         <td style={{ padding: '16px 20px' }}>
                           <strong style={{ color: '#f4f4f5', display: 'block', fontSize: '14px' }}>{c.name}</strong>
-                          <span style={{ color: '#71717a', fontSize: '12px' }}>{c.business_name || c.email}</span>
+                          <span style={{ color: '#71717a', fontSize: '12px', display: 'block' }}>{c.business_name || c.email}</span>
+                          {c.created_at && (
+                            <span style={{ color: '#52525b', fontSize: '11px', display: 'block', marginTop: '2px' }}>
+                              Joined: {new Date(c.created_at).toLocaleDateString('en-NG', { day: '2-digit', month: 'short', year: 'numeric' })}
+                            </span>
+                          )}
                         </td>
 
                         <td style={{ padding: '16px 20px' }}>
@@ -1688,16 +1693,38 @@ export default function AdminPortalPage() {
                                   cursor: activatingSubId === c.id ? 'not-allowed' : 'pointer',
                                 }}
                               >
-                                {activatingSubId === c.id ? 'Activating...' : 'Activate Monthly Billing'}
+                                {activatingSubId === c.id ? 'Activating...' : 'Mark Live & Start Billing'}
                               </button>
                             )}
                           </div>
                         </td>
 
                         <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                            <a
+                              href={`/api/admin/clients/${c.id}/portal-link`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                padding: '6px 10px',
+                                backgroundColor: 'rgba(255, 255, 255, 0.06)',
+                                color: '#e4e4f5',
+                                border: '1px solid rgba(255, 255, 255, 0.14)',
+                                borderRadius: '6px',
+                                fontSize: '12px',
+                                fontWeight: 600,
+                                textDecoration: 'none',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                              }}
+                            >
+                              <span>Open Portal</span>
+                              <span style={{ fontSize: '10px' }}>↗</span>
+                            </a>
                           {c.phone ? (
                             <a
-                              href={`https://wa.me/${c.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi ${c.name}, this is engineering from aB Labs regarding your domain setup.`)}`}
+                              href={`https://wa.me/${c.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi ${c.name}, following up from aB Labs regarding your website setup.`)}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               style={{
@@ -1717,9 +1744,8 @@ export default function AdminPortalPage() {
                               <span>WhatsApp</span>
                               <span style={{ fontSize: '10px' }}>↗</span>
                             </a>
-                          ) : (
-                            <span style={{ color: '#52525b' }}>-</span>
-                          )}
+                          ) : null}
+                          </div>
                         </td>
                       </tr>
                     );

@@ -37,36 +37,61 @@ interface ClientPortalViewProps {
   template?: Template | null;
 }
 
+type PortalTab = 'overview' | 'brand' | 'billing' | 'account';
+
 export default function ClientPortalView({ client, template }: ClientPortalViewProps) {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<PortalTab>('overview');
 
-  // Form State
+  // Brand Assets Form State
   const [logoUrl, setLogoUrl] = useState(client.logo_url || '');
   const [primaryColor, setPrimaryColor] = useState(client.primary_color || '#18181b');
   const [accentColor, setAccentColor] = useState(client.accent_color || '#10b981');
   const [businessBio, setBusinessBio] = useState(client.business_bio || '');
   const [whatsappNumber, setWhatsappNumber] = useState(client.whatsapp_number || client.phone || '');
-  
-  // Save State
+
+  // Save Brand State
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Recurring Billing / Card Linking State
+  // Billing & Card Linking State
   const [linkingCard, setLinkingCard] = useState(false);
   const [cardLinkedMessage, setCardLinkedMessage] = useState('');
   const [cardLast4, setCardLast4] = useState(client.card_last4 || '');
   const [cardBrand, setCardBrand] = useState(client.card_brand || '');
-  const [billingStatus, setBillingStatus] = useState(client.billing_status || 'pending_launch');
+  const [billingStatus] = useState(client.billing_status || 'pending_launch');
 
+  // Password Change State
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [savingPassword, setSavingPassword] = useState(false);
+  const [passwordSuccess, setPasswordSuccess] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
+  const currentPhase = client.build_phase || 1;
   const isOutright = String(client.plan_type || '').toUpperCase() === 'OUTRIGHT';
   const monthlyRate = Number(client.monthly_amount_ngn || template?.monthlyNgn || 5000);
+  const firstName = client.name ? String(client.name).trim().split(' ')[0] : 'there';
 
+  // Reset "Redirecting to Paystack..." if user hits Back button from Paystack (bfcache restore)
+  useEffect(() => {
+    const resetLoading = () => setLinkingCard(false);
+    window.addEventListener('pageshow', resetLoading);
+    window.addEventListener('focus', resetLoading);
+    return () => {
+      window.removeEventListener('pageshow', resetLoading);
+      window.removeEventListener('focus', resetLoading);
+    };
+  }, []);
+
+  // Verify card-linking callback when returning from Paystack
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     const ref = params.get('reference') || params.get('trxref');
     if (params.get('card_linked') === '1' && ref) {
+      setActiveTab('billing');
       fetch('/api/paystack/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -77,7 +102,7 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
           if (data?.success && data?.cardLinked) {
             if (data.last4) setCardLast4(data.last4);
             if (data.brand) setCardBrand(data.brand);
-            setCardLinkedMessage(data.message || 'Card saved for seamless monthly auto-renewal.');
+            setCardLinkedMessage(data.message || 'Your card has been saved for automatic monthly renewals.');
             window.history.replaceState({}, '', '/portal');
           }
         })
@@ -88,6 +113,7 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
   const handleLinkCard = async () => {
     setLinkingCard(true);
     setErrorMessage('');
+    const timeoutId = setTimeout(() => setLinkingCard(false), 12000);
     try {
       const origin = typeof window !== 'undefined' ? window.location.origin : '';
       const res = await fetch('/api/portal/link-card', {
@@ -97,16 +123,15 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
       });
       const data = await res.json();
       if (!data?.success || !data?.authorizationUrl) {
-        throw new Error(data?.error || 'Could not start card verification.');
+        throw new Error(data?.error || 'Could not open card setup.');
       }
       window.location.href = data.authorizationUrl;
     } catch (err: any) {
-      setErrorMessage(err.message || 'Failed to start card linking.');
+      clearTimeout(timeoutId);
+      setErrorMessage(err.message || 'Could not start card setup. Please try again.');
       setLinkingCard(false);
     }
   };
-
-  const currentPhase = client.build_phase || 1;
 
   const handleSaveAssets = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,7 +154,7 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
 
       const data = await res.json();
       if (!data.success) {
-        throw new Error(data.error || 'Failed to save brand assets');
+        throw new Error(data.error || 'Failed to save brand details');
       }
 
       setSaveSuccess(true);
@@ -141,555 +166,660 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
     }
   };
 
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingPassword(true);
+    setPasswordSuccess('');
+    setPasswordError('');
+
+    try {
+      const res = await fetch('/api/portal/password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newPassword, confirmPassword }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        throw new Error(data.error || 'Could not update password');
+      }
+      setPasswordSuccess('Password updated! Use this password next time you sign in.');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err: any) {
+      setPasswordError(err.message || 'Could not update password');
+    } finally {
+      setSavingPassword(false);
+    }
+  };
+
   const handleLogout = async () => {
     await fetch('/api/auth/client', { method: 'DELETE' });
     router.push('/login');
   };
 
-  return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#090a0b', color: '#f4f4f5', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-      
-      {/* Top Navbar */}
-      <header style={{ borderBottom: '1px solid #1f2227', padding: '16px 24px', backgroundColor: '#0d0f12' }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <Link href="/" style={{ color: '#ffffff', textDecoration: 'none', fontWeight: 800, fontSize: '18px', letterSpacing: '-0.02em' }}>
-              aB Labs
-            </Link>
-            <span style={{ color: '#52525b', fontSize: '14px' }}>/</span>
-            <span style={{ fontSize: '13px', fontWeight: 600, color: '#a1a1aa' }}>Client Portal</span>
-          </div>
+  const billingLabel = isOutright
+    ? 'Paid in Full (One-Time)'
+    : billingStatus === 'active'
+    ? 'Auto-Renewal Active'
+    : billingStatus === 'past_due'
+    ? 'Payment Due'
+    : 'Starts After Your Site Goes Live';
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <span style={{ fontSize: '13px', color: '#a1a1aa' }}>
-              {client.email}
-            </span>
-            <button
-              onClick={handleLogout}
-              style={{
-                background: 'transparent',
-                border: '1px solid #27272a',
-                color: '#a1a1aa',
-                padding: '6px 14px',
-                borderRadius: '6px',
-                fontSize: '12px',
-                cursor: 'pointer',
-                fontWeight: 600,
-              }}
-            >
-              Sign out
-            </button>
-          </div>
+  const tabs: { id: PortalTab; label: string }[] = [
+    { id: 'overview', label: 'Overview' },
+    { id: 'brand', label: 'Brand & Logo' },
+    { id: 'billing', label: 'Billing' },
+    { id: 'account', label: 'Account & Password' },
+  ];
+
+  return (
+    <div className="portal-shell">
+      <style>{`
+        .portal-shell {
+          min-height: 100vh;
+          background-color: #faf8f5;
+          color: #1c1917;
+          font-family: system-ui, -apple-system, sans-serif;
+          overflow-x: hidden;
+          width: 100%;
+          box-sizing: border-box;
+        }
+        .portal-shell * {
+          box-sizing: border-box;
+        }
+        .portal-header-bar {
+          background-color: #ffffff;
+          border-bottom: 1px solid #e7e5e4;
+          padding: 14px 20px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          flex-wrap: wrap;
+        }
+        .portal-main {
+          max-width: 1060px;
+          margin: 0 auto;
+          padding: 28px 18px 72px;
+        }
+        .portal-layout {
+          display: grid;
+          grid-template-columns: 220px minmax(0, 1fr);
+          gap: 24px;
+          align-items: start;
+        }
+        .portal-nav {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          background-color: #ffffff;
+          border: 1px solid #e7e5e4;
+          border-radius: 14px;
+          padding: 10px;
+        }
+        .portal-tab-btn {
+          text-align: left;
+          padding: 10px 14px;
+          border-radius: 8px;
+          border: none;
+          font-size: 13.5px;
+          font-weight: 600;
+          cursor: pointer;
+          background: transparent;
+          color: #57534e;
+          transition: background-color 0.15s ease, color 0.15s ease;
+          font-family: inherit;
+        }
+        .portal-tab-btn.is-active {
+          background-color: #1c1917;
+          color: #ffffff;
+        }
+        .portal-tab-btn:not(.is-active):hover {
+          background-color: #f5f5f4;
+          color: #1c1917;
+        }
+        .portal-card {
+          background-color: #ffffff;
+          border: 1px solid #e7e5e4;
+          border-radius: 16px;
+          padding: 24px;
+          margin-bottom: 20px;
+          min-width: 0;
+        }
+        .portal-steps-grid {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 14px;
+        }
+        .portal-color-grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 16px;
+        }
+        .portal-input {
+          width: 100%;
+          min-width: 0;
+          padding: 11px 14px;
+          background-color: #ffffff;
+          border: 1px solid #d6d3d1;
+          border-radius: 8px;
+          color: #1c1917;
+          font-size: 14px;
+          font-family: inherit;
+        }
+        .portal-input:focus {
+          outline: none;
+          border-color: #1c1917;
+        }
+        @media (max-width: 820px) {
+          .portal-layout {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 16px;
+          }
+          .portal-nav {
+            flex-direction: row;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            gap: 6px;
+            padding: 8px;
+          }
+          .portal-tab-btn {
+            white-space: nowrap;
+            flex-shrink: 0;
+            padding: 9px 12px;
+            font-size: 13px;
+          }
+          .portal-steps-grid {
+            grid-template-columns: minmax(0, 1fr);
+          }
+        }
+        @media (max-width: 560px) {
+          .portal-main {
+            padding: 20px 14px 64px;
+          }
+          .portal-card {
+            padding: 18px 16px;
+          }
+          .portal-color-grid {
+            grid-template-columns: minmax(0, 1fr);
+          }
+        }
+      `}</style>
+
+      {/* Top Header */}
+      <header className="portal-header-bar">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+          <Link href="/" style={{ textDecoration: 'none', color: '#1c1917', fontWeight: 800, fontSize: '18px', letterSpacing: '-0.03em', whiteSpace: 'nowrap' }}>
+            aB Labs
+          </Link>
+          <span style={{ color: '#d6d3d1' }}>/</span>
+          <span style={{ fontSize: '13.5px', fontWeight: 600, color: '#57534e', whiteSpace: 'nowrap' }}>
+            Client Dashboard
+          </span>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', maxWidth: '100%' }}>
+          <span style={{ fontSize: '12.5px', color: '#78716c', wordBreak: 'break-all' }}>
+            {client.email}
+          </span>
+          <button
+            type="button"
+            onClick={handleLogout}
+            style={{
+              background: '#ffffff',
+              border: '1px solid #d6d3d1',
+              color: '#1c1917',
+              fontSize: '12px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              padding: '6px 12px',
+              borderRadius: '8px',
+            }}
+          >
+            Sign out
+          </button>
         </div>
       </header>
 
-      {/* Main Content Container */}
-      <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '36px 20px 80px' }}>
-        
-        {/* Welcome & Project Overview Header */}
-        <div style={{ marginBottom: '32px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-            <span style={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#34d399', fontSize: '12px', fontWeight: 700, padding: '3px 10px', borderRadius: '100px', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
-              Active Project Build
-            </span>
-            <span style={{ color: '#71717a', fontSize: '13px' }}>Client ID: {client.id}</span>
-          </div>
-          <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.03em', margin: 0 }}>
-            Welcome, {client.name}
+      <main className="portal-main">
+        {/* Welcome Heading */}
+        <div style={{ marginBottom: '22px' }}>
+          <h1 style={{ fontSize: '26px', fontWeight: 800, color: '#1c1917', letterSpacing: '-0.03em', margin: '0 0 6px' }}>
+            Welcome, {firstName}
           </h1>
-          <p style={{ color: '#a1a1aa', fontSize: '14px', marginTop: '6px' }}>
-            Track the status of your website build and provide your brand details below.
+          <p style={{ color: '#57534e', fontSize: '14px', margin: 0, lineHeight: 1.5 }}>
+            {client.business_name ? `${client.business_name} · ` : ''}Track your website build, send your brand details, and manage billing.
           </p>
         </div>
 
-        {/* 8-Hour SLA Guarantee Banner */}
-        <div style={{
-          backgroundColor: 'rgba(16, 185, 129, 0.08)',
-          border: '1px solid rgba(16, 185, 129, 0.25)',
-          borderRadius: '14px',
-          padding: '20px 24px',
-          marginBottom: '32px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '16px',
-        }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <span style={{ fontSize: '18px' }}>⚡</span>
-              <strong style={{ color: '#34d399', fontSize: '15px' }}>8-Hour Onboarding &amp; Phase 1 Demo Guarantee</strong>
-            </div>
-            <p style={{ color: '#a7f3d0', fontSize: '13px', margin: 0, lineHeight: 1.5 }}>
-              Our engineering team is actively preparing your staging site. You will receive a direct WhatsApp message and demo preview within <strong>8 hours</strong> of your payment.
-            </p>
+        {/* Global Error Banner */}
+        {errorMessage && (
+          <div style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '12px 16px', borderRadius: '10px', fontSize: '13px', marginBottom: '18px' }}>
+            {errorMessage}
           </div>
+        )}
 
-          <a
-            href={`https://wa.me/2349036193817?text=${encodeURIComponent(`Hi aB Labs, I am checking in from my portal for ${client.business_name || client.name} (${client.id}).`)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              backgroundColor: '#16a34a',
-              color: '#ffffff',
-              padding: '10px 18px',
-              borderRadius: '8px',
-              fontWeight: 700,
-              fontSize: '13px',
-              textDecoration: 'none',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            Direct WhatsApp Support &rarr;
-          </a>
-        </div>
-
-        {/* 3-Phase Interactive Progress Stepper */}
-        <section style={{ backgroundColor: '#131518', border: '1px solid #23272e', borderRadius: '16px', padding: '24px 28px', marginBottom: '36px' }}>
-          <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#ffffff', marginBottom: '20px', letterSpacing: '-0.01em' }}>
-            36-Hour Launch Timeline
-          </h2>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
-            
-            {/* Step 1 */}
-            <div style={{
-              backgroundColor: currentPhase === 1 ? 'rgba(16, 185, 129, 0.08)' : '#181b20',
-              border: currentPhase === 1 ? '1px solid #10b981' : '1px solid #272b33',
-              borderRadius: '12px',
-              padding: '18px',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                <span style={{ fontSize: '12px', fontWeight: 800, color: currentPhase === 1 ? '#34d399' : '#71717a' }}>
-                  PHASE 01
-                </span>
-                <span style={{
-                  fontSize: '10px',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  padding: '2px 8px',
-                  borderRadius: '100px',
-                  backgroundColor: currentPhase === 1 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                  color: currentPhase === 1 ? '#34d399' : '#71717a',
-                }}>
-                  {currentPhase === 1 ? 'In Progress' : 'Completed'}
-                </span>
-              </div>
-              <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#ffffff', margin: '0 0 6px' }}>
-                Onboarding &amp; Brand Assets
-              </h3>
-              <p style={{ fontSize: '12px', color: '#9ca3af', margin: 0, lineHeight: 1.5 }}>
-                Submitting your logo, colors, and business info so we can adapt your selected template.
-              </p>
-            </div>
-
-            {/* Step 2 */}
-            <div style={{
-              backgroundColor: currentPhase === 2 ? 'rgba(16, 185, 129, 0.08)' : '#181b20',
-              border: currentPhase === 2 ? '1px solid #10b981' : '1px solid #272b33',
-              borderRadius: '12px',
-              padding: '18px',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                <span style={{ fontSize: '12px', fontWeight: 800, color: currentPhase === 2 ? '#34d399' : '#71717a' }}>
-                  PHASE 02
-                </span>
-                <span style={{
-                  fontSize: '10px',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  padding: '2px 8px',
-                  borderRadius: '100px',
-                  backgroundColor: currentPhase === 2 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                  color: currentPhase === 2 ? '#34d399' : '#71717a',
-                }}>
-                  {currentPhase === 2 ? 'In Review' : (currentPhase > 2 ? 'Completed' : 'Queued')}
-                </span>
-              </div>
-              <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#ffffff', margin: '0 0 6px' }}>
-                Customization &amp; Staging Demo
-              </h3>
-              <p style={{ fontSize: '12px', color: '#9ca3af', margin: 0, lineHeight: 1.5 }}>
-                {client.demo_preview_url ? (
-                  <a href={client.demo_preview_url} target="_blank" rel="noopener noreferrer" style={{ color: '#34d399', fontWeight: 700 }}>
-                    View Staging Demo &rarr;
-                  </a>
-                ) : (
-                  'Live prototype built with your content for your review and approval.'
-                )}
-              </p>
-            </div>
-
-            {/* Step 3 */}
-            <div style={{
-              backgroundColor: currentPhase === 3 ? 'rgba(16, 185, 129, 0.08)' : '#181b20',
-              border: currentPhase === 3 ? '1px solid #10b981' : '1px solid #272b33',
-              borderRadius: '12px',
-              padding: '18px',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                <span style={{ fontSize: '12px', fontWeight: 800, color: currentPhase === 3 ? '#34d399' : '#71717a' }}>
-                  PHASE 03
-                </span>
-                <span style={{
-                  fontSize: '10px',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  padding: '2px 8px',
-                  borderRadius: '100px',
-                  backgroundColor: currentPhase === 3 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                  color: currentPhase === 3 ? '#34d399' : '#71717a',
-                }}>
-                  {currentPhase === 3 ? 'Live Now' : 'Pending Staging'}
-                </span>
-              </div>
-              <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#ffffff', margin: '0 0 6px' }}>
-                Domain &amp; Live Launch
-              </h3>
-              <p style={{ fontSize: '12px', color: '#9ca3af', margin: 0, lineHeight: 1.5 }}>
-                Connecting <strong>{client.domain_name || 'your custom domain'}</strong>, generating SSL, and going live.
-              </p>
-            </div>
-
-          </div>
-        </section>
-
-        {/* Two-Column Grid: Left (Asset Submission Form), Right (Project Specs) */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '28px' }}>
-          
-          {/* Left: Brand Asset Submission */}
-          <div style={{ backgroundColor: '#131518', border: '1px solid #23272e', borderRadius: '16px', padding: '28px' }}>
-            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff', marginBottom: '8px', letterSpacing: '-0.02em' }}>
-              Brand Details &amp; Assets
-            </h2>
-            <p style={{ color: '#9ca3af', fontSize: '13px', marginBottom: '24px', lineHeight: 1.5 }}>
-              Enter whatever you have ready. If you prefer to send these over WhatsApp, our engineer will collect them directly.
-            </p>
-
-            {saveSuccess && (
-              <div style={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', border: '1px solid #10b981', color: '#34d399', padding: '12px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, marginBottom: '20px' }}>
-                ✓ Brand details saved successfully! We have updated your project file.
-              </div>
-            )}
-
-            {errorMessage && (
-              <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', border: '1px solid #ef4444', color: '#f87171', padding: '12px 16px', borderRadius: '8px', fontSize: '13px', marginBottom: '20px' }}>
-                ✕ {errorMessage}
-              </div>
-            )}
-
-            <form onSubmit={handleSaveAssets}>
-              {/* Logo URL */}
-              <div style={{ marginBottom: '18px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#d4d4d8', marginBottom: '6px' }}>
-                  Logo Link or Google Drive / Cloudinary URL
-                </label>
-                <input
-                  type="text"
-                  placeholder="https://.../my-logo.png"
-                  value={logoUrl}
-                  onChange={(e) => setLogoUrl(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '10px 14px',
-                    backgroundColor: '#1b1e24',
-                    border: '1px solid #2e3440',
-                    borderRadius: '8px',
-                    color: '#ffffff',
-                    fontSize: '13px',
-                    boxSizing: 'border-box',
-                  }}
-                />
-                <span style={{ fontSize: '11px', color: '#71717a', marginTop: '4px', display: 'block' }}>
-                  Or paste a link to your Google Drive folder or Dropbox.
-                </span>
-              </div>
-
-              {/* Brand Colors */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '18px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#d4d4d8', marginBottom: '6px' }}>
-                    Primary Color
-                  </label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <input
-                      type="color"
-                      value={primaryColor}
-                      onChange={(e) => setPrimaryColor(e.target.value)}
-                      style={{ width: '38px', height: '38px', border: 'none', borderRadius: '6px', cursor: 'pointer', background: 'transparent' }}
-                    />
-                    <input
-                      type="text"
-                      value={primaryColor}
-                      onChange={(e) => setPrimaryColor(e.target.value)}
-                      style={{
-                        flex: 1,
-                        padding: '8px 12px',
-                        backgroundColor: '#1b1e24',
-                        border: '1px solid #2e3440',
-                        borderRadius: '8px',
-                        color: '#ffffff',
-                        fontSize: '13px',
-                        boxSizing: 'border-box',
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#d4d4d8', marginBottom: '6px' }}>
-                    Accent Color
-                  </label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <input
-                      type="color"
-                      value={accentColor}
-                      onChange={(e) => setAccentColor(e.target.value)}
-                      style={{ width: '38px', height: '38px', border: 'none', borderRadius: '6px', cursor: 'pointer', background: 'transparent' }}
-                    />
-                    <input
-                      type="text"
-                      value={accentColor}
-                      onChange={(e) => setAccentColor(e.target.value)}
-                      style={{
-                        flex: 1,
-                        padding: '8px 12px',
-                        backgroundColor: '#1b1e24',
-                        border: '1px solid #2e3440',
-                        borderRadius: '8px',
-                        color: '#ffffff',
-                        fontSize: '13px',
-                        boxSizing: 'border-box',
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* WhatsApp Contact */}
-              <div style={{ marginBottom: '18px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#d4d4d8', marginBottom: '6px' }}>
-                  Official WhatsApp Number (To receive leads)
-                </label>
-                <input
-                  type="text"
-                  placeholder="+234 812 345 6789"
-                  value={whatsappNumber}
-                  onChange={(e) => setWhatsappNumber(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '10px 14px',
-                    backgroundColor: '#1b1e24',
-                    border: '1px solid #2e3440',
-                    borderRadius: '8px',
-                    color: '#ffffff',
-                    fontSize: '13px',
-                    boxSizing: 'border-box',
-                  }}
-                />
-              </div>
-
-              {/* Bio & Copy */}
-              <div style={{ marginBottom: '24px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#d4d4d8', marginBottom: '6px' }}>
-                  Company Bio, Tagline or Custom Requests
-                </label>
-                <textarea
-                  rows={4}
-                  placeholder="Tell us what your business does, your key services, and any special features you want on your website..."
-                  value={businessBio}
-                  onChange={(e) => setBusinessBio(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '10px 14px',
-                    backgroundColor: '#1b1e24',
-                    border: '1px solid #2e3440',
-                    borderRadius: '8px',
-                    color: '#ffffff',
-                    fontSize: '13px',
-                    boxSizing: 'border-box',
-                    fontFamily: 'inherit',
-                  }}
-                />
-              </div>
-
+        <div className="portal-layout">
+          {/* Side / Top Navigation Tabs */}
+          <nav className="portal-nav" aria-label="Portal sections">
+            {tabs.map((tab) => (
               <button
-                type="submit"
-                disabled={saving}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  backgroundColor: '#ffffff',
-                  color: '#090a0b',
-                  borderRadius: '8px',
-                  fontWeight: 700,
-                  fontSize: '14px',
-                  border: 'none',
-                  cursor: saving ? 'not-allowed' : 'pointer',
-                  opacity: saving ? 0.7 : 1,
-                }}
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={`portal-tab-btn ${activeTab === tab.id ? 'is-active' : ''}`}
               >
-                {saving ? 'Saving...' : 'Save & Update Brand Details'}
+                {tab.label}
               </button>
-            </form>
-          </div>
+            ))}
+          </nav>
 
-          {/* Right: Project Specifications Card */}
-          <div>
-            <div style={{ backgroundColor: '#131518', border: '1px solid #23272e', borderRadius: '16px', padding: '28px', marginBottom: '24px' }}>
-              <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff', marginBottom: '16px', letterSpacing: '-0.02em' }}>
-                Your Website Details
-              </h2>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                <div style={{ paddingBottom: '12px', borderBottom: '1px solid #23272e' }}>
-                  <div style={{ fontSize: '11px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Selected Template</div>
-                  <div style={{ fontSize: '15px', fontWeight: 700, color: '#ffffff', marginTop: '3px' }}>
-                    {template ? template.name : (client.template_slug || 'Custom Architecture')}
-                  </div>
-                  {template?.category && (
-                    <span style={{ fontSize: '11px', color: '#a1a1aa' }}>Category: {template.category}</span>
-                  )}
-                </div>
-
-                <div style={{ paddingBottom: '12px', borderBottom: '1px solid #23272e' }}>
-                  <div style={{ fontSize: '11px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Provisioned Domain</div>
-                  <div style={{ fontSize: '15px', fontWeight: 700, color: '#34d399', marginTop: '3px' }}>
-                    {client.domain_name || 'Free .com.ng Included'}
-                  </div>
-                  <span style={{ fontSize: '11px', color: '#a1a1aa' }}>Status: {client.domain_status || 'Active Provisioning'}</span>
-                </div>
-
-                <div style={{ paddingBottom: '12px', borderBottom: '1px solid #23272e' }}>
-                  <div style={{ fontSize: '11px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Package Plan</div>
-                  <div style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff', marginTop: '3px' }}>
-                    {client.plan_type === 'OUTRIGHT' ? 'Outright Ownership (One-Time)' : 'Monthly Managed Care Plan'}
-                  </div>
-                </div>
-
-                <div>
-                  <div style={{ fontSize: '11px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Dedicated Support</div>
-                  <div style={{ fontSize: '13px', color: '#d4d4d8', marginTop: '3px' }}>
-                    Lagos Engineering Squad &middot; WhatsApp Lead Desk
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Billing & Auto-Renewal Card */}
-            <div style={{ backgroundColor: '#131518', border: '1px solid #23272e', borderRadius: '16px', padding: '24px', marginBottom: '24px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', gap: '8px' }}>
-                <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#ffffff', margin: 0 }}>
-                  Billing &amp; Maintenance
-                </h3>
-                <span
-                  style={{
-                    fontSize: '10.5px',
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.04em',
-                    padding: '3px 8px',
-                    borderRadius: '6px',
-                    backgroundColor: isOutright || billingStatus === 'active' ? '#064e3b' : '#27272a',
-                    color: isOutright || billingStatus === 'active' ? '#34d399' : '#e4e4e7',
-                  }}
-                >
-                  {isOutright
-                    ? 'Outright'
-                    : billingStatus === 'active'
-                    ? 'Auto-Renewal Active'
-                    : billingStatus === 'past_due'
-                    ? 'Payment Due'
-                    : 'Starts After Go-Live'}
-                </span>
-              </div>
-
-              {isOutright ? (
-                <p style={{ fontSize: '13px', color: '#9ca3af', margin: 0, lineHeight: 1.5 }}>
-                  You own this website 100% outright with <strong style={{ color: '#ffffff' }}>₦0 recurring monthly fees</strong>.
-                </p>
-              ) : (
-                <div>
-                  <div style={{ fontSize: '13px', color: '#d4d4d8', marginBottom: '8px' }}>
-                    Monthly Maintenance: <strong style={{ color: '#ffffff' }}>₦{monthlyRate.toLocaleString()}/mo</strong>
-                  </div>
-                  {client.next_billing_date && (
-                    <div style={{ fontSize: '12px', color: '#9ca3af', marginBottom: '10px' }}>
-                      Next billing date: {new Date(client.next_billing_date).toLocaleDateString('en-NG', { dateStyle: 'medium' })}
-                    </div>
-                  )}
-
-                  {cardLinkedMessage && (
-                    <div style={{ padding: '10px 12px', borderRadius: '8px', backgroundColor: '#064e3b', color: '#a7f3d0', fontSize: '12px', marginBottom: '12px' }}>
-                      {cardLinkedMessage}
-                    </div>
-                  )}
-
-                  {cardLast4 ? (
-                    <div style={{ padding: '10px 12px', borderRadius: '8px', backgroundColor: '#181b20', border: '1px solid #272b33', fontSize: '12.5px', color: '#e4e4e7' }}>
-                      Saved Card: <strong style={{ textTransform: 'uppercase' }}>{cardBrand || 'Card'}</strong> &bull;&bull;&bull;&bull; {cardLast4}
-                    </div>
-                  ) : (
-                    <div>
-                      <p style={{ fontSize: '12px', color: '#9ca3af', margin: '0 0 12px', lineHeight: 1.45 }}>
-                        Add a debit card anytime so future monthly renewals run automatically once your site is live (₦50 refundable verification check).
+          {/* Active Tab Content */}
+          <div style={{ minWidth: 0 }}>
+            {/* TAB 1: OVERVIEW */}
+            {activeTab === 'overview' && (
+              <>
+                <div className="portal-card">
+                  <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1c1917', margin: '0 0 14px' }}>
+                    Your Build Progress
+                  </h2>
+                  <div className="portal-steps-grid">
+                    <div style={{ backgroundColor: currentPhase === 1 ? '#f0fdf4' : '#fafaf9', border: `1px solid ${currentPhase === 1 ? '#86efac' : '#e7e5e4'}`, borderRadius: '12px', padding: '14px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: 700, color: currentPhase === 1 ? '#15803d' : '#78716c', marginBottom: '4px' }}>
+                        STEP 1 · {currentPhase > 1 ? 'Done' : 'Active'}
+                      </div>
+                      <div style={{ fontSize: '14px', fontWeight: 700, color: '#1c1917', marginBottom: '4px' }}>
+                        Send Brand Details
+                      </div>
+                      <p style={{ fontSize: '12.5px', color: '#57534e', margin: 0, lineHeight: 1.45 }}>
+                        Add your logo, preferred colors, and business info in the Brand &amp; Logo tab (or send on WhatsApp).
                       </p>
-                      <button
-                        type="button"
-                        onClick={handleLinkCard}
-                        disabled={linkingCard}
-                        style={{
-                          width: '100%',
-                          padding: '10px 14px',
-                          backgroundColor: '#10b981',
-                          color: '#052e16',
-                          border: 'none',
-                          borderRadius: '8px',
-                          fontSize: '13px',
-                          fontWeight: 700,
-                          cursor: linkingCard ? 'not-allowed' : 'pointer',
-                          opacity: linkingCard ? 0.7 : 1,
-                        }}
-                      >
-                        {linkingCard ? 'Redirecting to Paystack...' : 'Save Card for Auto-Renewal'}
-                      </button>
                     </div>
-                  )}
+
+                    <div style={{ backgroundColor: currentPhase === 2 ? '#f0fdf4' : '#fafaf9', border: `1px solid ${currentPhase === 2 ? '#86efac' : '#e7e5e4'}`, borderRadius: '12px', padding: '14px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: 700, color: currentPhase === 2 ? '#15803d' : '#78716c', marginBottom: '4px' }}>
+                        STEP 2 · {currentPhase > 2 ? 'Done' : currentPhase === 2 ? 'Ready' : 'Up Next'}
+                      </div>
+                      <div style={{ fontSize: '14px', fontWeight: 700, color: '#1c1917', marginBottom: '4px' }}>
+                        Preview Your Site
+                      </div>
+                      <p style={{ fontSize: '12.5px', color: '#57534e', margin: 0, lineHeight: 1.45 }}>
+                        {client.demo_preview_url ? (
+                          <a href={client.demo_preview_url} target="_blank" rel="noopener noreferrer" style={{ color: '#15803d', fontWeight: 700 }}>
+                            Open Site Preview &rarr;
+                          </a>
+                        ) : (
+                          'We customize your design and send you a private preview link within 8 hours.'
+                        )}
+                      </p>
+                    </div>
+
+                    <div style={{ backgroundColor: currentPhase >= 3 ? '#f0fdf4' : '#fafaf9', border: `1px solid ${currentPhase >= 3 ? '#86efac' : '#e7e5e4'}`, borderRadius: '12px', padding: '14px' }}>
+                      <div style={{ fontSize: '11px', fontWeight: 700, color: currentPhase >= 3 ? '#15803d' : '#78716c', marginBottom: '4px' }}>
+                        STEP 3 · {currentPhase >= 4 ? 'Live' : currentPhase === 3 ? 'In Progress' : 'Up Next'}
+                      </div>
+                      <div style={{ fontSize: '14px', fontWeight: 700, color: '#1c1917', marginBottom: '4px' }}>
+                        Connect Domain &amp; Launch
+                      </div>
+                      <p style={{ fontSize: '12.5px', color: '#57534e', margin: 0, lineHeight: 1.45 }}>
+                        Once you approve the preview, we connect your website address and take it live.
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              )}
-            </div>
 
-            {/* Quick WhatsApp Reminder Card */}
-            <div style={{ backgroundColor: '#181b20', border: '1px solid #272b33', borderRadius: '16px', padding: '24px' }}>
-              <div style={{ fontSize: '24px', marginBottom: '8px' }}>💬</div>
-              <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#ffffff', margin: '0 0 6px' }}>
-                Prefer to handle everything on WhatsApp?
-              </h3>
-              <p style={{ fontSize: '13px', color: '#9ca3af', margin: '0 0 16px', lineHeight: 1.5 }}>
-                You never have to worry about complicated web portals. You can send pictures, logos, and voice notes directly to our WhatsApp hotline anytime.
-              </p>
-              <a
-                href="https://wa.me/2349036193817"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'inline-block',
-                  color: '#34d399',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  textDecoration: 'none',
-                }}
-              >
-                Chat with our lead developer &rarr;
-              </a>
-            </div>
+                <div className="portal-card">
+                  <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1c1917', margin: '0 0 14px' }}>
+                    Website Summary
+                  </h2>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '13.5px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', paddingBottom: '10px', borderBottom: '1px solid #f5f5f4', flexWrap: 'wrap' }}>
+                      <span style={{ color: '#78716c' }}>Selected Design</span>
+                      <strong style={{ color: '#1c1917' }}>{template ? template.name : (client.template_slug || 'Custom Website')}</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', paddingBottom: '10px', borderBottom: '1px solid #f5f5f4', flexWrap: 'wrap' }}>
+                      <span style={{ color: '#78716c' }}>Website Domain</span>
+                      <strong style={{ color: client.domain_name ? '#15803d' : '#57534e', textAlign: 'right' }}>
+                        {client.domain_name || 'Not set yet (we will set this up with you)'}
+                      </strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
+                      <span style={{ color: '#78716c' }}>Plan</span>
+                      <strong style={{ color: '#1c1917' }}>
+                        {isOutright ? 'Full Ownership (One-Time)' : `Monthly Plan (₦${monthlyRate.toLocaleString()}/mo)`}
+                      </strong>
+                    </div>
+                  </div>
+                </div>
 
+                <div className="portal-card" style={{ backgroundColor: '#f0fdf4', borderColor: '#bbf7d0' }}>
+                  <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#166534', margin: '0 0 6px' }}>
+                    Need help or prefer WhatsApp?
+                  </h3>
+                  <p style={{ fontSize: '13px', color: '#15803d', margin: '0 0 14px', lineHeight: 1.5 }}>
+                    You can send your logo, pictures, or voice notes directly to us on WhatsApp at any time.
+                  </p>
+                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                    <a
+                      href={`https://wa.me/2349036193817?text=${encodeURIComponent(`Hi aB Labs, this is ${client.name} (${client.email}). Checking in about my website.`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-block',
+                        padding: '10px 16px',
+                        backgroundColor: '#16a34a',
+                        color: '#ffffff',
+                        borderRadius: '8px',
+                        fontSize: '13px',
+                        fontWeight: 700,
+                        textDecoration: 'none',
+                      }}
+                    >
+                      Chat on WhatsApp &rarr;
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('brand')}
+                      style={{
+                        padding: '10px 16px',
+                        backgroundColor: '#ffffff',
+                        color: '#1c1917',
+                        border: '1px solid #d6d3d1',
+                        borderRadius: '8px',
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Fill Brand Details Form
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* TAB 2: BRAND & LOGO */}
+            {activeTab === 'brand' && (
+              <div className="portal-card">
+                <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1c1917', margin: '0 0 6px' }}>
+                  Brand Details &amp; Logo
+                </h2>
+                <p style={{ color: '#57534e', fontSize: '13.5px', margin: '0 0 20px', lineHeight: 1.5 }}>
+                  Share whatever you have ready. Anything you leave blank can be sent later on WhatsApp.
+                </p>
+
+                {saveSuccess && (
+                  <div style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', color: '#15803d', padding: '12px 14px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, marginBottom: '18px' }}>
+                    Saved! Our team has received your brand details.
+                  </div>
+                )}
+
+                <form onSubmit={handleSaveAssets} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 600, color: '#44403c', marginBottom: '6px' }}>
+                      Logo Link (Google Drive, Dropbox, or image URL)
+                    </label>
+                    <input
+                      type="text"
+                      className="portal-input"
+                      placeholder="https://drive.google.com/..."
+                      value={logoUrl}
+                      onChange={(e) => setLogoUrl(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="portal-color-grid">
+                    <div>
+                      <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 600, color: '#44403c', marginBottom: '6px' }}>
+                        Primary Color
+                      </label>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <input
+                          type="color"
+                          value={primaryColor}
+                          onChange={(e) => setPrimaryColor(e.target.value)}
+                          style={{ width: '40px', height: '40px', border: '1px solid #d6d3d1', borderRadius: '8px', cursor: 'pointer', padding: '2px', backgroundColor: '#ffffff', flexShrink: 0 }}
+                        />
+                        <input
+                          type="text"
+                          className="portal-input"
+                          value={primaryColor}
+                          onChange={(e) => setPrimaryColor(e.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 600, color: '#44403c', marginBottom: '6px' }}>
+                        Accent Color
+                      </label>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <input
+                          type="color"
+                          value={accentColor}
+                          onChange={(e) => setAccentColor(e.target.value)}
+                          style={{ width: '40px', height: '40px', border: '1px solid #d6d3d1', borderRadius: '8px', cursor: 'pointer', padding: '2px', backgroundColor: '#ffffff', flexShrink: 0 }}
+                        />
+                        <input
+                          type="text"
+                          className="portal-input"
+                          value={accentColor}
+                          onChange={(e) => setAccentColor(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 600, color: '#44403c', marginBottom: '6px' }}>
+                      Customer WhatsApp Number (shown on your website)
+                    </label>
+                    <input
+                      type="tel"
+                      className="portal-input"
+                      placeholder="08012345678"
+                      value={whatsappNumber}
+                      onChange={(e) => setWhatsappNumber(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 600, color: '#44403c', marginBottom: '6px' }}>
+                      About Your Business / Special Requests
+                    </label>
+                    <textarea
+                      rows={4}
+                      className="portal-input"
+                      placeholder="Briefly describe what your business does, your main products or services, and any custom notes..."
+                      value={businessBio}
+                      onChange={(e) => setBusinessBio(e.target.value)}
+                      style={{ resize: 'vertical' }}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    style={{
+                      width: '100%',
+                      padding: '13px',
+                      backgroundColor: '#1c1917',
+                      color: '#ffffff',
+                      borderRadius: '10px',
+                      fontWeight: 700,
+                      fontSize: '14px',
+                      border: 'none',
+                      cursor: saving ? 'not-allowed' : 'pointer',
+                      opacity: saving ? 0.7 : 1,
+                    }}
+                  >
+                    {saving ? 'Saving...' : 'Save Brand Details'}
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {/* TAB 3: BILLING */}
+            {activeTab === 'billing' && (
+              <div className="portal-card">
+                <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1c1917', margin: '0 0 6px' }}>
+                  Billing &amp; Maintenance
+                </h2>
+                <p style={{ color: '#57534e', fontSize: '13.5px', margin: '0 0 20px', lineHeight: 1.5 }}>
+                  Manage your website maintenance plan and payment method.
+                </p>
+
+                {isOutright ? (
+                  <div style={{ padding: '16px', backgroundColor: '#fafaf9', border: '1px solid #e7e5e4', borderRadius: '12px', fontSize: '13.5px', color: '#44403c' }}>
+                    You own this website 100% outright with <strong>₦0 recurring monthly fees</strong>.
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div style={{ padding: '16px', backgroundColor: '#fafaf9', border: '1px solid #e7e5e4', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13.5px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap' }}>
+                        <span style={{ color: '#78716c' }}>Monthly Maintenance Fee</span>
+                        <strong style={{ color: '#1c1917' }}>₦{monthlyRate.toLocaleString()}/month</strong>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap' }}>
+                        <span style={{ color: '#78716c' }}>Status</span>
+                        <strong style={{ color: billingStatus === 'active' ? '#15803d' : '#1c1917' }}>{billingLabel}</strong>
+                      </div>
+                      {client.next_billing_date && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap' }}>
+                          <span style={{ color: '#78716c' }}>Next Billing Date</span>
+                          <strong style={{ color: '#1c1917' }}>
+                            {new Date(client.next_billing_date).toLocaleDateString('en-NG', { dateStyle: 'medium' })}
+                          </strong>
+                        </div>
+                      )}
+                    </div>
+
+                    {cardLinkedMessage && (
+                      <div style={{ padding: '12px 14px', borderRadius: '8px', backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', color: '#15803d', fontSize: '13px', fontWeight: 600 }}>
+                        {cardLinkedMessage}
+                      </div>
+                    )}
+
+                    {cardLast4 ? (
+                      <div style={{ padding: '14px 16px', borderRadius: '10px', backgroundColor: '#fafaf9', border: '1px solid #e7e5e4', fontSize: '13.5px', color: '#1c1917' }}>
+                        Saved Card: <strong style={{ textTransform: 'uppercase' }}>{cardBrand || 'Card'}</strong> &bull;&bull;&bull;&bull; {cardLast4}
+                      </div>
+                    ) : (
+                      <div style={{ padding: '16px', borderRadius: '12px', border: '1px solid #e7e5e4', backgroundColor: '#ffffff' }}>
+                        <h3 style={{ fontSize: '14.5px', fontWeight: 700, color: '#1c1917', margin: '0 0 6px' }}>
+                          Auto-Renewal Card (Optional)
+                        </h3>
+                        <p style={{ fontSize: '13px', color: '#57534e', margin: '0 0 14px', lineHeight: 1.5 }}>
+                          Save a debit card so monthly renewals run automatically once your website is live. Paystack performs a quick ₦50 check that is refunded immediately.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={handleLinkCard}
+                          disabled={linkingCard}
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            backgroundColor: '#1c1917',
+                            color: '#ffffff',
+                            border: 'none',
+                            borderRadius: '10px',
+                            fontSize: '13.5px',
+                            fontWeight: 700,
+                            cursor: linkingCard ? 'not-allowed' : 'pointer',
+                            opacity: linkingCard ? 0.7 : 1,
+                          }}
+                        >
+                          {linkingCard ? 'Opening Paystack...' : 'Save Card for Auto-Renewal'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB 4: ACCOUNT & PASSWORD */}
+            {activeTab === 'account' && (
+              <div className="portal-card">
+                <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1c1917', margin: '0 0 6px' }}>
+                  Account &amp; Password
+                </h2>
+                <p style={{ color: '#57534e', fontSize: '13.5px', margin: '0 0 20px', lineHeight: 1.5 }}>
+                  Set your own password so you don&apos;t have to use the temporary password from your email.
+                </p>
+
+                <div style={{ padding: '14px 16px', backgroundColor: '#fafaf9', border: '1px solid #e7e5e4', borderRadius: '10px', marginBottom: '20px', fontSize: '13.5px' }}>
+                  <span style={{ color: '#78716c', display: 'block', fontSize: '12px', marginBottom: '2px' }}>Account Email</span>
+                  <strong style={{ color: '#1c1917', wordBreak: 'break-all' }}>{client.email}</strong>
+                </div>
+
+                {passwordSuccess && (
+                  <div style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', color: '#15803d', padding: '12px 14px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, marginBottom: '16px' }}>
+                    {passwordSuccess}
+                  </div>
+                )}
+
+                {passwordError && (
+                  <div style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '12px 14px', borderRadius: '8px', fontSize: '13px', marginBottom: '16px' }}>
+                    {passwordError}
+                  </div>
+                )}
+
+                <form onSubmit={handleChangePassword} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 600, color: '#44403c', marginBottom: '6px' }}>
+                      New Password (at least 8 characters)
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      minLength={8}
+                      className="portal-input"
+                      placeholder="Enter new password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 600, color: '#44403c', marginBottom: '6px' }}>
+                      Confirm New Password
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      minLength={8}
+                      className="portal-input"
+                      placeholder="Re-enter new password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={savingPassword}
+                    style={{
+                      width: '100%',
+                      padding: '13px',
+                      backgroundColor: '#1c1917',
+                      color: '#ffffff',
+                      border: 'none',
+                      borderRadius: '10px',
+                      fontSize: '14px',
+                      fontWeight: 700,
+                      cursor: savingPassword ? 'not-allowed' : 'pointer',
+                      opacity: savingPassword ? 0.7 : 1,
+                    }}
+                  >
+                    {savingPassword ? 'Updating...' : 'Update Password'}
+                  </button>
+                </form>
+              </div>
+            )}
           </div>
-
         </div>
-
       </main>
-
     </div>
   );
 }
