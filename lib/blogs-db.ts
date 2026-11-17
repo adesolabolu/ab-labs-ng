@@ -106,7 +106,6 @@ export async function getBlogPostsFromDb(options?: {
   includeUnpublished?: boolean;
 }): Promise<BlogPost[]> {
   try {
-    await seedBlogsIfEmpty();
     const includeUnpublished = options?.includeUnpublished ?? false;
     const categorySlug = options?.categorySlug;
     const limit = options?.limit ?? 100;
@@ -161,7 +160,6 @@ export async function getBlogPostFromDb(slug: string): Promise<BlogPost | null> 
   if (!clean) return null;
 
   try {
-    await seedBlogsIfEmpty();
     const rows = (await sql`
       SELECT * FROM blog_posts
       WHERE slug = ${clean} OR id = ${clean}

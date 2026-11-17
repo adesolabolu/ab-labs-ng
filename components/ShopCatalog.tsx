@@ -33,10 +33,26 @@ export default function ShopCatalog({ templates }: ShopCatalogProps) {
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get('category') || 'all';
 
+  const [liveTemplates, setLiveTemplates] = useState<Template[]>(templates);
   const [activeCategory, setActiveCategory] = useState<string>(initialCategory);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [priceRange, setPriceRange] = useState<PriceRangeId>('all');
   const [sortBy, setSortBy] = useState<SortOption>('featured');
+
+  useEffect(() => {
+    let active = true;
+    fetch('/api/templates', { cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (active && data?.success && Array.isArray(data.templates) && data.templates.length > 0) {
+          setLiveTemplates(data.templates);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     const cat = searchParams.get('category');
@@ -48,7 +64,7 @@ export default function ShopCatalog({ templates }: ShopCatalogProps) {
   const filteredTemplates = useMemo(() => {
     const selectedRange = PRICE_RANGES.find((r) => r.id === priceRange) || PRICE_RANGES[0];
 
-    return templates
+    return liveTemplates
       .filter((tpl) => {
         const matchesCategory = activeCategory === 'all' || tpl.category === activeCategory;
         const effectivePrice = tpl.outrightNgn || tpl.priceNgn || 0;
@@ -69,7 +85,7 @@ export default function ShopCatalog({ templates }: ShopCatalogProps) {
         if (sortBy === 'monthly-low') return (a.monthlyNgn || 5000) - (b.monthlyNgn || 5000);
         return 0; // featured default order
       });
-  }, [templates, activeCategory, searchQuery, priceRange, sortBy]);
+  }, [liveTemplates, activeCategory, searchQuery, priceRange, sortBy]);
 
   const hasActiveFilters = activeCategory !== 'all' || searchQuery.trim() !== '' || priceRange !== 'all' || sortBy !== 'featured';
 

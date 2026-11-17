@@ -5,12 +5,15 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CallToAction from '@/components/CallToAction';
 import { getBlogPostFromDb, getBlogPostsFromDb } from '@/lib/blogs-db';
+import { BLOG_POSTS } from '@/data/blogs';
 import { pageMetadata, absoluteUrl } from '@/lib/site';
 import { itemsMap } from './content';
 
-// Single source of truth: Always query latest editorial guide from Neon DB.
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export function generateStaticParams() {
+  const blogSlugs = BLOG_POSTS.map((p) => p.slug);
+  const legacySlugs = Object.keys(itemsMap);
+  return Array.from(new Set([...blogSlugs, ...legacySlugs])).map((slug) => ({ slug }));
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

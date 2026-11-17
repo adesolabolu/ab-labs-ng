@@ -1,23 +1,53 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import type { TemplateWithPricing } from '@/lib/template-pricing';
 
 interface CheckoutClientProps {
-  initialTemplate: TemplateWithPricing;
-  initialPlan: 'monthly' | 'outright';
+  initialTemplates: TemplateWithPricing[];
 }
 
 export default function CheckoutClient({
-  initialTemplate,
-  initialPlan,
+  initialTemplates,
 }: CheckoutClientProps) {
   const router = useRouter();
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'outright'>(initialPlan);
+  const searchParams = useSearchParams();
+  const slugParam = searchParams.get('template') || 'lumina-lighting-lamps';
+  const planParam = searchParams.get('plan')?.toLowerCase() === 'outright' ? 'outright' : 'monthly';
+
+  const matchedInitial =
+    initialTemplates.find((t) => t.slug === slugParam || t.id === slugParam) || initialTemplates[0];
+
+  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'outright'>(planParam);
   const [monthlyOption, setMonthlyOption] = useState<'setup_only' | 'full_package'>('setup_only');
-  const [template, setTemplate] = useState<TemplateWithPricing>(initialTemplate);
+  const [template, setTemplate] = useState<TemplateWithPricing>(matchedInitial);
+
+  useEffect(() => {
+    setSelectedPlan(planParam);
+  }, [planParam]);
+
+  useEffect(() => {
+    const localMatch =
+      initialTemplates.find((t) => t.slug === slugParam || t.id === slugParam) || initialTemplates[0];
+    if (localMatch) {
+      setTemplate(localMatch);
+    }
+
+    let active = true;
+    fetch(`/api/templates?slug=${encodeURIComponent(slugParam)}`, { cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (active && data?.success && data.template) {
+          setTemplate(data.template);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [slugParam, initialTemplates]);
 
   // Form inputs (Lean, frictionless: Name, Email, WhatsApp, Business)
   const [customerName, setCustomerName] = useState('');

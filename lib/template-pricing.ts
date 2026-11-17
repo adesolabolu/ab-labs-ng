@@ -180,7 +180,6 @@ function rowToTemplate(row: any): TemplateWithPricing {
 /** Queries all templates directly from Neon Database (authoritative single source of truth). */
 export async function getTemplatesFromDb(): Promise<TemplateWithPricing[]> {
   try {
-    await seedTemplatesIfEmpty();
     const rows = (await sql`
       SELECT id, slug, name, tagline, category, category_label,
              price_ngn, price_usd, monthly_ngn, setup_fee_ngn, outright_ngn,
@@ -192,6 +191,7 @@ export async function getTemplatesFromDb(): Promise<TemplateWithPricing[]> {
     `) as any[];
 
     if (!rows || rows.length === 0) {
+      await seedTemplatesIfEmpty();
       return TEMPLATES.map((t) => ({ ...t, pricingOverride: false }));
     }
 
@@ -208,7 +208,6 @@ export async function getTemplateFromDb(slugOrId: string): Promise<TemplateWithP
   if (!clean) return null;
 
   try {
-    await seedTemplatesIfEmpty();
     const rows = (await sql`
       SELECT id, slug, name, tagline, category, category_label,
              price_ngn, price_usd, monthly_ngn, setup_fee_ngn, outright_ngn,

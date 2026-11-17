@@ -6,10 +6,6 @@ import { itemsMap, itemSlugs } from './content';
 import { applyPricingOverrides } from '@/lib/template-pricing';
 import { pageMetadata, absoluteUrl, SITE_NAME } from '@/lib/site';
 
-// Single source of truth: Always query latest template details & pricing from Neon DB.
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
 // Mapping legacy furniture slugs to our real website foundations
 const SLUG_ALIASES: Record<string, string> = {
   'cozy-curve-sofa': 'lumina-lighting-lamps',

@@ -17,10 +17,38 @@ interface TemplateDetailViewProps {
 }
 
 export default function TemplateDetailView({
-  template,
+  template: initialTemplate,
   relatedTemplates = TEMPLATES,
 }: TemplateDetailViewProps) {
+  const [template, setTemplate] = useState<Template>(initialTemplate);
+  const [liveRelated, setLiveRelated] = useState<Template[]>(relatedTemplates);
   const [activeTab, setActiveTab] = useState<'overview' | 'launch'>('overview');
+
+  React.useEffect(() => {
+    setTemplate(initialTemplate);
+  }, [initialTemplate]);
+
+  // Sync live pricing & details from Neon DB without forcing SSR on every page view
+  React.useEffect(() => {
+    let active = true;
+    fetch('/api/templates', { cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (active && data?.success && Array.isArray(data.templates) && data.templates.length > 0) {
+          setLiveRelated(data.templates);
+          const fresh = data.templates.find(
+            (t: Template) => t.slug === initialTemplate.slug || t.id === initialTemplate.id
+          );
+          if (fresh) {
+            setTemplate(fresh);
+          }
+        }
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [initialTemplate.slug, initialTemplate.id]);
 
   // Ensure landing on this template page always starts at the top
   React.useEffect(() => {
@@ -35,7 +63,7 @@ export default function TemplateDetailView({
   }, [template.slug]);
 
   // Select 4 other templates to recommend
-  const otherTemplates = relatedTemplates
+  const otherTemplates = liveRelated
     .filter((t) => t.slug !== template.slug)
     .slice(0, 4);
 
