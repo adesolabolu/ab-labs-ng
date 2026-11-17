@@ -317,17 +317,18 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
             gap: 16px;
           }
           .portal-nav {
-            flex-direction: row;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 6px;
             padding: 8px;
           }
           .portal-tab-btn {
+            text-align: center;
             white-space: nowrap;
-            flex-shrink: 0;
-            padding: 9px 12px;
-            font-size: 13px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 9px 10px;
+            font-size: 12.5px;
           }
           .portal-steps-grid {
             grid-template-columns: minmax(0, 1fr);
