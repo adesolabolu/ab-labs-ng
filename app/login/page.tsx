@@ -99,7 +99,7 @@ export default function ClientLoginPage() {
               color: mode === 'password' ? '#ffffff' : '#9ca3af',
             }}
           >
-            Password Login
+            Sign In with Password
           </button>
           <button
             type="button"
@@ -116,7 +116,7 @@ export default function ClientLoginPage() {
               color: mode === 'magic-link' ? '#ffffff' : '#9ca3af',
             }}
           >
-            1-Click Email Link
+            Email Me a Login Link
           </button>
         </div>
 
@@ -136,7 +136,7 @@ export default function ClientLoginPage() {
           {/* Email */}
           <div style={{ marginBottom: '18px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#d4d4d8', marginBottom: '6px' }}>
-              Checkout Email Address
+              Email Used at Checkout
             </label>
             <input
               type="email"
@@ -162,7 +162,7 @@ export default function ClientLoginPage() {
             <div style={{ marginBottom: '22px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                 <label style={{ fontSize: '12px', fontWeight: 700, color: '#d4d4d8' }}>
-                  Temporary or Set Password
+                  Portal Password (sent to your email after payment)
                 </label>
                 <button
                   type="button"

@@ -189,7 +189,7 @@ export async function POST(req: Request) {
         const templateMatch = TEMPLATES.find((t) => t.slug === order.template_slug);
         const templateName = templateMatch ? templateMatch.name : (order.template_slug || 'Website Template');
 
-        sendClientCredentialsEmail({
+        await sendClientCredentialsEmail({
           to: orderEmail,
           name: order.customer_name,
           templateName,
