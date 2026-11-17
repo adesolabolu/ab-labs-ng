@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { Template } from '@/data/templates';
@@ -24,6 +24,12 @@ interface ClientData {
   whatsapp_number?: string | null;
   demo_preview_url?: string | null;
   created_at?: string | null;
+  billing_status?: string | null;
+  next_billing_date?: string | null;
+  monthly_amount_ngn?: number | null;
+  card_last4?: string | null;
+  card_brand?: string | null;
+  paystack_subscription_code?: string | null;
 }
 
 interface ClientPortalViewProps {
@@ -45,6 +51,60 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Recurring Billing / Card Linking State
+  const [linkingCard, setLinkingCard] = useState(false);
+  const [cardLinkedMessage, setCardLinkedMessage] = useState('');
+  const [cardLast4, setCardLast4] = useState(client.card_last4 || '');
+  const [cardBrand, setCardBrand] = useState(client.card_brand || '');
+  const [billingStatus, setBillingStatus] = useState(client.billing_status || 'pending_launch');
+
+  const isOutright = String(client.plan_type || '').toUpperCase() === 'OUTRIGHT';
+  const monthlyRate = Number(client.monthly_amount_ngn || template?.monthlyNgn || 5000);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('reference') || params.get('trxref');
+    if (params.get('card_linked') === '1' && ref) {
+      fetch('/api/paystack/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reference: ref }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data?.success && data?.cardLinked) {
+            if (data.last4) setCardLast4(data.last4);
+            if (data.brand) setCardBrand(data.brand);
+            setCardLinkedMessage(data.message || 'Card saved for seamless monthly auto-renewal.');
+            window.history.replaceState({}, '', '/portal');
+          }
+        })
+        .catch(() => {});
+    }
+  }, []);
+
+  const handleLinkCard = async () => {
+    setLinkingCard(true);
+    setErrorMessage('');
+    try {
+      const origin = typeof window !== 'undefined' ? window.location.origin : '';
+      const res = await fetch('/api/portal/link-card', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ callbackOrigin: origin }),
+      });
+      const data = await res.json();
+      if (!data?.success || !data?.authorizationUrl) {
+        throw new Error(data?.error || 'Could not start card verification.');
+      }
+      window.location.href = data.authorizationUrl;
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Failed to start card linking.');
+      setLinkingCard(false);
+    }
+  };
 
   const currentPhase = client.build_phase || 1;
 
@@ -514,6 +574,89 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Billing & Auto-Renewal Card */}
+            <div style={{ backgroundColor: '#131518', border: '1px solid #23272e', borderRadius: '16px', padding: '24px', marginBottom: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', gap: '8px' }}>
+                <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#ffffff', margin: 0 }}>
+                  Billing &amp; Maintenance
+                </h3>
+                <span
+                  style={{
+                    fontSize: '10.5px',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                    padding: '3px 8px',
+                    borderRadius: '6px',
+                    backgroundColor: isOutright || billingStatus === 'active' ? '#064e3b' : '#27272a',
+                    color: isOutright || billingStatus === 'active' ? '#34d399' : '#e4e4e7',
+                  }}
+                >
+                  {isOutright
+                    ? 'Outright'
+                    : billingStatus === 'active'
+                    ? 'Auto-Renewal Active'
+                    : billingStatus === 'past_due'
+                    ? 'Payment Due'
+                    : 'Starts After Go-Live'}
+                </span>
+              </div>
+
+              {isOutright ? (
+                <p style={{ fontSize: '13px', color: '#9ca3af', margin: 0, lineHeight: 1.5 }}>
+                  You own this website 100% outright with <strong style={{ color: '#ffffff' }}>₦0 recurring monthly fees</strong>.
+                </p>
+              ) : (
+                <div>
+                  <div style={{ fontSize: '13px', color: '#d4d4d8', marginBottom: '8px' }}>
+                    Monthly Maintenance: <strong style={{ color: '#ffffff' }}>₦{monthlyRate.toLocaleString()}/mo</strong>
+                  </div>
+                  {client.next_billing_date && (
+                    <div style={{ fontSize: '12px', color: '#9ca3af', marginBottom: '10px' }}>
+                      Next billing date: {new Date(client.next_billing_date).toLocaleDateString('en-NG', { dateStyle: 'medium' })}
+                    </div>
+                  )}
+
+                  {cardLinkedMessage && (
+                    <div style={{ padding: '10px 12px', borderRadius: '8px', backgroundColor: '#064e3b', color: '#a7f3d0', fontSize: '12px', marginBottom: '12px' }}>
+                      {cardLinkedMessage}
+                    </div>
+                  )}
+
+                  {cardLast4 ? (
+                    <div style={{ padding: '10px 12px', borderRadius: '8px', backgroundColor: '#181b20', border: '1px solid #272b33', fontSize: '12.5px', color: '#e4e4e7' }}>
+                      Saved Card: <strong style={{ textTransform: 'uppercase' }}>{cardBrand || 'Card'}</strong> &bull;&bull;&bull;&bull; {cardLast4}
+                    </div>
+                  ) : (
+                    <div>
+                      <p style={{ fontSize: '12px', color: '#9ca3af', margin: '0 0 12px', lineHeight: 1.45 }}>
+                        Add a debit card anytime so future monthly renewals run automatically once your site is live (₦50 refundable verification check).
+                      </p>
+                      <button
+                        type="button"
+                        onClick={handleLinkCard}
+                        disabled={linkingCard}
+                        style={{
+                          width: '100%',
+                          padding: '10px 14px',
+                          backgroundColor: '#10b981',
+                          color: '#052e16',
+                          border: 'none',
+                          borderRadius: '8px',
+                          fontSize: '13px',
+                          fontWeight: 700,
+                          cursor: linkingCard ? 'not-allowed' : 'pointer',
+                          opacity: linkingCard ? 0.7 : 1,
+                        }}
+                      >
+                        {linkingCard ? 'Redirecting to Paystack...' : 'Save Card for Auto-Renewal'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Quick WhatsApp Reminder Card */}

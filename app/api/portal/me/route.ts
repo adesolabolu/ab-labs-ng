@@ -18,7 +18,9 @@ export async function GET(req: Request) {
         SELECT id, name, email, phone, business_name, domain_name, domain_status,
                domain_expiry_date, template_slug, plan_type, build_phase,
                logo_url, primary_color, accent_color, business_bio,
-               whatsapp_number, demo_preview_url, created_at
+               whatsapp_number, demo_preview_url, created_at,
+               billing_status, next_billing_date, monthly_amount_ngn,
+               card_last4, card_brand, paystack_subscription_code
         FROM clients
         WHERE portal_access_token = ${token}
         LIMIT 1
@@ -36,7 +38,9 @@ export async function GET(req: Request) {
           SELECT id, name, email, phone, business_name, domain_name, domain_status,
                  domain_expiry_date, template_slug, plan_type, build_phase,
                  logo_url, primary_color, accent_color, business_bio,
-                 whatsapp_number, demo_preview_url, created_at
+                 whatsapp_number, demo_preview_url, created_at,
+                 billing_status, next_billing_date, monthly_amount_ngn,
+                 card_last4, card_brand, paystack_subscription_code
           FROM clients
           WHERE id = ${session.clientId}
           LIMIT 1

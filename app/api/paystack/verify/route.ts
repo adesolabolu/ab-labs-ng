@@ -4,6 +4,12 @@ import sql from '@/lib/db';
 import { generateFriendlyPassword, hashPassword, setClientSessionCookie } from '@/lib/auth';
 import { sendClientCredentialsEmail } from '@/lib/email';
 import { TEMPLATES } from '@/data/templates';
+import { getTemplateWithPricing } from '@/lib/template-pricing';
+import {
+  saveClientAuthorizationFromPaystack,
+  refundVerificationCharge,
+  activateClientSubscription,
+} from '@/lib/paystack-recurring';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +19,52 @@ export async function POST(req: Request) {
 
     if (!reference) {
       return NextResponse.json({ success: false, error: 'Reference is required' }, { status: 400 });
+    }
+
+    const paystackSecretKey = process.env.PAYSTACK_SECRET_KEY;
+    const isLiveKeyAvailable = paystackSecretKey && !paystackSecretKey.includes('placeholder');
+
+    // Special flow: /portal "Save Card for Auto-Renewal" (₦50 refundable verification)
+    if (String(reference).startsWith('ab_card_')) {
+      if (!isLiveKeyAvailable) {
+        return NextResponse.json({ success: false, error: 'Paystack live key not configured' }, { status: 503 });
+      }
+      const verifyRes = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, {
+        headers: { Authorization: `Bearer ${paystackSecretKey}` },
+      });
+      const verifyData = await verifyRes.json();
+      if (!verifyData?.status || verifyData?.data?.status !== 'success') {
+        return NextResponse.json({ success: false, error: 'Card verification failed at Paystack' }, { status: 400 });
+      }
+
+      const clientId = String(verifyData.data?.metadata?.clientId || '');
+      if (!clientId) {
+        return NextResponse.json({ success: false, error: 'Missing client metadata' }, { status: 400 });
+      }
+
+      const saved = await saveClientAuthorizationFromPaystack(clientId, verifyData.data);
+      await refundVerificationCharge(reference, paystackSecretKey);
+
+      const clientRows = (await sql`SELECT build_phase, billing_status FROM clients WHERE id = ${clientId} LIMIT 1`) as any[];
+      if (
+        saved.saved &&
+        clientRows.length > 0 &&
+        (Number(clientRows[0].build_phase) >= 4 || clientRows[0].billing_status === 'awaiting_card')
+      ) {
+        await activateClientSubscription(clientId).catch((err) =>
+          console.error('[Card Link] Subscription activation warning:', err)
+        );
+      }
+
+      return NextResponse.json({
+        success: true,
+        cardLinked: saved.saved,
+        last4: saved.last4 || null,
+        brand: saved.brand || null,
+        message: saved.saved
+          ? 'Card saved for automatic monthly renewals and ₦50 verification refunded.'
+          : 'Card verified, but Paystack marked it non-reusable for auto-billing.',
+      });
     }
 
     // Find the order
@@ -27,10 +79,7 @@ export async function POST(req: Request) {
     }
 
     const order = orders[0];
-
-    // Verify payment with Paystack API if live key is available, else support simulation
-    const paystackSecretKey = process.env.PAYSTACK_SECRET_KEY;
-    const isLiveKeyAvailable = paystackSecretKey && !paystackSecretKey.includes('placeholder');
+    let paystackTxData: any = null;
 
     if (isLiveKeyAvailable) {
       const verifyRes = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, {
@@ -51,6 +100,7 @@ export async function POST(req: Request) {
           error: 'Paid amount does not match expected order total',
         }, { status: 400 });
       }
+      paystackTxData = verifyData.data;
     } else {
       console.log(`[Paystack Simulation]: Approving reference ${reference} in testing mode`);
     }
@@ -85,6 +135,14 @@ export async function POST(req: Request) {
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + 365);
 
+    const matchedTpl = order.template_slug ? await getTemplateWithPricing(order.template_slug) : null;
+    const monthlyAmountNgn =
+      String(order.plan_type || '').toUpperCase() === 'OUTRIGHT'
+        ? 0
+        : Number(matchedTpl?.monthlyNgn || 5000);
+    const initialBillingStatus =
+      String(order.plan_type || '').toUpperCase() === 'OUTRIGHT' ? 'outright' : 'pending_launch';
+
     const upserted = await sql`
       INSERT INTO clients (
         id,
@@ -98,6 +156,8 @@ export async function POST(req: Request) {
         template_slug,
         plan_type,
         monthly_status,
+        billing_status,
+        monthly_amount_ngn,
         portal_access_token,
         password_hash,
         build_phase
@@ -113,6 +173,8 @@ export async function POST(req: Request) {
         ${order.template_slug},
         ${order.plan_type},
         'ACTIVE',
+        ${initialBillingStatus},
+        ${monthlyAmountNgn},
         ${portalAccessToken},
         ${passwordHash},
         1
@@ -123,9 +185,18 @@ export async function POST(req: Request) {
         template_slug = EXCLUDED.template_slug,
         plan_type = EXCLUDED.plan_type,
         domain_expiry_date = EXCLUDED.domain_expiry_date,
-        monthly_status = 'ACTIVE'
+        monthly_status = 'ACTIVE',
+        billing_status = COALESCE(clients.billing_status, EXCLUDED.billing_status),
+        monthly_amount_ngn = EXCLUDED.monthly_amount_ngn
       RETURNING id, (xmax = 0) AS inserted
     `;
+
+    const resolvedClientId = Array.isArray(upserted) && upserted[0] ? String(upserted[0].id) : clientId;
+    if (paystackTxData) {
+      await saveClientAuthorizationFromPaystack(resolvedClientId, paystackTxData).catch((err) =>
+        console.error('[Paystack Verify] Failed to save authorization:', err)
+      );
+    }
 
     const isNewClient = Array.isArray(upserted) && upserted[0] && upserted[0].inserted === true;
 

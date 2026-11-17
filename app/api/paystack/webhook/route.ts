@@ -4,6 +4,12 @@ import sql from '@/lib/db';
 import { generateFriendlyPassword, hashPassword } from '@/lib/auth';
 import { sendClientCredentialsEmail } from '@/lib/email';
 import { TEMPLATES } from '@/data/templates';
+import { getTemplateWithPricing } from '@/lib/template-pricing';
+import {
+  saveClientAuthorizationFromPaystack,
+  refundVerificationCharge,
+  activateClientSubscription,
+} from '@/lib/paystack-recurring';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,6 +44,26 @@ export async function POST(req: Request) {
 
       if (!reference) {
         return NextResponse.json({ status: 'ignored_no_reference' });
+      }
+
+      // Handle /portal card-linking verification charge
+      if (data.metadata?.purpose === 'link_card' || String(reference).startsWith('ab_card_')) {
+        const linkedClientId = String(data.metadata?.clientId || '');
+        if (linkedClientId) {
+          const saved = await saveClientAuthorizationFromPaystack(linkedClientId, data);
+          await refundVerificationCharge(reference, paystackSecretKey);
+          const clientRows = (await sql`SELECT build_phase, billing_status FROM clients WHERE id = ${linkedClientId} LIMIT 1`) as any[];
+          if (
+            saved.saved &&
+            clientRows.length > 0 &&
+            (Number(clientRows[0].build_phase) >= 4 || clientRows[0].billing_status === 'awaiting_card')
+          ) {
+            await activateClientSubscription(linkedClientId).catch((err) =>
+              console.error('[Webhook Card Link] Subscription activation warning:', err)
+            );
+          }
+        }
+        return NextResponse.json({ received: true, purpose: 'link_card' });
       }
 
       // 1. Look up the order in Neon Postgres
@@ -93,6 +119,14 @@ export async function POST(req: Request) {
       const expiryDate = new Date();
       expiryDate.setDate(expiryDate.getDate() + 365);
 
+      const matchedTpl = order.template_slug ? await getTemplateWithPricing(order.template_slug) : null;
+      const monthlyAmountNgn =
+        String(order.plan_type || '').toUpperCase() === 'OUTRIGHT'
+          ? 0
+          : Number(matchedTpl?.monthlyNgn || 5000);
+      const initialBillingStatus =
+        String(order.plan_type || '').toUpperCase() === 'OUTRIGHT' ? 'outright' : 'pending_launch';
+
       const upserted = await sql`
         INSERT INTO clients (
           id,
@@ -106,6 +140,8 @@ export async function POST(req: Request) {
           template_slug,
           plan_type,
           monthly_status,
+          billing_status,
+          monthly_amount_ngn,
           portal_access_token,
           password_hash,
           build_phase
@@ -121,6 +157,8 @@ export async function POST(req: Request) {
           ${order.template_slug},
           ${order.plan_type},
           'ACTIVE',
+          ${initialBillingStatus},
+          ${monthlyAmountNgn},
           ${portalAccessToken},
           ${passwordHash},
           1
@@ -131,9 +169,16 @@ export async function POST(req: Request) {
           template_slug = EXCLUDED.template_slug,
           plan_type = EXCLUDED.plan_type,
           domain_expiry_date = EXCLUDED.domain_expiry_date,
-          monthly_status = 'ACTIVE'
+          monthly_status = 'ACTIVE',
+          billing_status = COALESCE(clients.billing_status, EXCLUDED.billing_status),
+          monthly_amount_ngn = EXCLUDED.monthly_amount_ngn
         RETURNING id, (xmax = 0) AS inserted
       `;
+
+      const resolvedClientId = Array.isArray(upserted) && upserted[0] ? String(upserted[0].id) : clientId;
+      await saveClientAuthorizationFromPaystack(resolvedClientId, data).catch((err) =>
+        console.error('[Paystack Webhook] Failed to save authorization:', err)
+      );
 
       const isNewClient = Array.isArray(upserted) && upserted[0] && upserted[0].inserted === true;
 
@@ -152,6 +197,40 @@ export async function POST(req: Request) {
           portalUrl,
           domainName: order.requested_domain,
         }).catch((err) => console.error('[Paystack Webhook] Email error:', err));
+      }
+    } else if (event.event === 'subscription.create') {
+      const data = event.data;
+      const customerEmail = String(data?.customer?.email || '').toLowerCase().trim();
+      if (customerEmail) {
+        await sql`
+          UPDATE clients
+          SET paystack_subscription_code = COALESCE(${data?.subscription_code || null}, paystack_subscription_code),
+              paystack_email_token = COALESCE(${data?.email_token || null}, paystack_email_token),
+              paystack_plan_code = COALESCE(${data?.plan?.plan_code || null}, paystack_plan_code),
+              billing_status = 'active',
+              next_billing_date = COALESCE(${data?.next_payment_date ? new Date(data.next_payment_date) : null}, next_billing_date)
+          WHERE email = ${customerEmail}
+        `;
+      }
+    } else if (event.event === 'invoice.payment_failed') {
+      const data = event.data;
+      const customerEmail = String(data?.customer?.email || '').toLowerCase().trim();
+      if (customerEmail) {
+        await sql`
+          UPDATE clients
+          SET billing_status = 'past_due'
+          WHERE email = ${customerEmail}
+        `;
+      }
+    } else if (event.event === 'subscription.disable' || event.event === 'subscription.not_renew') {
+      const data = event.data;
+      const subCode = data?.subscription_code || null;
+      if (subCode) {
+        await sql`
+          UPDATE clients
+          SET billing_status = 'cancelled'
+          WHERE paystack_subscription_code = ${subCode}
+        `;
       }
     }
 

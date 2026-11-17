@@ -102,6 +102,7 @@ export async function POST(req: Request) {
           email: customerEmail,
           amount: finalAmount * 100, // Paystack expects kobo
           reference,
+          channels: ['bank_transfer', 'card', 'bank', 'ussd'],
           callback_url: callbackUrl || undefined,
           metadata: {
             customerName,

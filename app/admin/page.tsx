@@ -248,6 +248,40 @@ export default function AdminPortalPage() {
 
   const formatNgn = (val: number) => `₦${Number(val || 0).toLocaleString()}`;
 
+  const [activatingSubId, setActivatingSubId] = useState<string | null>(null);
+
+  const activateClientBilling = async (clientId: string) => {
+    setActivatingSubId(clientId);
+    try {
+      const res = await fetch('/api/admin/clients/subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clientId, markLive: true }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        throw new Error(data.error || 'Could not activate billing');
+      }
+      setClients((prev) =>
+        prev.map((c) =>
+          c.id === clientId
+            ? {
+                ...c,
+                billing_status: data.status || c.billing_status,
+                paystack_subscription_code: data.subscriptionCode || c.paystack_subscription_code,
+                next_billing_date: data.nextBillingDate || c.next_billing_date,
+                build_phase: 4,
+              }
+            : c
+        )
+      );
+    } catch (err: any) {
+      alert(err.message || 'Failed to activate monthly billing');
+    } finally {
+      setActivatingSubId(null);
+    }
+  };
+
   const startEditingDomain = (client: any) => {
     setEditingClientId(client.id);
     setEditDomainName(client.domain_name || '');
@@ -1613,17 +1647,51 @@ export default function AdminPortalPage() {
                         </td>
 
                         <td style={{ padding: '16px 20px' }}>
-                          <span style={{
-                            padding: '3px 8px',
-                            borderRadius: '6px',
-                            fontSize: '11px',
-                            fontWeight: 700,
-                            backgroundColor: 'rgba(16, 185, 129, 0.12)',
-                            color: '#34d399',
-                            border: '1px solid rgba(16, 185, 129, 0.25)',
-                          }}>
-                            {c.monthly_status}
-                          </span>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'flex-start' }}>
+                            <span style={{
+                              padding: '3px 8px',
+                              borderRadius: '6px',
+                              fontSize: '11px',
+                              fontWeight: 700,
+                              backgroundColor: c.billing_status === 'active' || c.billing_status === 'outright' ? 'rgba(16, 185, 129, 0.12)' : 'rgba(245, 158, 11, 0.12)',
+                              color: c.billing_status === 'active' || c.billing_status === 'outright' ? '#34d399' : '#fbbf24',
+                              border: `1px solid ${c.billing_status === 'active' || c.billing_status === 'outright' ? 'rgba(16, 185, 129, 0.25)' : 'rgba(245, 158, 11, 0.25)'}`,
+                            }}>
+                              {String(c.plan_type || '').toUpperCase() === 'OUTRIGHT'
+                                ? 'OUTRIGHT'
+                                : c.billing_status === 'active'
+                                ? 'AUTO-BILLING ACTIVE'
+                                : c.billing_status === 'awaiting_card'
+                                ? 'AWAITING CARD'
+                                : c.billing_status === 'past_due'
+                                ? 'PAST DUE'
+                                : 'PENDING GO-LIVE'}
+                            </span>
+                            {c.card_last4 && (
+                              <span style={{ fontSize: '11px', color: '#a1a1aa' }}>
+                                {String(c.card_brand || 'Card').toUpperCase()} &bull;&bull;&bull;&bull; {c.card_last4}
+                              </span>
+                            )}
+                            {String(c.plan_type || '').toUpperCase() !== 'OUTRIGHT' && c.billing_status !== 'active' && (
+                              <button
+                                type="button"
+                                onClick={() => activateClientBilling(c.id)}
+                                disabled={activatingSubId === c.id}
+                                style={{
+                                  padding: '4px 8px',
+                                  borderRadius: '6px',
+                                  fontSize: '11px',
+                                  fontWeight: 600,
+                                  backgroundColor: '#18181b',
+                                  color: '#f4f4f5',
+                                  border: '1px solid #3f3f46',
+                                  cursor: activatingSubId === c.id ? 'not-allowed' : 'pointer',
+                                }}
+                              >
+                                {activatingSubId === c.id ? 'Activating...' : 'Activate Monthly Billing'}
+                              </button>
+                            )}
+                          </div>
                         </td>
 
                         <td style={{ padding: '16px 20px', textAlign: 'right' }}>
