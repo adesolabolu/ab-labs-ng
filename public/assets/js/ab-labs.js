@@ -86,67 +86,39 @@ function initABLabs(force = false) {
 
     if (heroH || heroEyebrow || heroContentWrapper) {
       // 1. Pre-set starting properties while elements are still hidden by CSS
-      if (heroContentWrapper) gsap.set(heroContentWrapper, { yPercent: -100, opacity: 0 });
-      if (heroEyebrow) gsap.set(heroEyebrow, { opacity: 0, y: 16 });
+      if (heroContentWrapper) gsap.set(heroContentWrapper, { y: 24, opacity: 0 });
+      if (heroEyebrow) gsap.set(heroEyebrow, { opacity: 0, y: 14 });
+      if (heroH) gsap.set(heroH, { opacity: 0, y: 22 });
+      if (heroLead) gsap.set(heroLead, { opacity: 0, y: 18 });
       if (heroBtn) gsap.set(heroBtn, { opacity: 0, y: 16 });
-      if (heroCard) gsap.set(heroCard, { opacity: 0, y: 16 });
-      if (heroThumb) gsap.set(heroThumb, { opacity: 0, y: 16 });
-      if (heroLead) gsap.set(heroLead, { opacity: 0, y: 16 });
-
-      let splitChars = null;
-      if (heroH && typeof SplitText !== 'undefined') {
-        try {
-          const splitH = new SplitText(heroH, { type: 'words,chars', charsClass: 'split-char' });
-          splitChars = splitH.chars;
-          gsap.set(splitChars, { opacity: 0, y: 40 });
-        } catch (e) {
-          gsap.set(heroH, { opacity: 0, y: 30 });
-        }
-      } else if (heroH) {
-        gsap.set(heroH, { opacity: 0, y: 30 });
-      }
-
-      let splitLines = null;
-      if (heroLead && typeof SplitText !== 'undefined') {
-        try {
-          const splitL = new SplitText(heroLead, { type: 'lines' });
-          splitLines = splitL.lines;
-          gsap.set(heroLead, { opacity: 1, y: 0 });
-          gsap.set(splitLines, { opacity: 0, y: 16 });
-        } catch (e) {
-          gsap.set(heroLead, { opacity: 0, y: 16 });
-        }
-      }
+      if (heroCard) gsap.set(heroCard, { opacity: 0, y: 14 });
+      if (heroThumb) gsap.set(heroThumb, { opacity: 0, y: 14 });
 
       // 2. Release visibility lock NOW (elements are pre-transformed and 0 opacity, so ZERO FOUC!)
       document.documentElement.classList.add('ab-labs-ready', 'choroo-ready');
 
-      // 3. Play entrance timeline
+      // 3. Play entrance timeline (smooth staggered reveal without SplitText line-wrap distortion)
       const heroTl = gsap.timeline();
-      if (heroContentWrapper) {
-        heroTl.to(heroContentWrapper, { yPercent: 0, opacity: 1, duration: 1.2, ease: 'power1.out' }, 0);
-      }
       if (heroEyebrow) {
-        heroTl.to(heroEyebrow, { opacity: 1, y: 0, duration: 0.8, ease: 'power1.out' }, 0.2);
+        heroTl.to(heroEyebrow, { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, 0.05);
       }
-      if (splitChars) {
-        heroTl.to(splitChars, { opacity: 1, y: 0, duration: 0.7, stagger: 0.035, ease: 'power1.out' }, 0.4);
-      } else if (heroH) {
-        heroTl.to(heroH, { opacity: 1, y: 0, duration: 0.8, ease: 'power1.out' }, 0.4);
+      if (heroH) {
+        heroTl.to(heroH, { opacity: 1, y: 0, duration: 0.65, ease: 'power2.out' }, 0.12);
+      }
+      if (heroLead) {
+        heroTl.to(heroLead, { opacity: 1, y: 0, duration: 0.65, ease: 'power2.out' }, 0.22);
       }
       if (heroBtn) {
-        heroTl.to(heroBtn, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 0.9);
+        heroTl.to(heroBtn, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 0.32);
+      }
+      if (heroContentWrapper) {
+        heroTl.to(heroContentWrapper, { y: 0, opacity: 1, duration: 0.85, ease: 'power2.out' }, 0.18);
       }
       if (heroCard) {
-        heroTl.to(heroCard, { opacity: 1, y: 0, duration: 0.6, ease: 'power1.out' }, 1.0);
+        heroTl.to(heroCard, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 0.55);
       }
       if (heroThumb) {
-        heroTl.to(heroThumb, { opacity: 1, y: 0, duration: 0.6, ease: 'power1.out' }, 1.1);
-      }
-      if (splitLines) {
-        heroTl.to(splitLines, { opacity: 1, y: 0, duration: 0.6, stagger: 0.15, ease: 'power1.out' }, 1.2);
-      } else if (heroLead) {
-        heroTl.to(heroLead, { opacity: 1, y: 0, duration: 0.6, ease: 'power1.out' }, 1.2);
+        heroTl.to(heroThumb, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 0.65);
       }
     }
 
@@ -577,8 +549,10 @@ function initABLabs(force = false) {
   }
 
   // =========================================================================
-  // 5. Hero 4-Stage Continuous Curtain Wipe Loop (Exact Interaction IX t-976369a7)
-  // =========================================================================
+  // 5. Hero 4-Stage Continuous Curtain Wipe Loop
+  // Handled by React HeroStageSlider component (.hero-slider-container) using hardware-accelerated clipPath.
+  // Only run legacy width-wipe if .hero-slider-container is not present.
+  const isReactHeroSlider = Boolean(document.querySelector('.hero-slider-container'));
   const stageImages = [
     document.querySelector('.hero-stage-img.is-4'),
     document.querySelector('.hero-stage-img.is-3'),
@@ -586,7 +560,7 @@ function initABLabs(force = false) {
     document.querySelector('.hero-stage-img:not(.is-2):not(.is-3):not(.is-4)')
   ];
 
-  if (stageImages[0] && stageImages[1] && stageImages[2] && typeof gsap !== 'undefined') {
+  if (!isReactHeroSlider && stageImages[0] && stageImages[1] && stageImages[2] && typeof gsap !== 'undefined') {
     // Initial styles
     gsap.set(['.hero-stage-img.is-4', '.hero-stage-img.is-3', '.hero-stage-img.is-2'], {
       width: '100%',
