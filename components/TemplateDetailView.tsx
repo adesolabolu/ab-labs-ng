@@ -31,7 +31,7 @@ export default function TemplateDetailView({
   // Sync live pricing & details from Neon DB without forcing SSR on every page view
   React.useEffect(() => {
     let active = true;
-    fetch('/api/templates', { cache: 'no-store' })
+    fetch('/api/templates')
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (active && data?.success && Array.isArray(data.templates) && data.templates.length > 0) {

@@ -24,7 +24,7 @@ export default function LiveTemplateGrid({
 
   useEffect(() => {
     let active = true;
-    fetch('/api/templates', { cache: 'no-store' })
+    fetch('/api/templates')
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (active && data?.success && Array.isArray(data.templates) && data.templates.length > 0) {

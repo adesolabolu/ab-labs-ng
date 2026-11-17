@@ -46,7 +46,7 @@ const nextConfig = {
     ];
   },
   typescript: {
-    ignoreBuildErrors: true
+    ignoreBuildErrors: false
   },
   async redirects() {
     return [

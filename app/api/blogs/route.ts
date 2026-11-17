@@ -18,7 +18,7 @@ export async function GET(req: Request) {
         { success: true, post },
         {
           headers: {
-            'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            'Cache-Control': 'public, max-age=0, s-maxage=15, stale-while-revalidate=60',
           },
         }
       );
@@ -29,7 +29,7 @@ export async function GET(req: Request) {
       { success: true, posts },
       {
         headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Cache-Control': 'public, max-age=0, s-maxage=15, stale-while-revalidate=60',
         },
       }
     );

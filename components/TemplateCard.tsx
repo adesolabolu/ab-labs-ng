@@ -42,6 +42,8 @@ export default function TemplateCard({ template, priority = false, ctaText = 'Ex
             src={template.image}
             alt={template.name}
             loading={priority ? 'eager' : 'lazy'}
+            decoding="async"
+            fetchPriority={priority ? 'high' : 'auto'}
             className="shop-template-img"
           />
         </Link>

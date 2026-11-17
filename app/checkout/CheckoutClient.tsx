@@ -36,7 +36,7 @@ export default function CheckoutClient({
     }
 
     let active = true;
-    fetch(`/api/templates?slug=${encodeURIComponent(slugParam)}`, { cache: 'no-store' })
+    fetch(`/api/templates?slug=${encodeURIComponent(slugParam)}`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (active && data?.success && data.template) {
