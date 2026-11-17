@@ -1536,6 +1536,31 @@ export default function AdminPortalPage() {
                               Joined: {new Date(c.created_at).toLocaleDateString('en-NG', { day: '2-digit', month: 'short', year: 'numeric' })}
                             </span>
                           )}
+                          {Array.isArray(c.brand_files) && c.brand_files.length > 0 && (
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '6px' }}>
+                              {c.brand_files.map((file: any, fIdx: number) => (
+                                <a
+                                  key={file.publicId || fIdx}
+                                  href={file.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    fontSize: '11px',
+                                    color: '#34d399',
+                                    textDecoration: 'underline',
+                                    maxWidth: '160px',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                    display: 'inline-block',
+                                  }}
+                                  title={file.name || 'Brand asset'}
+                                >
+                                  {file.name || `Asset ${fIdx + 1}`}
+                                </a>
+                              ))}
+                            </div>
+                          )}
                         </td>
 
                         <td style={{ padding: '16px 20px' }}>

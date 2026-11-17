@@ -15,7 +15,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com",
       "img-src 'self' data: blob: https:",
       "font-src 'self' data: https://fonts.gstatic.com",
-      "connect-src 'self' https://umami-tracker-8hgi.vercel.app https://vitals.vercel-insights.com",
+      "connect-src 'self' https://api.cloudinary.com https://umami-tracker-8hgi.vercel.app https://vitals.vercel-insights.com",
       "frame-ancestors 'self'",
       "form-action 'self' https://checkout.paystack.com",
       "base-uri 'self'",

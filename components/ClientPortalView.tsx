@@ -1,9 +1,19 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { Template } from '@/data/templates';
+
+export interface BrandFileItem {
+  publicId: string;
+  url: string;
+  name: string;
+  format: string;
+  resourceType: string;
+  bytes: number;
+  uploadedAt: string;
+}
 
 interface ClientData {
   id: string;
@@ -18,6 +28,7 @@ interface ClientData {
   plan_type?: string | null;
   build_phase?: number | null;
   logo_url?: string | null;
+  brand_files?: BrandFileItem[] | null;
   primary_color?: string | null;
   accent_color?: string | null;
   business_bio?: string | null;
@@ -45,6 +56,13 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
 
   // Brand Assets Form State
   const [logoUrl, setLogoUrl] = useState(client.logo_url || '');
+  const [brandFiles, setBrandFiles] = useState<BrandFileItem[]>(
+    Array.isArray(client.brand_files) ? client.brand_files : []
+  );
+  const [uploadingFiles, setUploadingFiles] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [primaryColor, setPrimaryColor] = useState(client.primary_color || '#18181b');
   const [accentColor, setAccentColor] = useState(client.accent_color || '#10b981');
   const [businessBio, setBusinessBio] = useState(client.business_bio || '');
@@ -133,6 +151,135 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
     }
   };
 
+  const formatFileSize = (bytes: number) => {
+    if (!bytes || bytes < 1024) return `${bytes || 0} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+  };
+
+  const handleFilesSelected = async (fileList: FileList | null) => {
+    if (!fileList || fileList.length === 0) return;
+    setUploadError('');
+
+    const selected = Array.from(fileList);
+    const allowedExts = new Set(['png', 'jpg', 'jpeg', 'webp', 'pdf', 'zip']);
+    const maxBytes = 8 * 1024 * 1024;
+
+    if (brandFiles.length + selected.length > 10) {
+      setUploadError(`You can upload up to 10 files total. (${10 - brandFiles.length} slot(s) remaining.)`);
+      return;
+    }
+
+    setUploadingFiles(true);
+    let updatedFiles = [...brandFiles];
+    let updatedLogoUrl = logoUrl;
+
+    try {
+      for (const file of selected) {
+        const ext = (file.name.split('.').pop() || '').toLowerCase();
+        if (!allowedExts.has(ext)) {
+          throw new Error(`"${file.name}" is not supported. Allowed: PNG, JPG, WebP, PDF, or ZIP.`);
+        }
+        if (file.size > maxBytes) {
+          throw new Error(`"${file.name}" is too large. Maximum size is 8 MB per file.`);
+        }
+
+        const signRes = await fetch('/api/portal/upload-sign', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fileName: file.name,
+            fileSize: file.size,
+            mimeType: file.type,
+          }),
+        });
+        const signData = await signRes.json();
+        if (!signRes.ok || !signData?.success) {
+          throw new Error(signData?.error || `Could not prepare upload for "${file.name}".`);
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('api_key', signData.apiKey);
+        formData.append('timestamp', String(signData.timestamp));
+        formData.append('signature', signData.signature);
+        formData.append('folder', signData.folder);
+        formData.append('allowed_formats', signData.allowedFormats);
+
+        const cloudRes = await fetch(
+          `https://api.cloudinary.com/v1_1/${signData.cloudName}/auto/upload`,
+          { method: 'POST', body: formData }
+        );
+        const cloudData = await cloudRes.json();
+        if (!cloudRes.ok || !cloudData?.secure_url || !cloudData?.public_id) {
+          throw new Error(cloudData?.error?.message || `Upload failed for "${file.name}".`);
+        }
+
+        const newItem: BrandFileItem = {
+          publicId: cloudData.public_id,
+          url: cloudData.secure_url,
+          name: file.name,
+          format: (cloudData.format || ext).toLowerCase(),
+          resourceType: cloudData.resource_type || (ext === 'pdf' || ext === 'zip' ? 'raw' : 'image'),
+          bytes: Number(cloudData.bytes || file.size),
+          uploadedAt: new Date().toISOString(),
+        };
+
+        updatedFiles = [...updatedFiles, newItem];
+        if (!updatedLogoUrl && ['png', 'jpg', 'jpeg', 'webp'].includes(newItem.format)) {
+          updatedLogoUrl = newItem.url;
+        }
+      }
+
+      const persistRes = await fetch('/api/portal/assets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          logoUrl: updatedLogoUrl,
+          brandFiles: updatedFiles,
+        }),
+      });
+      const persistData = await persistRes.json();
+      if (!persistRes.ok || !persistData?.success) {
+        throw new Error(persistData?.error || 'Uploaded, but could not save to your account.');
+      }
+
+      setBrandFiles(updatedFiles);
+      setLogoUrl(updatedLogoUrl);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3500);
+    } catch (err: any) {
+      setUploadError(err.message || 'File upload failed. Please try again.');
+    } finally {
+      setUploadingFiles(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleRemoveFile = async (file: BrandFileItem) => {
+    setUploadError('');
+    try {
+      const res = await fetch(
+        `/api/portal/assets?publicId=${encodeURIComponent(file.publicId)}&resourceType=${encodeURIComponent(file.resourceType || 'image')}`,
+        { method: 'DELETE' }
+      );
+      const data = await res.json();
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Could not remove file.');
+      }
+      const next = Array.isArray(data.brandFiles)
+        ? data.brandFiles
+        : brandFiles.filter((item) => item.publicId !== file.publicId);
+      setBrandFiles(next);
+      if (logoUrl === file.url) {
+        const fallbackImg = next.find((item: BrandFileItem) => ['png', 'jpg', 'jpeg', 'webp'].includes(item.format));
+        setLogoUrl(fallbackImg ? fallbackImg.url : '');
+      }
+    } catch (err: any) {
+      setUploadError(err.message || 'Could not remove file.');
+    }
+  };
+
   const handleSaveAssets = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -145,6 +292,7 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           logoUrl,
+          brandFiles,
           primaryColor,
           accentColor,
           businessBio,
@@ -342,6 +490,17 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
             padding: 18px 16px;
           }
           .portal-color-grid {
+            grid-template-columns: minmax(0, 1fr);
+          }
+        }
+        .portal-file-split {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 14px;
+          align-items: stretch;
+        }
+        @media (max-width: 640px) {
+          .portal-file-split {
             grid-template-columns: minmax(0, 1fr);
           }
         }
@@ -557,16 +716,167 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
 
                 <form onSubmit={handleSaveAssets} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 600, color: '#44403c', marginBottom: '6px' }}>
-                      Logo Link (Google Drive, Dropbox, or image URL)
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 600, color: '#44403c', marginBottom: '8px' }}>
+                      Logo &amp; Brand Files
                     </label>
                     <input
-                      type="text"
-                      className="portal-input"
-                      placeholder="https://drive.google.com/..."
-                      value={logoUrl}
-                      onChange={(e) => setLogoUrl(e.target.value)}
+                      ref={fileInputRef}
+                      type="file"
+                      multiple
+                      accept=".png,.jpg,.jpeg,.webp,.pdf,.zip,image/png,image/jpeg,image/webp,application/pdf,application/zip"
+                      style={{ display: 'none' }}
+                      onChange={(e) => handleFilesSelected(e.target.files)}
                     />
+                    <div className="portal-file-split">
+                      {/* Left Half: Upload Dropzone */}
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => !uploadingFiles && fileInputRef.current?.click()}
+                        onKeyDown={(e) => {
+                          if ((e.key === 'Enter' || e.key === ' ') && !uploadingFiles) {
+                            e.preventDefault();
+                            fileInputRef.current?.click();
+                          }
+                        }}
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          setIsDragging(true);
+                        }}
+                        onDragLeave={() => setIsDragging(false)}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          setIsDragging(false);
+                          if (!uploadingFiles) handleFilesSelected(e.dataTransfer.files);
+                        }}
+                        style={{
+                          border: isDragging ? '1.5px dashed #1c1917' : '1.5px dashed #d6d3d1',
+                          backgroundColor: isDragging ? '#f5f5f4' : '#fafaf9',
+                          borderRadius: '10px',
+                          padding: '22px 16px',
+                          minHeight: '190px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          textAlign: 'center',
+                          cursor: uploadingFiles ? 'wait' : 'pointer',
+                          transition: 'background-color 0.15s, border-color 0.15s',
+                        }}
+                      >
+                        <div style={{ width: '38px', height: '38px', borderRadius: '9px', backgroundColor: '#ffffff', border: '1px solid #e7e5e4', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px', fontSize: '18px', fontWeight: 700, color: '#1c1917' }}>
+                          {uploadingFiles ? '…' : '+'}
+                        </div>
+                        <p style={{ margin: '0 0 4px', fontSize: '13.5px', fontWeight: 700, color: '#1c1917' }}>
+                          {uploadingFiles ? 'Uploading files...' : 'Click or drop files here'}
+                        </p>
+                        <p style={{ margin: 0, fontSize: '12px', color: '#78716c', lineHeight: 1.45 }}>
+                          PNG, JPG, WebP, PDF or ZIP
+                          <br />
+                          Max 8 MB per file · Up to 10 files
+                        </p>
+                      </div>
+
+                      {/* Right Half: Uploaded Files List */}
+                      <div
+                        style={{
+                          border: '1px solid #e7e5e4',
+                          backgroundColor: '#ffffff',
+                          borderRadius: '10px',
+                          padding: '14px',
+                          minHeight: '190px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px', paddingBottom: '8px', borderBottom: '1px solid #f5f5f4' }}>
+                          <span style={{ fontSize: '12px', fontWeight: 700, color: '#44403c' }}>
+                            Uploaded Files ({brandFiles.length}/10)
+                          </span>
+                        </div>
+
+                        {brandFiles.length === 0 ? (
+                          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '16px 8px' }}>
+                            <p style={{ margin: 0, fontSize: '12.5px', color: '#a8a29e', lineHeight: 1.5 }}>
+                              No files uploaded yet.
+                              <br />
+                              Your logos and brand assets will appear here.
+                            </p>
+                          </div>
+                        ) : (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '220px', overflowY: 'auto' }}>
+                            {brandFiles.map((file) => {
+                              const isImg = ['png', 'jpg', 'jpeg', 'webp'].includes((file.format || '').toLowerCase());
+                              return (
+                                <div
+                                  key={file.publicId}
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '10px',
+                                    padding: '8px',
+                                    borderRadius: '8px',
+                                    backgroundColor: '#fafaf9',
+                                    border: '1px solid #f5f5f4',
+                                    minWidth: 0,
+                                  }}
+                                >
+                                  {isImg ? (
+                                    <img
+                                      src={file.url}
+                                      alt={file.name}
+                                      style={{ width: '34px', height: '34px', borderRadius: '6px', objectFit: 'cover', border: '1px solid #e7e5e4', flexShrink: 0, backgroundColor: '#ffffff' }}
+                                    />
+                                  ) : (
+                                    <div style={{ width: '34px', height: '34px', borderRadius: '6px', backgroundColor: '#f5f5f4', border: '1px solid #e7e5e4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 700, color: '#57534e', textTransform: 'uppercase', flexShrink: 0 }}>
+                                      {file.format || 'FILE'}
+                                    </div>
+                                  )}
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div style={{ fontSize: '12.5px', fontWeight: 600, color: '#1c1917', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                      {file.name}
+                                    </div>
+                                    <div style={{ fontSize: '11px', color: '#78716c' }}>
+                                      {formatFileSize(file.bytes)}
+                                    </div>
+                                  </div>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                                    <a
+                                      href={file.url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      style={{ fontSize: '11.5px', fontWeight: 600, color: '#44403c', textDecoration: 'underline' }}
+                                    >
+                                      View
+                                    </a>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRemoveFile(file)}
+                                      style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        padding: '2px 4px',
+                                        fontSize: '11.5px',
+                                        fontWeight: 600,
+                                        color: '#b91c1c',
+                                        cursor: 'pointer',
+                                      }}
+                                    >
+                                      Remove
+                                    </button>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    {uploadError && (
+                      <p style={{ margin: '8px 0 0', fontSize: '12.5px', color: '#b91c1c', fontWeight: 600 }}>
+                        {uploadError}
+                      </p>
+                    )}
                   </div>
 
                   <div className="portal-color-grid">

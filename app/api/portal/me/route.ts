@@ -20,7 +20,7 @@ export async function GET(req: Request) {
                logo_url, primary_color, accent_color, business_bio,
                whatsapp_number, demo_preview_url, created_at,
                billing_status, next_billing_date, monthly_amount_ngn,
-               card_last4, card_brand, paystack_subscription_code
+               card_last4, card_brand, paystack_subscription_code, brand_files
         FROM clients
         WHERE portal_access_token = ${token}
         LIMIT 1
@@ -40,7 +40,7 @@ export async function GET(req: Request) {
                  logo_url, primary_color, accent_color, business_bio,
                  whatsapp_number, demo_preview_url, created_at,
                  billing_status, next_billing_date, monthly_amount_ngn,
-                 card_last4, card_brand, paystack_subscription_code
+                 card_last4, card_brand, paystack_subscription_code, brand_files
           FROM clients
           WHERE id = ${session.clientId}
           LIMIT 1
