@@ -66,12 +66,26 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { logoUrl, primaryColor, accentColor, businessBio, whatsappNumber, brandAssets, brandFiles } = body;
+    const { projectId, logoUrl, primaryColor, accentColor, businessBio, whatsappNumber, brandAssets, brandFiles } = body;
 
     const hasBrandFiles = Array.isArray(brandFiles);
     const cleanFiles = hasBrandFiles ? validateBrandFiles(brandFiles, session.clientId) : null;
     const firstImage = cleanFiles?.find((f) => f.resourceType === 'image');
     const resolvedLogoUrl = logoUrl || firstImage?.url || null;
+
+    if (projectId && typeof projectId === 'string') {
+      await sql`
+        UPDATE client_projects
+        SET
+          logo_url = COALESCE(${resolvedLogoUrl}, logo_url),
+          primary_color = COALESCE(${primaryColor || null}, primary_color),
+          accent_color = COALESCE(${accentColor || null}, accent_color),
+          business_bio = COALESCE(${businessBio || null}, business_bio),
+          whatsapp_number = COALESCE(${whatsappNumber || null}, whatsapp_number),
+          brand_files = COALESCE(${cleanFiles ? JSON.stringify(cleanFiles) : null}::jsonb, brand_files)
+        WHERE id = ${projectId} AND client_id = ${session.clientId}
+      `;
+    }
 
     await sql`
       UPDATE clients
@@ -106,6 +120,7 @@ export async function DELETE(req: Request) {
 
     const { searchParams } = new URL(req.url);
     const publicId = String(searchParams.get('publicId') || '').trim();
+    const projectId = String(searchParams.get('projectId') || '').trim();
     const resourceType = searchParams.get('resourceType') === 'raw' ? 'raw' : 'image';
 
     // Strict ownership check: clients may only delete files inside their own isolated folder
@@ -136,19 +151,33 @@ export async function DELETE(req: Request) {
       }).catch((err) => console.error('[Cloudinary Destroy] Warning:', err));
     }
 
+    let updatedFiles: any[] = [];
+    if (projectId) {
+      const projRows = (await sql`
+        SELECT brand_files FROM client_projects WHERE id = ${projectId} AND client_id = ${session.clientId} LIMIT 1
+      `) as any[];
+      const currentProjFiles = Array.isArray(projRows[0]?.brand_files) ? projRows[0].brand_files : [];
+      updatedFiles = currentProjFiles.filter((f: any) => f?.publicId !== publicId);
+      await sql`
+        UPDATE client_projects
+        SET brand_files = ${JSON.stringify(updatedFiles)}::jsonb
+        WHERE id = ${projectId} AND client_id = ${session.clientId}
+      `;
+    }
+
     const rows = (await sql`
       SELECT brand_files FROM clients WHERE id = ${session.clientId} LIMIT 1
     `) as any[];
     const currentFiles = Array.isArray(rows[0]?.brand_files) ? rows[0].brand_files : [];
-    const updatedFiles = currentFiles.filter((f: any) => f?.publicId !== publicId);
+    const updatedClientFiles = currentFiles.filter((f: any) => f?.publicId !== publicId);
 
     await sql`
       UPDATE clients
-      SET brand_files = ${JSON.stringify(updatedFiles)}::jsonb
+      SET brand_files = ${JSON.stringify(updatedClientFiles)}::jsonb
       WHERE id = ${session.clientId}
     `;
 
-    return NextResponse.json({ success: true, brandFiles: updatedFiles });
+    return NextResponse.json({ success: true, brandFiles: projectId ? updatedFiles : updatedClientFiles });
   } catch (error: any) {
     console.error('Error deleting portal file:', error);
     return NextResponse.json({ success: false, error: error.message || 'Could not delete file' }, { status: 500 });

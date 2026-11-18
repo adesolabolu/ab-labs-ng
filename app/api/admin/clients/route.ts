@@ -5,14 +5,31 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const clients = await sql`
+    const clients = (await sql`
       SELECT * FROM clients 
       ORDER BY created_at DESC
-    `;
+    `) as any[];
+
+    const projectRows = (await sql`
+      SELECT * FROM client_projects
+      ORDER BY created_at DESC
+    `) as any[];
+
+    const projectsByClient = new Map<string, any[]>();
+    for (const p of projectRows) {
+      const list = projectsByClient.get(p.client_id) || [];
+      list.push(p);
+      projectsByClient.set(p.client_id, list);
+    }
+
+    const enrichedClients = clients.map((c) => ({
+      ...c,
+      projects: projectsByClient.get(c.id) || [],
+    }));
 
     return NextResponse.json({
       success: true,
-      clients
+      clients: enrichedClients,
     });
   } catch (error: any) {
     console.error('Error fetching clients:', error);

@@ -133,14 +133,16 @@ export async function sendOrderConfirmationEmail(options: {
   name: string;
   templateName: string;
   portalUrl: string;
+  domainName?: string | null;
 }): Promise<boolean> {
-  const { to, name, templateName, portalUrl } = options;
+  const { to, name, templateName, portalUrl, domainName } = options;
   const resendApiKey = process.env.RESEND_API_KEY;
   if (!resendApiKey) return true;
 
   const eName = escapeHtml(name);
   const eTemplateName = escapeHtml(templateName);
   const ePortalUrl = escapeHtml(portalUrl);
+  const eDomainName = domainName ? escapeHtml(domainName) : null;
 
   const html = `
     <!DOCTYPE html>
@@ -150,7 +152,7 @@ export async function sendOrderConfirmationEmail(options: {
           <div style="font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 20px;">aB Labs</div>
           <h1 style="font-size: 22px; font-weight: 700; color: #ffffff; margin: 0 0 12px;">Payment Confirmed: ${eTemplateName}</h1>
           <p style="font-size: 14px; color: #a1a1aa; line-height: 1.6; margin: 0 0 24px;">
-            Hello <strong>${eName}</strong>, we have received your payment for <strong>${eTemplateName}</strong>. Your existing client portal login remains active, and you can jump straight in with the 1-click button below:
+            Hello <strong>${eName}</strong>, we have received your payment for <strong>${eTemplateName}</strong>${eDomainName ? ` (<strong>${eDomainName}</strong>)` : ''}. This new website project has been added to your existing client portal account, and you can switch between your websites anytime.
           </p>
           <div style="text-align: center; margin: 24px 0;">
             <a href="${ePortalUrl}" style="display: inline-block; background-color: #ffffff; color: #000000; font-size: 14px; font-weight: 700; padding: 14px 28px; border-radius: 8px; text-decoration: none;">Open Your Client Portal &rarr;</a>

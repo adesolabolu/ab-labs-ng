@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server';
-import crypto from 'crypto';
 import sql from '@/lib/db';
-import { generateFriendlyPassword, hashPassword, setClientSessionCookie } from '@/lib/auth';
-import { sendClientCredentialsEmail, sendOrderConfirmationEmail } from '@/lib/email';
-import { TEMPLATES } from '@/data/templates';
-import { getTemplateWithPricing } from '@/lib/template-pricing';
+import { setClientSessionCookie } from '@/lib/auth';
+import { provisionClientAndProjectFromOrder } from '@/lib/client-provisioning';
 import {
   saveClientAuthorizationFromPaystack,
   refundVerificationCharge,
@@ -121,127 +118,24 @@ export async function POST(req: Request) {
       `;
     }
 
-    // 3. AUTOMATED ACCOUNT PROVISIONING
-    // New customers get a fresh account with emailed credentials.
-    // Existing customers (ON CONFLICT) keep portal_access_token and
-    // password_hash untouched - nothing is returned in this unauthenticated response.
-    const orderEmail = String(order.customer_email || '').toLowerCase().trim();
-    const clientId = `cli_${crypto.randomBytes(4).toString('hex')}`;
-    const portalAccessToken = `token_${crypto.randomBytes(12).toString('hex')}`;
-    const tempPassword = generateFriendlyPassword();
-    const passwordHash = hashPassword(tempPassword);
-
-    // Calculate domain expiry: 1 year (365 days) from today
-    const expiryDate = new Date();
-    expiryDate.setDate(expiryDate.getDate() + 365);
-
-    const matchedTpl = order.template_slug ? await getTemplateWithPricing(order.template_slug) : null;
-    const monthlyAmountNgn =
-      String(order.plan_type || '').toUpperCase() === 'OUTRIGHT'
-        ? 0
-        : Number(matchedTpl?.monthlyNgn || 5000);
-    const initialBillingStatus =
-      String(order.plan_type || '').toUpperCase() === 'OUTRIGHT' ? 'outright' : 'pending_launch';
-
-    const upserted = await sql`
-      INSERT INTO clients (
-        id,
-        email,
-        name,
-        phone,
-        business_name,
-        domain_name,
-        domain_status,
-        domain_expiry_date,
-        template_slug,
-        plan_type,
-        monthly_status,
-        billing_status,
-        monthly_amount_ngn,
-        portal_access_token,
-        password_hash,
-        build_phase
-      ) VALUES (
-        ${clientId},
-        ${orderEmail},
-        ${order.customer_name},
-        ${order.customer_phone || null},
-        ${order.business_name || null},
-        ${order.requested_domain || null},
-        'ACTIVE',
-        ${expiryDate.toISOString()},
-        ${order.template_slug},
-        ${order.plan_type},
-        'ACTIVE',
-        ${initialBillingStatus},
-        ${monthlyAmountNgn},
-        ${portalAccessToken},
-        ${passwordHash},
-        1
-      )
-      ON CONFLICT (email) DO UPDATE SET
-        business_name = COALESCE(EXCLUDED.business_name, clients.business_name),
-        domain_name = COALESCE(EXCLUDED.domain_name, clients.domain_name),
-        template_slug = EXCLUDED.template_slug,
-        plan_type = EXCLUDED.plan_type,
-        domain_expiry_date = EXCLUDED.domain_expiry_date,
-        monthly_status = 'ACTIVE',
-        billing_status = COALESCE(clients.billing_status, EXCLUDED.billing_status),
-        monthly_amount_ngn = EXCLUDED.monthly_amount_ngn
-      RETURNING id, portal_access_token, (xmax = 0) AS inserted
-    `;
-
-    const resolvedClientId = Array.isArray(upserted) && upserted[0] ? String(upserted[0].id) : clientId;
-    const resolvedAccessToken =
-      Array.isArray(upserted) && upserted[0]?.portal_access_token
-        ? String(upserted[0].portal_access_token)
-        : portalAccessToken;
-
-    if (paystackTxData) {
-      await saveClientAuthorizationFromPaystack(resolvedClientId, paystackTxData).catch((err) =>
-        console.error('[Paystack Verify] Failed to save authorization:', err)
-      );
-    }
+    // 3. Idempotently provision client account + project row + post-payment email
+    const { clientId: resolvedClientId, orderEmail, isNewClient, expiryDateIso } =
+      await provisionClientAndProjectFromOrder(order, paystackTxData);
 
     // 4. ALWAYS issue session cookie so paying customer enters /portal immediately without hitting /login
     await setClientSessionCookie(resolvedClientId, orderEmail);
-
-    const isNewClient = Array.isArray(upserted) && upserted[0] && upserted[0].inserted === true;
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ng.ab-labs.cv';
-    const portalUrl = `${baseUrl}/portal?token=${resolvedAccessToken}`;
-    const templateMatch = TEMPLATES.find((t) => t.slug === order.template_slug);
-    const templateName = templateMatch ? templateMatch.name : (order.template_slug || 'Website Template');
-
-    // 5. Await email dispatch so Cloudflare Workers does not cancel the fetch before Resend responds
-    if (isNewClient) {
-      await sendClientCredentialsEmail({
-        to: order.customer_email,
-        name: order.customer_name,
-        templateName,
-        temporaryPassword: tempPassword,
-        portalUrl,
-        domainName: order.requested_domain,
-      });
-    } else {
-      await sendOrderConfirmationEmail({
-        to: order.customer_email,
-        name: order.customer_name,
-        templateName,
-        portalUrl,
-      });
-    }
 
     return NextResponse.json({
       success: true,
       message: isNewClient
         ? 'Payment verified and client account successfully created!'
-        : 'Payment verified. Welcome back - your client portal is ready.',
+        : 'Payment verified. Your new website project has been added to your portal.',
       client: {
         email: order.customer_email,
         name: order.customer_name,
         businessName: order.business_name,
         domainName: order.requested_domain,
-        domainExpiryDate: expiryDate.toISOString(),
+        domainExpiryDate: expiryDateIso,
       },
       orderId: order.id,
       portalUrl: '/portal',

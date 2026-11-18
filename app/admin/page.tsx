@@ -1536,6 +1536,18 @@ export default function AdminPortalPage() {
                               Joined: {new Date(c.created_at).toLocaleDateString('en-NG', { day: '2-digit', month: 'short', year: 'numeric' })}
                             </span>
                           )}
+                          {Array.isArray(c.projects) && c.projects.length > 1 && (
+                            <div style={{ marginTop: '6px', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                              <span style={{ color: '#a1a1aa', fontSize: '11px', fontWeight: 600 }}>
+                                {c.projects.length} websites:
+                              </span>
+                              {c.projects.map((p: any) => (
+                                <span key={p.id} style={{ color: '#71717a', fontSize: '11px', display: 'block' }}>
+                                  • {p.business_name || p.template_slug || 'Website'}{p.domain_name ? ` (${p.domain_name})` : ''}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                           {Array.isArray(c.brand_files) && c.brand_files.length > 0 && (
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '6px' }}>
                               {c.brand_files.map((file: any, fIdx: number) => (

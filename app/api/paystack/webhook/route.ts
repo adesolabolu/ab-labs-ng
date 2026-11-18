@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import sql from '@/lib/db';
-import { generateFriendlyPassword, hashPassword } from '@/lib/auth';
-import { sendClientCredentialsEmail } from '@/lib/email';
-import { TEMPLATES } from '@/data/templates';
-import { getTemplateWithPricing } from '@/lib/template-pricing';
+import { provisionClientAndProjectFromOrder } from '@/lib/client-provisioning';
 import {
   saveClientAuthorizationFromPaystack,
   refundVerificationCharge,
@@ -107,97 +104,8 @@ export async function POST(req: Request) {
         `;
       }
 
-      // 4. Provision client account. New customers get fresh credentials.
-      // Existing customers (ON CONFLICT) keep portal_access_token and
-      // password_hash untouched: no rotation, no credential email, no overwrites.
-      const orderEmail = String(order.customer_email || '').toLowerCase().trim();
-      const clientId = `cli_${crypto.randomBytes(4).toString('hex')}`;
-      const portalAccessToken = `token_${crypto.randomBytes(12).toString('hex')}`;
-      const tempPassword = generateFriendlyPassword();
-      const passwordHash = hashPassword(tempPassword);
-
-      const expiryDate = new Date();
-      expiryDate.setDate(expiryDate.getDate() + 365);
-
-      const matchedTpl = order.template_slug ? await getTemplateWithPricing(order.template_slug) : null;
-      const monthlyAmountNgn =
-        String(order.plan_type || '').toUpperCase() === 'OUTRIGHT'
-          ? 0
-          : Number(matchedTpl?.monthlyNgn || 5000);
-      const initialBillingStatus =
-        String(order.plan_type || '').toUpperCase() === 'OUTRIGHT' ? 'outright' : 'pending_launch';
-
-      const upserted = await sql`
-        INSERT INTO clients (
-          id,
-          email,
-          name,
-          phone,
-          business_name,
-          domain_name,
-          domain_status,
-          domain_expiry_date,
-          template_slug,
-          plan_type,
-          monthly_status,
-          billing_status,
-          monthly_amount_ngn,
-          portal_access_token,
-          password_hash,
-          build_phase
-        ) VALUES (
-          ${clientId},
-          ${orderEmail},
-          ${order.customer_name},
-          ${order.customer_phone || null},
-          ${order.business_name || null},
-          ${order.requested_domain || null},
-          'ACTIVE',
-          ${expiryDate.toISOString()},
-          ${order.template_slug},
-          ${order.plan_type},
-          'ACTIVE',
-          ${initialBillingStatus},
-          ${monthlyAmountNgn},
-          ${portalAccessToken},
-          ${passwordHash},
-          1
-        )
-        ON CONFLICT (email) DO UPDATE SET
-          business_name = COALESCE(EXCLUDED.business_name, clients.business_name),
-          domain_name = COALESCE(EXCLUDED.domain_name, clients.domain_name),
-          template_slug = EXCLUDED.template_slug,
-          plan_type = EXCLUDED.plan_type,
-          domain_expiry_date = EXCLUDED.domain_expiry_date,
-          monthly_status = 'ACTIVE',
-          billing_status = COALESCE(clients.billing_status, EXCLUDED.billing_status),
-          monthly_amount_ngn = EXCLUDED.monthly_amount_ngn
-        RETURNING id, (xmax = 0) AS inserted
-      `;
-
-      const resolvedClientId = Array.isArray(upserted) && upserted[0] ? String(upserted[0].id) : clientId;
-      await saveClientAuthorizationFromPaystack(resolvedClientId, data).catch((err) =>
-        console.error('[Paystack Webhook] Failed to save authorization:', err)
-      );
-
-      const isNewClient = Array.isArray(upserted) && upserted[0] && upserted[0].inserted === true;
-
-      // 5. Send credentials email (new accounts only)
-      if (isNewClient) {
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ng.ab-labs.cv';
-        const portalUrl = `${baseUrl}/portal?token=${portalAccessToken}`;
-        const templateMatch = TEMPLATES.find((t) => t.slug === order.template_slug);
-        const templateName = templateMatch ? templateMatch.name : (order.template_slug || 'Website Template');
-
-        await sendClientCredentialsEmail({
-          to: orderEmail,
-          name: order.customer_name,
-          templateName,
-          temporaryPassword: tempPassword,
-          portalUrl,
-          domainName: order.requested_domain,
-        }).catch((err) => console.error('[Paystack Webhook] Email error:', err));
-      }
+      // 4. Idempotently provision client account + project row + post-payment email
+      await provisionClientAndProjectFromOrder(order, data);
     } else if (event.event === 'subscription.create') {
       const data = event.data;
       const customerEmail = String(data?.customer?.email || '').toLowerCase().trim();

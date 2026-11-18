@@ -13,10 +13,12 @@ export default function PortalLoader() {
   const [state, setState] = useState<{
     loading: boolean;
     client: any | null;
+    projects: any[];
     template: Template | null;
   }>({
     loading: true,
     client: null,
+    projects: [],
     template: null,
   });
 
@@ -37,7 +39,12 @@ export default function PortalLoader() {
       .then((data) => {
         if (!active || !data) return;
         if (data.success && data.client) {
-          setState({ loading: false, client: data.client, template: data.template || null });
+          setState({
+            loading: false,
+            client: data.client,
+            projects: Array.isArray(data.projects) ? data.projects : [],
+            template: data.template || null,
+          });
         } else {
           router.replace('/login?redirect=/portal');
         }
@@ -72,5 +79,5 @@ export default function PortalLoader() {
     );
   }
 
-  return <ClientPortalView client={state.client} template={state.template} />;
+  return <ClientPortalView client={state.client} projects={state.projects} template={state.template} />;
 }

@@ -43,30 +43,45 @@ interface ClientData {
   paystack_subscription_code?: string | null;
 }
 
+export interface ClientProject extends ClientData {
+  template?: Template | null;
+}
+
 interface ClientPortalViewProps {
   client: ClientData;
+  projects?: ClientProject[];
   template?: Template | null;
 }
 
 type PortalTab = 'overview' | 'brand' | 'billing' | 'account';
 
-export default function ClientPortalView({ client, template }: ClientPortalViewProps) {
+export default function ClientPortalView({ client, projects, template }: ClientPortalViewProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<PortalTab>('overview');
 
+  const initialProjects: ClientProject[] =
+    Array.isArray(projects) && projects.length > 0
+      ? projects
+      : [{ ...client, template: template || null }];
+
+  const [projectList, setProjectList] = useState<ClientProject[]>(initialProjects);
+  const [selectedProjectId, setSelectedProjectId] = useState<string>(initialProjects[0].id);
+  const activeProject = projectList.find((p) => p.id === selectedProjectId) || projectList[0];
+  const activeTemplate = activeProject.template || template || null;
+
   // Brand Assets Form State
-  const [logoUrl, setLogoUrl] = useState(client.logo_url || '');
+  const [logoUrl, setLogoUrl] = useState(activeProject.logo_url || '');
   const [brandFiles, setBrandFiles] = useState<BrandFileItem[]>(
-    Array.isArray(client.brand_files) ? client.brand_files : []
+    Array.isArray(activeProject.brand_files) ? activeProject.brand_files : []
   );
   const [uploadingFiles, setUploadingFiles] = useState(false);
   const [uploadError, setUploadError] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [primaryColor, setPrimaryColor] = useState(client.primary_color || '#18181b');
-  const [accentColor, setAccentColor] = useState(client.accent_color || '#10b981');
-  const [businessBio, setBusinessBio] = useState(client.business_bio || '');
-  const [whatsappNumber, setWhatsappNumber] = useState(client.whatsapp_number || client.phone || '');
+  const [primaryColor, setPrimaryColor] = useState(activeProject.primary_color || '#18181b');
+  const [accentColor, setAccentColor] = useState(activeProject.accent_color || '#10b981');
+  const [businessBio, setBusinessBio] = useState(activeProject.business_bio || '');
+  const [whatsappNumber, setWhatsappNumber] = useState(activeProject.whatsapp_number || client.phone || '');
 
   // Save Brand State
   const [saving, setSaving] = useState(false);
@@ -78,7 +93,7 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
   const [cardLinkedMessage, setCardLinkedMessage] = useState('');
   const [cardLast4, setCardLast4] = useState(client.card_last4 || '');
   const [cardBrand, setCardBrand] = useState(client.card_brand || '');
-  const [billingStatus] = useState(client.billing_status || 'pending_launch');
+  const billingStatus = activeProject.billing_status || client.billing_status || 'pending_launch';
 
   // Password Change State
   const [newPassword, setNewPassword] = useState('');
@@ -87,9 +102,21 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
   const [passwordSuccess, setPasswordSuccess] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-  const currentPhase = client.build_phase || 1;
-  const isOutright = String(client.plan_type || '').toUpperCase() === 'OUTRIGHT';
-  const monthlyRate = Number(client.monthly_amount_ngn || template?.monthlyNgn || 5000);
+  const handleSelectProject = (proj: ClientProject) => {
+    setSelectedProjectId(proj.id);
+    setLogoUrl(proj.logo_url || '');
+    setBrandFiles(Array.isArray(proj.brand_files) ? proj.brand_files : []);
+    setPrimaryColor(proj.primary_color || '#18181b');
+    setAccentColor(proj.accent_color || '#10b981');
+    setBusinessBio(proj.business_bio || '');
+    setWhatsappNumber(proj.whatsapp_number || client.phone || '');
+    setUploadError('');
+    setSaveSuccess(false);
+  };
+
+  const currentPhase = activeProject.build_phase || 1;
+  const isOutright = String(activeProject.plan_type || '').toUpperCase() === 'OUTRIGHT';
+  const monthlyRate = Number(activeProject.monthly_amount_ngn || activeTemplate?.monthlyNgn || 5000);
   const firstName = client.name ? String(client.name).trim().split(' ')[0] : 'there';
 
   // Reset "Redirecting to Paystack..." if user hits Back button from Paystack (bfcache restore)
@@ -235,6 +262,7 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          projectId: activeProject.id,
           logoUrl: updatedLogoUrl,
           brandFiles: updatedFiles,
         }),
@@ -246,6 +274,11 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
 
       setBrandFiles(updatedFiles);
       setLogoUrl(updatedLogoUrl);
+      setProjectList((prev) =>
+        prev.map((p) =>
+          p.id === activeProject.id ? { ...p, logo_url: updatedLogoUrl, brand_files: updatedFiles } : p
+        )
+      );
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3500);
     } catch (err: any) {
@@ -260,7 +293,7 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
     setUploadError('');
     try {
       const res = await fetch(
-        `/api/portal/assets?publicId=${encodeURIComponent(file.publicId)}&resourceType=${encodeURIComponent(file.resourceType || 'image')}`,
+        `/api/portal/assets?projectId=${encodeURIComponent(activeProject.id)}&publicId=${encodeURIComponent(file.publicId)}&resourceType=${encodeURIComponent(file.resourceType || 'image')}`,
         { method: 'DELETE' }
       );
       const data = await res.json();
@@ -271,10 +304,16 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
         ? data.brandFiles
         : brandFiles.filter((item) => item.publicId !== file.publicId);
       setBrandFiles(next);
+      const nextLogoUrl =
+        logoUrl === file.url
+          ? next.find((item: BrandFileItem) => ['png', 'jpg', 'jpeg', 'webp'].includes(item.format))?.url || ''
+          : logoUrl;
       if (logoUrl === file.url) {
-        const fallbackImg = next.find((item: BrandFileItem) => ['png', 'jpg', 'jpeg', 'webp'].includes(item.format));
-        setLogoUrl(fallbackImg ? fallbackImg.url : '');
+        setLogoUrl(nextLogoUrl);
       }
+      setProjectList((prev) =>
+        prev.map((p) => (p.id === activeProject.id ? { ...p, logo_url: nextLogoUrl, brand_files: next } : p))
+      );
     } catch (err: any) {
       setUploadError(err.message || 'Could not remove file.');
     }
@@ -291,6 +330,7 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          projectId: activeProject.id,
           logoUrl,
           brandFiles,
           primaryColor,
@@ -304,6 +344,22 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
       if (!data.success) {
         throw new Error(data.error || 'Failed to save brand details');
       }
+
+      setProjectList((prev) =>
+        prev.map((p) =>
+          p.id === activeProject.id
+            ? {
+                ...p,
+                logo_url: logoUrl,
+                brand_files: brandFiles,
+                primary_color: primaryColor,
+                accent_color: accentColor,
+                business_bio: businessBio,
+                whatsapp_number: whatsappNumber,
+              }
+            : p
+        )
+      );
 
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 4000);
@@ -548,9 +604,54 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
             Welcome, {firstName}
           </h1>
           <p style={{ color: '#57534e', fontSize: '14px', margin: 0, lineHeight: 1.5 }}>
-            {client.business_name ? `${client.business_name} · ` : ''}Track your website build, send your brand details, and manage billing.
+            {activeProject.business_name ? `${activeProject.business_name} · ` : ''}Track your website build, send your brand details, and manage billing.
           </p>
         </div>
+
+        {/* Multi-Website Switcher (only shown when client has 2+ websites) */}
+        {projectList.length > 1 && (
+          <div
+            style={{
+              backgroundColor: '#ffffff',
+              border: '1px solid #e7e5e4',
+              borderRadius: '12px',
+              padding: '12px 14px',
+              marginBottom: '18px',
+            }}
+          >
+            <div style={{ fontSize: '12px', fontWeight: 700, color: '#57534e', marginBottom: '8px' }}>
+              Your Websites ({projectList.length})
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              {projectList.map((proj, idx) => {
+                const isSelected = proj.id === activeProject.id;
+                const label = proj.business_name || proj.template?.name || `Website ${idx + 1}`;
+                const sub = proj.domain_name || 'Domain pending';
+                return (
+                  <button
+                    key={proj.id}
+                    type="button"
+                    onClick={() => handleSelectProject(proj)}
+                    style={{
+                      textAlign: 'left',
+                      padding: '8px 12px',
+                      borderRadius: '9px',
+                      border: isSelected ? '1.5px solid #1c1917' : '1px solid #e7e5e4',
+                      backgroundColor: isSelected ? '#1c1917' : '#fafaf9',
+                      color: isSelected ? '#ffffff' : '#1c1917',
+                      cursor: 'pointer',
+                      minWidth: 0,
+                      maxWidth: '100%',
+                    }}
+                  >
+                    <div style={{ fontSize: '13px', fontWeight: 700, lineHeight: 1.25 }}>{label}</div>
+                    <div style={{ fontSize: '11px', opacity: isSelected ? 0.8 : 0.65, marginTop: '2px' }}>{sub}</div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Global Error Banner */}
         {errorMessage && (
@@ -604,8 +705,8 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
                         Preview Your Site
                       </div>
                       <p style={{ fontSize: '12.5px', color: '#57534e', margin: 0, lineHeight: 1.45 }}>
-                        {client.demo_preview_url ? (
-                          <a href={client.demo_preview_url} target="_blank" rel="noopener noreferrer" style={{ color: '#15803d', fontWeight: 700 }}>
+                        {activeProject.demo_preview_url ? (
+                          <a href={activeProject.demo_preview_url} target="_blank" rel="noopener noreferrer" style={{ color: '#15803d', fontWeight: 700 }}>
                             Open Site Preview &rarr;
                           </a>
                         ) : (
@@ -635,12 +736,12 @@ export default function ClientPortalView({ client, template }: ClientPortalViewP
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '13.5px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', paddingBottom: '10px', borderBottom: '1px solid #f5f5f4', flexWrap: 'wrap' }}>
                       <span style={{ color: '#78716c' }}>Selected Design</span>
-                      <strong style={{ color: '#1c1917' }}>{template ? template.name : (client.template_slug || 'Custom Website')}</strong>
+                      <strong style={{ color: '#1c1917' }}>{activeTemplate ? activeTemplate.name : (activeProject.template_slug || 'Custom Website')}</strong>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', paddingBottom: '10px', borderBottom: '1px solid #f5f5f4', flexWrap: 'wrap' }}>
                       <span style={{ color: '#78716c' }}>Website Domain</span>
-                      <strong style={{ color: client.domain_name ? '#15803d' : '#57534e', textAlign: 'right' }}>
-                        {client.domain_name || 'Not set yet (we will set this up with you)'}
+                      <strong style={{ color: activeProject.domain_name ? '#15803d' : '#57534e', textAlign: 'right' }}>
+                        {activeProject.domain_name || 'Not set yet (we will set this up with you)'}
                       </strong>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>

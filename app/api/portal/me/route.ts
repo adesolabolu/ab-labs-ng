@@ -55,9 +55,25 @@ export async function GET(req: Request) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const template = TEMPLATES.find((t) => t.slug === client.template_slug) || null;
+    const projectRows = (await sql`
+      SELECT id, client_id, order_id, business_name, domain_name, domain_status,
+             domain_expiry_date, template_slug, plan_type, build_phase,
+             logo_url, brand_files, primary_color, accent_color, business_bio,
+             whatsapp_number, demo_preview_url, billing_status, next_billing_date,
+             monthly_amount_ngn, paystack_subscription_code, created_at
+      FROM client_projects
+      WHERE client_id = ${client.id}
+      ORDER BY created_at DESC
+    `) as any[];
+
+    const projects = (projectRows.length > 0 ? projectRows : [client]).map((p: any) => ({
+      ...p,
+      template: TEMPLATES.find((t) => t.slug === p.template_slug) || null,
+    }));
+
+    const template = projects[0]?.template || TEMPLATES.find((t) => t.slug === client.template_slug) || null;
     const response = NextResponse.json(
-      { success: true, client, template },
+      { success: true, client, projects, template },
       { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
     );
 
