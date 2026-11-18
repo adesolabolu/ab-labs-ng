@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import sql from '@/lib/db';
 import { setClientSessionCookie } from '@/lib/auth';
 import { provisionClientAndProjectFromOrder } from '@/lib/client-provisioning';
+import { activateProjectBilling } from '@/lib/billing-engine';
 import {
   saveClientAuthorizationFromPaystack,
   refundVerificationCharge,
@@ -20,6 +21,39 @@ export async function POST(req: Request) {
 
     const paystackSecretKey = process.env.PAYSTACK_SECRET_KEY;
     const isLiveKeyAvailable = paystackSecretKey && !paystackSecretKey.includes('placeholder');
+
+    // Special flow: /portal "Activate / Reactivate Monthly Billing"
+    if (String(reference).startsWith('ab_bill_')) {
+      if (!isLiveKeyAvailable) {
+        return NextResponse.json({ success: false, error: 'Paystack live key not configured' }, { status: 503 });
+      }
+      const verifyRes = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, {
+        headers: { Authorization: `Bearer ${paystackSecretKey}` },
+      });
+      const verifyData = await verifyRes.json();
+      if (!verifyData?.status || verifyData?.data?.status !== 'success') {
+        return NextResponse.json({ success: false, error: 'Billing payment verification failed at Paystack' }, { status: 400 });
+      }
+
+      const clientId = String(verifyData.data?.metadata?.clientId || '');
+      const projectId = String(verifyData.data?.metadata?.projectId || '');
+      if (!clientId || !projectId) {
+        return NextResponse.json({ success: false, error: 'Missing project metadata' }, { status: 400 });
+      }
+
+      const saved = await saveClientAuthorizationFromPaystack(clientId, verifyData.data);
+      const billing = await activateProjectBilling(projectId, clientId);
+
+      return NextResponse.json({
+        success: true,
+        billingActivated: true,
+        projectId,
+        nextBillingDate: billing.nextBillingDate,
+        last4: saved.last4 || null,
+        brand: saved.brand || null,
+        message: 'Monthly billing activated and your website is now live!',
+      });
+    }
 
     // Special flow: /portal "Save Card for Auto-Renewal" (₦50 refundable verification)
     if (String(reference).startsWith('ab_card_')) {

@@ -249,6 +249,61 @@ export default function AdminPortalPage() {
   const formatNgn = (val: number) => `₦${Number(val || 0).toLocaleString()}`;
 
   const [activatingSubId, setActivatingSubId] = useState<string | null>(null);
+  const [togglingProjectId, setTogglingProjectId] = useState<string | null>(null);
+  const [runningBillingTick, setRunningBillingTick] = useState(false);
+  const [billingTickMessage, setBillingTickMessage] = useState('');
+
+  const handleToggleSiteLive = async (clientId: string, projectId: string, nextLive: boolean) => {
+    setTogglingProjectId(projectId);
+    try {
+      const res = await fetch('/api/admin/clients/live-toggle', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId, isLive: nextLive }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Could not toggle site status');
+      }
+      setClients((prev) =>
+        prev.map((c) =>
+          c.id === clientId
+            ? {
+                ...c,
+                projects: Array.isArray(c.projects)
+                  ? c.projects.map((p: any) => (p.id === projectId ? { ...p, is_live: nextLive } : p))
+                  : c.projects,
+              }
+            : c
+        )
+      );
+    } catch (err: any) {
+      alert(err.message || 'Failed to update site status');
+    } finally {
+      setTogglingProjectId(null);
+    }
+  };
+
+  const handleRunBillingTick = async () => {
+    setRunningBillingTick(true);
+    setBillingTickMessage('');
+    try {
+      const res = await fetch('/api/cron/billing', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Billing check failed');
+      }
+      const s = data.summary;
+      setBillingTickMessage(
+        `Checked ${s.checked} · Reminders: ${s.remindersSent} · Charged: ${s.chargesSucceeded} · Failed: ${s.chargesFailed} · Suspended: ${s.suspended}`
+      );
+      await fetchAdminData();
+    } catch (err: any) {
+      alert(err.message || 'Billing check failed');
+    } finally {
+      setRunningBillingTick(false);
+    }
+  };
 
   const activateClientBilling = async (clientId: string) => {
     setActivatingSubId(clientId);
@@ -1485,12 +1540,36 @@ export default function AdminPortalPage() {
 
         {/* Tab 2: Clients & Domain Tracker */}
         {activeTab === 'clients' && (
-          <div style={{
-            backgroundColor: '#121215',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '14px',
-            overflow: 'hidden',
-          }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+              <span style={{ fontSize: '12.5px', color: '#a1a1aa' }}>
+                {billingTickMessage || 'Automated reminders & 36h overdue checks run on schedule or manually.'}
+              </span>
+              <button
+                type="button"
+                onClick={handleRunBillingTick}
+                disabled={runningBillingTick}
+                style={{
+                  padding: '7px 12px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255, 255, 255, 0.14)',
+                  backgroundColor: '#18181b',
+                  color: '#f4f4f5',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  cursor: runningBillingTick ? 'wait' : 'pointer',
+                  opacity: runningBillingTick ? 0.7 : 1,
+                }}
+              >
+                {runningBillingTick ? 'Running Billing Check...' : 'Run Billing & Reminders Check'}
+              </button>
+            </div>
+            <div style={{
+              backgroundColor: '#121215',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '14px',
+              overflow: 'hidden',
+            }}>
             {filteredClients.length === 0 ? (
               <div style={{ padding: '64px 24px', textAlign: 'center' }}>
                 <p style={{ color: '#71717a', fontSize: '14px' }}>
@@ -1733,6 +1812,34 @@ export default function AdminPortalPage() {
                                 {activatingSubId === c.id ? 'Activating...' : 'Mark Live & Start Billing'}
                               </button>
                             )}
+                            {(Array.isArray(c.projects) && c.projects.length > 0
+                              ? c.projects
+                              : [{ id: `proj_${String(c.id).replace('cli_', '')}`, business_name: c.business_name, is_live: c.is_live !== false }]
+                            ).map((proj: any, pIdx: number) => {
+                              const live = proj.is_live !== false;
+                              return (
+                                <button
+                                  key={proj.id || pIdx}
+                                  type="button"
+                                  onClick={() => handleToggleSiteLive(c.id, proj.id, !live)}
+                                  disabled={togglingProjectId === proj.id}
+                                  style={{
+                                    padding: '4px 8px',
+                                    borderRadius: '6px',
+                                    fontSize: '11px',
+                                    fontWeight: 600,
+                                    backgroundColor: live ? 'rgba(16, 185, 129, 0.14)' : 'rgba(239, 68, 68, 0.14)',
+                                    color: live ? '#34d399' : '#fca5a5',
+                                    border: `1px solid ${live ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)'}`,
+                                    cursor: togglingProjectId === proj.id ? 'wait' : 'pointer',
+                                  }}
+                                >
+                                  {togglingProjectId === proj.id
+                                    ? 'Updating...'
+                                    : `${live ? '● Site Live' : '○ Disconnected'}${c.projects?.length > 1 ? ` (${proj.business_name || pIdx + 1})` : ''} · Toggle`}
+                                </button>
+                              );
+                            })}
                           </div>
                         </td>
 
@@ -1790,6 +1897,7 @@ export default function AdminPortalPage() {
                 </tbody>
               </table>
             )}
+          </div>
           </div>
         )}
 

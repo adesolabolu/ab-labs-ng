@@ -41,6 +41,8 @@ interface ClientData {
   card_last4?: string | null;
   card_brand?: string | null;
   paystack_subscription_code?: string | null;
+  is_live?: boolean | null;
+  billing_anchor_date?: string | null;
 }
 
 export interface ClientProject extends ClientData {
@@ -90,10 +92,12 @@ export default function ClientPortalView({ client, projects, template }: ClientP
 
   // Billing & Card Linking State
   const [linkingCard, setLinkingCard] = useState(false);
+  const [activatingBilling, setActivatingBilling] = useState(false);
   const [cardLinkedMessage, setCardLinkedMessage] = useState('');
   const [cardLast4, setCardLast4] = useState(client.card_last4 || '');
   const [cardBrand, setCardBrand] = useState(client.card_brand || '');
   const billingStatus = activeProject.billing_status || client.billing_status || 'pending_launch';
+  const isSiteLive = activeProject.is_live !== false;
 
   // Password Change State
   const [newPassword, setNewPassword] = useState('');
@@ -119,9 +123,12 @@ export default function ClientPortalView({ client, projects, template }: ClientP
   const monthlyRate = Number(activeProject.monthly_amount_ngn || activeTemplate?.monthlyNgn || 5000);
   const firstName = client.name ? String(client.name).trim().split(' ')[0] : 'there';
 
-  // Reset "Redirecting to Paystack..." if user hits Back button from Paystack (bfcache restore)
+  // Reset loading state if user hits Back button from Paystack (bfcache restore)
   useEffect(() => {
-    const resetLoading = () => setLinkingCard(false);
+    const resetLoading = () => {
+      setLinkingCard(false);
+      setActivatingBilling(false);
+    };
     window.addEventListener('pageshow', resetLoading);
     window.addEventListener('focus', resetLoading);
     return () => {
@@ -130,12 +137,12 @@ export default function ClientPortalView({ client, projects, template }: ClientP
     };
   }, []);
 
-  // Verify card-linking callback when returning from Paystack
+  // Verify card-linking or billing-activation callback when returning from Paystack
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     const ref = params.get('reference') || params.get('trxref');
-    if (params.get('card_linked') === '1' && ref) {
+    if ((params.get('card_linked') === '1' || params.get('billing_activated') === '1') && ref) {
       setActiveTab('billing');
       fetch('/api/paystack/verify', {
         method: 'POST',
@@ -149,11 +156,51 @@ export default function ClientPortalView({ client, projects, template }: ClientP
             if (data.brand) setCardBrand(data.brand);
             setCardLinkedMessage(data.message || 'Your card has been saved for automatic monthly renewals.');
             window.history.replaceState({}, '', '/portal');
+          } else if (data?.success && data?.billingActivated) {
+            if (data.last4) setCardLast4(data.last4);
+            if (data.brand) setCardBrand(data.brand);
+            setProjectList((prev) =>
+              prev.map((p) =>
+                p.id === (data.projectId || activeProject.id)
+                  ? {
+                      ...p,
+                      is_live: true,
+                      billing_status: 'active',
+                      next_billing_date: data.nextBillingDate || p.next_billing_date,
+                    }
+                  : p
+              )
+            );
+            setCardLinkedMessage(data.message || 'Monthly billing activated and your website is now live!');
+            window.history.replaceState({}, '', '/portal');
           }
         })
         .catch(() => {});
     }
   }, []);
+
+  const handleActivateBilling = async () => {
+    setActivatingBilling(true);
+    setErrorMessage('');
+    const timeoutId = setTimeout(() => setActivatingBilling(false), 12000);
+    try {
+      const origin = typeof window !== 'undefined' ? window.location.origin : '';
+      const res = await fetch('/api/portal/activate-billing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId: activeProject.id, callbackOrigin: origin }),
+      });
+      const data = await res.json();
+      if (!data?.success || !data?.authorizationUrl) {
+        throw new Error(data?.error || 'Could not start billing payment.');
+      }
+      window.location.href = data.authorizationUrl;
+    } catch (err: any) {
+      clearTimeout(timeoutId);
+      setErrorMessage(err.message || 'Could not start billing payment. Please try again.');
+      setActivatingBilling(false);
+    }
+  };
 
   const handleLinkCard = async () => {
     setLinkingCard(true);
@@ -1093,18 +1140,66 @@ export default function ClientPortalView({ client, projects, template }: ClientP
                         <strong style={{ color: '#1c1917' }}>₦{monthlyRate.toLocaleString()}/month</strong>
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap' }}>
-                        <span style={{ color: '#78716c' }}>Status</span>
-                        <strong style={{ color: billingStatus === 'active' ? '#15803d' : '#1c1917' }}>{billingLabel}</strong>
+                        <span style={{ color: '#78716c' }}>Website Status</span>
+                        <strong style={{ color: isSiteLive ? '#15803d' : '#b91c1c' }}>
+                          {isSiteLive ? 'Live' : 'Disconnected (Payment Due)'}
+                        </strong>
                       </div>
-                      {client.next_billing_date && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap' }}>
+                        <span style={{ color: '#78716c' }}>Billing Status</span>
+                        <strong style={{ color: billingStatus === 'active' ? '#15803d' : billingStatus === 'suspended' || billingStatus === 'past_due' ? '#b91c1c' : '#1c1917' }}>
+                          {billingStatus === 'suspended' ? 'Suspended (Overdue)' : billingLabel}
+                        </strong>
+                      </div>
+                      {(activeProject.next_billing_date || client.next_billing_date) && (
                         <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap' }}>
                           <span style={{ color: '#78716c' }}>Next Billing Date</span>
                           <strong style={{ color: '#1c1917' }}>
-                            {new Date(client.next_billing_date).toLocaleDateString('en-NG', { dateStyle: 'medium' })}
+                            {new Date(activeProject.next_billing_date || client.next_billing_date!).toLocaleDateString('en-NG', { dateStyle: 'medium' })}
                           </strong>
                         </div>
                       )}
                     </div>
+
+                    {(billingStatus !== 'active' || !isSiteLive) && (
+                      <div style={{ padding: '16px', borderRadius: '12px', border: !isSiteLive ? '1px solid #fecaca' : '1px solid #e7e5e4', backgroundColor: !isSiteLive ? '#fef2f2' : '#ffffff' }}>
+                        <h3 style={{ fontSize: '14.5px', fontWeight: 700, color: '#1c1917', margin: '0 0 6px' }}>
+                          {billingStatus === 'suspended' || !isSiteLive
+                            ? 'Reactivate Monthly Billing'
+                            : billingStatus === 'past_due'
+                            ? 'Pay Overdue Monthly Renewal'
+                            : 'Activate Monthly Billing'}
+                        </h3>
+                        <p style={{ fontSize: '13px', color: '#57534e', margin: '0 0 14px', lineHeight: 1.5 }}>
+                          {billingStatus === 'suspended' || !isSiteLive
+                            ? `Pay ₦${monthlyRate.toLocaleString()} now to bring your website back online immediately (your original monthly cycle date stays unchanged).`
+                            : `Pay ₦${monthlyRate.toLocaleString()} via Paystack to activate your monthly plan and connect your live site automatically.`}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={handleActivateBilling}
+                          disabled={activatingBilling}
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            backgroundColor: '#15803d',
+                            color: '#ffffff',
+                            border: 'none',
+                            borderRadius: '10px',
+                            fontSize: '13.5px',
+                            fontWeight: 700,
+                            cursor: activatingBilling ? 'not-allowed' : 'pointer',
+                            opacity: activatingBilling ? 0.7 : 1,
+                          }}
+                        >
+                          {activatingBilling
+                            ? 'Opening Paystack...'
+                            : billingStatus === 'suspended' || !isSiteLive
+                            ? `Reactivate Billing (₦${monthlyRate.toLocaleString()})`
+                            : `Activate Monthly Billing (₦${monthlyRate.toLocaleString()})`}
+                        </button>
+                      </div>
+                    )}
 
                     {cardLinkedMessage && (
                       <div style={{ padding: '12px 14px', borderRadius: '8px', backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', color: '#15803d', fontSize: '13px', fontWeight: 600 }}>

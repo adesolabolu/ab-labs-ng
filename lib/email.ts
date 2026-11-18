@@ -190,3 +190,172 @@ export async function sendOrderConfirmationEmail(options: {
     return false;
   }
 }
+
+async function sendResendEmail(to: string, subject: string, html: string): Promise<boolean> {
+  const resendApiKey = process.env.RESEND_API_KEY;
+  if (!resendApiKey) return true;
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'aB Labs Billing <hello@ab-labs.cv>',
+        to: [to],
+        subject,
+        html,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      console.error('Resend API error:', res.status, data);
+      return false;
+    }
+    return !!data.id;
+  } catch (err) {
+    console.error('Failed to send email via Resend:', err);
+    return false;
+  }
+}
+
+function wrapBillingEmail(title: string, bodyHtml: string, ctaLabel?: string, ctaUrl?: string): string {
+  const buttonHtml =
+    ctaLabel && ctaUrl
+      ? `<div style="text-align: center; margin: 24px 0;"><a href="${escapeHtml(ctaUrl)}" style="display: inline-block; background-color: #ffffff; color: #000000; font-size: 14px; font-weight: 700; padding: 14px 28px; border-radius: 8px; text-decoration: none;">${escapeHtml(ctaLabel)} &rarr;</a></div>`
+      : '';
+  return `<!DOCTYPE html>
+<html>
+  <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #0c0d0e; color: #e4e4e7; margin: 0; padding: 40px 20px;">
+    <div style="max-width: 560px; margin: 0 auto; background-color: #141517; border: 1px solid #27272a; border-radius: 16px; padding: 32px;">
+      <div style="font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 20px;">aB Labs</div>
+      <h1 style="font-size: 22px; font-weight: 700; color: #ffffff; margin: 0 0 12px;">${escapeHtml(title)}</h1>
+      ${bodyHtml}
+      ${buttonHtml}
+      <p style="font-size: 12px; color: #71717a; text-align: center; margin-top: 28px;">
+        &copy; ${new Date().getFullYear()} aB Labs &middot; Lagos, Nigeria
+      </p>
+    </div>
+  </body>
+</html>`;
+}
+
+export async function sendBillingReminderEmail(options: {
+  to: string;
+  name: string;
+  businessName: string;
+  amountNgn: number;
+  dueDate: Date;
+  daysLeft: number;
+  portalUrl: string;
+}): Promise<boolean> {
+  const { to, name, businessName, amountNgn, dueDate, daysLeft, portalUrl } = options;
+  const formattedDate = dueDate.toLocaleDateString('en-NG', { day: '2-digit', month: 'short', year: 'numeric' });
+  const dayText = daysLeft <= 1 ? 'tomorrow' : `in ${daysLeft} days`;
+  const html = wrapBillingEmail(
+    `Upcoming Monthly Renewal (${dayText})`,
+    `<p style="font-size: 14px; color: #a1a1aa; line-height: 1.6; margin: 0 0 16px;">
+      Hello <strong>${escapeHtml(name)}</strong>, your monthly hosting &amp; maintenance renewal of <strong>&#8358;${amountNgn.toLocaleString()}</strong> for <strong>${escapeHtml(businessName)}</strong> is due <strong>${escapeHtml(dayText)}</strong> (${escapeHtml(formattedDate)}).
+    </p>
+    <p style="font-size: 13px; color: #a1a1aa; line-height: 1.6; margin: 0;">
+      If your card is saved on file, we will renew it automatically. You can also check or update your billing details in your portal anytime.
+    </p>`,
+    'Open Client Portal',
+    portalUrl
+  );
+  return sendResendEmail(to, `Reminder: Monthly renewal for ${businessName} due ${dayText}`, html);
+}
+
+export async function sendBillingOverdueWarningEmail(options: {
+  to: string;
+  name: string;
+  businessName: string;
+  amountNgn: number;
+  portalUrl: string;
+}): Promise<boolean> {
+  const { to, name, businessName, amountNgn, portalUrl } = options;
+  const html = wrapBillingEmail(
+    'Action Needed: Monthly Payment Failed',
+    `<p style="font-size: 14px; color: #a1a1aa; line-height: 1.6; margin: 0 0 16px;">
+      Hello <strong>${escapeHtml(name)}</strong>, we could not process your monthly renewal of <strong>&#8358;${amountNgn.toLocaleString()}</strong> for <strong>${escapeHtml(businessName)}</strong>.
+    </p>
+    <p style="font-size: 14px; color: #fca5a5; line-height: 1.6; margin: 0;">
+      Please complete payment in your portal within <strong>36 hours</strong> so your live website is not disconnected.
+    </p>`,
+    'Pay Now in Portal',
+    portalUrl
+  );
+  return sendResendEmail(to, `Payment Failed: ${businessName} will go offline in 36 hours`, html);
+}
+
+export async function sendSiteSuspendedEmail(options: {
+  to: string;
+  name: string;
+  businessName: string;
+  amountNgn: number;
+  portalUrl: string;
+}): Promise<boolean> {
+  const { to, name, businessName, amountNgn, portalUrl } = options;
+  const html = wrapBillingEmail(
+    'Website Temporarily Disconnected',
+    `<p style="font-size: 14px; color: #a1a1aa; line-height: 1.6; margin: 0 0 16px;">
+      Hello <strong>${escapeHtml(name)}</strong>, because the monthly renewal of <strong>&#8358;${amountNgn.toLocaleString()}</strong> for <strong>${escapeHtml(businessName)}</strong> remained unpaid after 36 hours, your live website has been disconnected.
+    </p>
+    <p style="font-size: 13px; color: #a1a1aa; line-height: 1.6; margin: 0;">
+      Click below to reactivate billing and your website will come right back online.
+    </p>`,
+    'Reactivate Website',
+    portalUrl
+  );
+  return sendResendEmail(to, `Website Offline: Reactivate ${businessName}`, html);
+}
+
+export async function sendAdminBillingAlertEmail(options: {
+  clientName: string;
+  clientEmail: string;
+  businessName: string;
+  amountNgn: number;
+  stage: 'overdue' | 'suspended';
+}): Promise<boolean> {
+  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || 'boluwatifeadesola9@gmail.com';
+  const { clientName, clientEmail, businessName, amountNgn, stage } = options;
+  const title =
+    stage === 'suspended'
+      ? `Site Auto-Disconnected: ${businessName}`
+      : `Client Payment Overdue: ${businessName}`;
+  const html = wrapBillingEmail(
+    title,
+    `<p style="font-size: 14px; color: #a1a1aa; line-height: 1.6; margin: 0 0 12px;">
+      <strong>Client:</strong> ${escapeHtml(clientName)} (${escapeHtml(clientEmail)})<br/>
+      <strong>Project:</strong> ${escapeHtml(businessName)}<br/>
+      <strong>Amount:</strong> &#8358;${amountNgn.toLocaleString()}/mo<br/>
+      <strong>Status:</strong> ${stage === 'suspended' ? 'Unpaid after 36h — is_live set to FALSE' : 'Renewal charge failed — 36h grace period started'}
+    </p>`
+  );
+  return sendResendEmail(adminEmail, `[aB Labs Billing] ${title}`, html);
+}
+
+export async function sendBillingRenewalReceiptEmail(options: {
+  to: string;
+  name: string;
+  businessName: string;
+  amountNgn: number;
+  nextBillingDate: Date;
+  portalUrl: string;
+}): Promise<boolean> {
+  const { to, name, businessName, amountNgn, nextBillingDate, portalUrl } = options;
+  const formattedNext = nextBillingDate.toLocaleDateString('en-NG', { day: '2-digit', month: 'short', year: 'numeric' });
+  const html = wrapBillingEmail(
+    'Monthly Renewal Confirmed',
+    `<p style="font-size: 14px; color: #a1a1aa; line-height: 1.6; margin: 0 0 16px;">
+      Hello <strong>${escapeHtml(name)}</strong>, your monthly payment of <strong>&#8358;${amountNgn.toLocaleString()}</strong> for <strong>${escapeHtml(businessName)}</strong> is confirmed and your website remains live.
+    </p>
+    <p style="font-size: 13px; color: #34d399; margin: 0;">
+      Next billing date: <strong>${escapeHtml(formattedNext)}</strong>
+    </p>`,
+    'View Billing in Portal',
+    portalUrl
+  );
+  return sendResendEmail(to, `Receipt: ${businessName} renewed until ${formattedNext}`, html);
+}

@@ -60,7 +60,7 @@ export async function GET(req: Request) {
              domain_expiry_date, template_slug, plan_type, build_phase,
              logo_url, brand_files, primary_color, accent_color, business_bio,
              whatsapp_number, demo_preview_url, billing_status, next_billing_date,
-             monthly_amount_ngn, paystack_subscription_code, created_at
+             monthly_amount_ngn, paystack_subscription_code, is_live, billing_anchor_date, created_at
       FROM client_projects
       WHERE client_id = ${client.id}
       ORDER BY created_at DESC

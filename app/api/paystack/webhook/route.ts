@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import sql from '@/lib/db';
 import { provisionClientAndProjectFromOrder } from '@/lib/client-provisioning';
+import { activateProjectBilling } from '@/lib/billing-engine';
 import {
   saveClientAuthorizationFromPaystack,
   refundVerificationCharge,
@@ -61,6 +62,17 @@ export async function POST(req: Request) {
           }
         }
         return NextResponse.json({ received: true, purpose: 'link_card' });
+      }
+
+      // Special flow: Activate / Reactivate Monthly Billing
+      if (data?.metadata?.type === 'activate_monthly_billing') {
+        const clientId = String(data?.metadata?.clientId || '');
+        const projectId = String(data?.metadata?.projectId || '');
+        if (clientId && projectId) {
+          await saveClientAuthorizationFromPaystack(clientId, data);
+          await activateProjectBilling(projectId, clientId);
+        }
+        return NextResponse.json({ status: 'billing_activated' });
       }
 
       // 1. Look up the order in Neon Postgres
