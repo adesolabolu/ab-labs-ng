@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import type { ResourceItem } from '@/data/resources';
 
@@ -9,8 +9,6 @@ interface ResourcesGridProps {
 }
 
 export default function ResourcesGrid({ items }: ResourcesGridProps) {
-  const [activeEmbed, setActiveEmbed] = useState<ResourceItem | null>(null);
-
   return (
     <>
       <style>{`
@@ -36,6 +34,8 @@ export default function ResourcesGrid({ items }: ResourcesGridProps) {
           overflow: hidden;
           display: flex;
           flex-direction: column;
+          text-decoration: none;
+          color: inherit;
           transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         .res-card:hover {
@@ -62,7 +62,7 @@ export default function ResourcesGrid({ items }: ResourcesGridProps) {
 
       <div className="res-grid">
         {items.map((item) => (
-          <article key={item.id} className="res-card">
+          <Link key={item.id} href={`/resources/${item.slug}`} className="res-card">
             {item.embeddable ? (
               <div className="res-preview-box">
                 <iframe
@@ -70,36 +70,8 @@ export default function ResourcesGrid({ items }: ResourcesGridProps) {
                   title={item.title}
                   className="res-preview-iframe"
                   loading="lazy"
+                  tabIndex={-1}
                 />
-                <button
-                  type="button"
-                  onClick={() => setActiveEmbed(item)}
-                  aria-label={`Preview ${item.title} interactively`}
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'linear-gradient(to top, rgba(7,8,10,0.65) 0%, transparent 45%)',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'flex-end',
-                    justifyContent: 'flex-end',
-                    padding: '12px',
-                  }}
-                >
-                  <span
-                    style={{
-                      backgroundColor: '#ffffff',
-                      color: '#1c1917',
-                      fontSize: '12px',
-                      fontWeight: 700,
-                      padding: '6px 12px',
-                      borderRadius: '8px',
-                    }}
-                  >
-                    Interactive View
-                  </span>
-                </button>
               </div>
             ) : (
               <div
@@ -122,7 +94,15 @@ export default function ResourcesGrid({ items }: ResourcesGridProps) {
             )}
 
             <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flex: 1, gap: '10px' }}>
-              <div style={{ fontSize: '11.5px', fontWeight: 700, color: item.isPlaceholder ? '#78716c' : '#9a6843', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              <div
+                style={{
+                  fontSize: '11.5px',
+                  fontWeight: 700,
+                  color: item.isPlaceholder ? '#78716c' : '#9a6843',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                }}
+              >
                 {item.category}
               </div>
 
@@ -134,161 +114,13 @@ export default function ResourcesGrid({ items }: ResourcesGridProps) {
                 {item.description}
               </p>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '8px', flexWrap: 'wrap' }}>
-                {item.embeddable && (
-                  <button
-                    type="button"
-                    onClick={() => setActiveEmbed(item)}
-                    style={{
-                      padding: '10px 16px',
-                      borderRadius: '9px',
-                      border: 'none',
-                      backgroundColor: '#1c1917',
-                      color: '#ffffff',
-                      fontSize: '13px',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Launch Preview
-                  </button>
-                )}
-
-                {item.isExternal ? (
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      padding: '10px 14px',
-                      borderRadius: '9px',
-                      border: '1px solid #d6d3d1',
-                      backgroundColor: '#ffffff',
-                      color: '#1c1917',
-                      fontSize: '13px',
-                      fontWeight: 600,
-                      textDecoration: 'none',
-                    }}
-                  >
-                    {item.ctaLabel} ↗
-                  </a>
-                ) : (
-                  <Link
-                    href={item.url}
-                    style={{
-                      padding: '10px 14px',
-                      borderRadius: '9px',
-                      border: '1px solid #d6d3d1',
-                      backgroundColor: '#ffffff',
-                      color: '#1c1917',
-                      fontSize: '13px',
-                      fontWeight: 600,
-                      textDecoration: 'none',
-                    }}
-                  >
-                    {item.ctaLabel} →
-                  </Link>
-                )}
+              <div style={{ marginTop: '8px', fontSize: '13.5px', fontWeight: 700, color: '#1c1917' }}>
+                {item.ctaLabel} →
               </div>
             </div>
-          </article>
+          </Link>
         ))}
       </div>
-
-      {/* Full Interactive Modal for Embeddable Resources */}
-      {activeEmbed && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={activeEmbed.title}
-          onClick={() => setActiveEmbed(null)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 999999,
-            backgroundColor: 'rgba(12, 11, 10, 0.72)',
-            backdropFilter: 'blur(6px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '16px',
-          }}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              width: '100%',
-              maxWidth: '1120px',
-              height: '86vh',
-              backgroundColor: '#07080a',
-              borderRadius: '16px',
-              border: '1px solid rgba(255,255,255,0.14)',
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <div
-              style={{
-                padding: '12px 16px',
-                backgroundColor: '#121215',
-                borderBottom: '1px solid rgba(255,255,255,0.1)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: '12px',
-              }}
-            >
-              <div style={{ minWidth: 0 }}>
-                <strong style={{ color: '#ffffff', fontSize: '14px', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {activeEmbed.title}
-                </strong>
-                <span style={{ color: '#a1a1aa', fontSize: '12px' }}>{activeEmbed.url}</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-                <a
-                  href={activeEmbed.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    padding: '7px 12px',
-                    borderRadius: '8px',
-                    backgroundColor: '#ffffff',
-                    color: '#121215',
-                    fontSize: '12px',
-                    fontWeight: 700,
-                    textDecoration: 'none',
-                  }}
-                >
-                  Open in New Tab ↗
-                </a>
-                <button
-                  type="button"
-                  onClick={() => setActiveEmbed(null)}
-                  aria-label="Close preview"
-                  style={{
-                    padding: '7px 12px',
-                    borderRadius: '8px',
-                    backgroundColor: 'rgba(255,255,255,0.1)',
-                    color: '#ffffff',
-                    border: 'none',
-                    fontSize: '12px',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                  }}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-            <iframe
-              src={activeEmbed.url}
-              title={activeEmbed.title}
-              style={{ width: '100%', flex: 1, border: 'none', backgroundColor: '#07080a' }}
-            />
-          </div>
-        </div>
-      )}
     </>
   );
 }
