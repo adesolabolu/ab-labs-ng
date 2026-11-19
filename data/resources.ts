@@ -23,16 +23,15 @@ export const RESOURCES: ResourceItem[] = [
     embeddable: true,
   },
   {
-    id: 'brand-launch-checklist',
-    slug: 'brand-launch-checklist',
-    title: 'Website Launch Readiness Checklist',
-    category: 'Sample Resource',
+    id: 'tts-live-studio',
+    slug: 'tts-live-studio',
+    title: 'TTS Live Studio — Free Text-to-Speech for Live Streamers',
+    category: 'Live App · aB Labs',
     description:
-      'Placeholder card — prepare your logo files, brand colors, domain name, and WhatsApp routing before your 36-hour build.',
-    url: '/shop',
+      'Free Windows desktop app that reads your live stream chat aloud in natural offline voices. Built for TikTok Live Studio.',
+    url: 'https://tts.ab-labs.cv',
     ctaLabel: 'Open Resource',
-    embeddable: false,
-    isPlaceholder: true,
+    embeddable: true,
   },
   {
     id: 'domain-payments-guide',
