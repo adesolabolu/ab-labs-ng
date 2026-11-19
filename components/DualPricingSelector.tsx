@@ -32,177 +32,207 @@ export default function DualPricingSelector({
 
   const formatNgn = (val: number) => `₦${val.toLocaleString()}`;
 
-  // Discount badges are derived so admin-edited prices stay truthful.
   const discountPct = (standard: number, current: number) =>
     standard > current && current > 0 ? Math.round((1 - current / standard) * 100) : 0;
 
   const monthlyDiscountPct = discountPct(standardMonthlyPrice, monthlyPrice);
   const outrightDiscountPct = discountPct(standardOutrightPrice, outrightPrice);
 
-  const cleanTemplateName = templateName.replace(/ - /g, '-');
-
-  const whatsappMessage = selectedPlan === 'monthly'
-    ? `Hi aB Labs, I would like to request a free brand demo for the ${cleanTemplateName} on the Monthly Launch Plan (${formatNgn(setupFee)} setup + ${formatNgn(monthlyPrice)}/month).`
-    : `Hi aB Labs, I would like to request a free brand demo for the ${cleanTemplateName} on the Outright Launch Plan (${formatNgn(outrightPrice)} one-time).`;
-
-  const encodedWhatsapp = encodeURIComponent(whatsappMessage);
+  const isMonthly = selectedPlan === 'monthly';
 
   return (
     <div className="dual-pricing-selector" style={{ width: '100%', marginTop: '16px' }}>
-      {/* Plan Selection Cards */}
+      <style>{`
+        .dps-card {
+          cursor: pointer;
+          padding: 14px 16px;
+          border-radius: 12px;
+          transition: border-color 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease;
+        }
+        .dps-card:hover {
+          border-color: #1c1917;
+        }
+        .dps-ticks {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px 14px;
+          margin-top: 8px;
+          font-size: 12px;
+          color: #57534e;
+        }
+        .dps-tick {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+        }
+      `}</style>
+
+      {/* Both Plans Always Visible */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        {/* OPTION 1: Low-Friction Monthly Plan */}
+        {/* OPTION 1: Monthly Plan */}
         <div
+          className="dps-card"
           onClick={() => setSelectedPlan('monthly')}
           role="button"
           tabIndex={0}
+          aria-pressed={isMonthly}
           data-umami-event="Pricing Selector - Selected Monthly Plan"
           data-umami-event-template={templateSlug}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') setSelectedPlan('monthly');
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setSelectedPlan('monthly');
+            }
           }}
           style={{
-            cursor: 'pointer',
-            padding: '14px 14px',
-            borderRadius: '12px',
-            border: selectedPlan === 'monthly' ? '2px solid #111827' : '1px solid #e5e7eb',
-            backgroundColor: selectedPlan === 'monthly' ? '#ffffff' : '#f9fafb',
-            boxShadow: selectedPlan === 'monthly' ? '0 4px 12px rgba(0, 0, 0, 0.06)' : 'none',
-            transition: 'all 0.2s ease',
+            border: isMonthly ? '2px solid #1c1917' : '1px solid #e7e5e4',
+            backgroundColor: isMonthly ? '#ffffff' : '#fafaf9',
+            boxShadow: isMonthly ? '0 6px 18px rgba(28, 25, 23, 0.07)' : 'none',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+              <span
                 style={{
-                  width: '18px',
-                  height: '18px',
+                  width: '17px',
+                  height: '17px',
                   borderRadius: '50%',
-                  border: selectedPlan === 'monthly' ? '5px solid #111827' : '2px solid #d1d5db',
+                  border: isMonthly ? '5px solid #1c1917' : '2px solid #d6d3d1',
                   backgroundColor: '#ffffff',
                   boxSizing: 'border-box',
                   flexShrink: 0,
+                  display: 'inline-block',
                 }}
               />
-              <span style={{ fontSize: '14px', fontWeight: 700, color: '#111827' }}>
-                Low-Friction Entry Plan
+              <span style={{ fontSize: '14px', fontWeight: 700, color: '#1c1917' }}>
+                Monthly Plan
               </span>
             </div>
-            <span
-              style={{
-                fontSize: '11px',
-                fontWeight: '700',
-                color: '#065f46',
-                backgroundColor: '#d1fae5',
-                padding: '2px 8px',
-                borderRadius: '999px',
-                flexShrink: 0,
-              }}
-            >
-              {monthlyDiscountPct > 0 ? `${monthlyDiscountPct}% Launch Off` : 'Monthly Plan'}
+            <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#15803d', whiteSpace: 'nowrap' }}>
+              {monthlyDiscountPct > 0 ? `Popular · ${monthlyDiscountPct}% Off` : 'Most Popular'}
             </span>
           </div>
 
-          <div style={{ marginTop: '8px', paddingLeft: '26px' }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
-              <span style={{ fontSize: '26px', fontWeight: 800, color: '#111827', lineHeight: 1 }}>
+          <div style={{ marginTop: '10px', paddingLeft: '26px' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '28px', fontWeight: 800, color: '#1c1917', lineHeight: 1, letterSpacing: '-0.02em' }}>
                 {formatNgn(monthlyPrice)}
               </span>
-              <span style={{ fontSize: '13px', fontWeight: 500, color: '#6b7280' }}>/ month</span>
-              <span style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginLeft: '4px' }}>
+              <span style={{ fontSize: '13px', fontWeight: 500, color: '#78716c' }}>/month</span>
+              <span style={{ fontSize: '12.5px', fontWeight: 600, color: '#44403c', marginLeft: '4px' }}>
                 + {formatNgn(setupFee)} setup
               </span>
             </div>
 
-            <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#6b7280', lineHeight: 1.45 }}>
-              ⚡ Pay only <strong>{formatNgn(setupFee)} setup fee</strong> today to start your build. Monthly {formatNgn(monthlyPrice)}/mo maintenance begins only after your website is completed, approved, and live.
-            </p>
+            <div className="dps-ticks">
+              <span className="dps-tick">
+                <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span> Monthly starts after launch
+              </span>
+              <span className="dps-tick">
+                <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span> Hosting &amp; updates included
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* OPTION 2: Outright Full Ownership */}
+        {/* OPTION 2: Outright Ownership */}
         <div
+          className="dps-card"
           onClick={() => setSelectedPlan('outright')}
           role="button"
           tabIndex={0}
+          aria-pressed={!isMonthly}
           data-umami-event="Pricing Selector - Selected Outright Plan"
           data-umami-event-template={templateSlug}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') setSelectedPlan('outright');
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setSelectedPlan('outright');
+            }
           }}
           style={{
-            cursor: 'pointer',
-            padding: '14px 14px',
-            borderRadius: '12px',
-            border: selectedPlan === 'outright' ? '2px solid #111827' : '1px solid #e5e7eb',
-            backgroundColor: selectedPlan === 'outright' ? '#ffffff' : '#f9fafb',
-            boxShadow: selectedPlan === 'outright' ? '0 4px 12px rgba(0, 0, 0, 0.06)' : 'none',
-            transition: 'all 0.2s ease',
+            border: !isMonthly ? '2px solid #1c1917' : '1px solid #e7e5e4',
+            backgroundColor: !isMonthly ? '#ffffff' : '#fafaf9',
+            boxShadow: !isMonthly ? '0 6px 18px rgba(28, 25, 23, 0.07)' : 'none',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+              <span
                 style={{
-                  width: '18px',
-                  height: '18px',
+                  width: '17px',
+                  height: '17px',
                   borderRadius: '50%',
-                  border: selectedPlan === 'outright' ? '5px solid #111827' : '2px solid #d1d5db',
+                  border: !isMonthly ? '5px solid #1c1917' : '2px solid #d6d3d1',
                   backgroundColor: '#ffffff',
                   boxSizing: 'border-box',
                   flexShrink: 0,
+                  display: 'inline-block',
                 }}
               />
-              <span style={{ fontSize: '14px', fontWeight: 700, color: '#111827' }}>
+              <span style={{ fontSize: '14px', fontWeight: 700, color: '#1c1917' }}>
                 Outright Ownership
               </span>
             </div>
-            <span
-              style={{
-                fontSize: '11px',
-                fontWeight: '700',
-                color: '#1e40af',
-                backgroundColor: '#dbeafe',
-                padding: '2px 8px',
-                borderRadius: '999px',
-                flexShrink: 0,
-              }}
-            >
-              {outrightDiscountPct > 0 ? `${outrightDiscountPct}% Launch Off` : 'Full Ownership'}
+            <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#9a6843', whiteSpace: 'nowrap' }}>
+              {outrightDiscountPct > 0 ? `Save ${outrightDiscountPct}%` : 'One-Time'}
             </span>
           </div>
 
-          <div style={{ marginTop: '8px', paddingLeft: '26px' }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-              <span style={{ fontSize: '26px', fontWeight: 800, color: '#111827', lineHeight: 1 }}>
+          <div style={{ marginTop: '10px', paddingLeft: '26px' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '28px', fontWeight: 800, color: '#1c1917', lineHeight: 1, letterSpacing: '-0.02em' }}>
                 {formatNgn(outrightPrice)}
               </span>
               {outrightDiscountPct > 0 && (
-                <span
-                  style={{
-                    fontSize: '14px',
-                    color: '#9ca3af',
-                    textDecoration: 'line-through',
-                    fontWeight: 500,
-                  }}
-                >
+                <span style={{ fontSize: '13.5px', color: '#a8a29e', textDecoration: 'line-through', fontWeight: 500 }}>
                   {formatNgn(standardOutrightPrice)}
                 </span>
               )}
-              <span style={{ fontSize: '12px', fontWeight: 600, color: '#047857' }}>
-                One-time
+              <span style={{ fontSize: '12.5px', fontWeight: 600, color: '#15803d' }}>
+                once
               </span>
             </div>
 
-            <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#6b7280', lineHeight: 1.45 }}>
-              🛡️ <strong>100% full ownership</strong> with zero monthly fees. GitHub repository transfer, 1-year domain (.com.ng, .online, .store, .site &amp; more) &amp; SSL included.
-            </p>
+            <div className="dps-ticks">
+              <span className="dps-tick">
+                <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span> ₦0 monthly fees
+              </span>
+              <span className="dps-tick">
+                <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span> Full GitHub code ownership
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Clear Due Today Summary */}
+      <div
+        style={{
+          marginTop: '14px',
+          padding: '11px 14px',
+          borderRadius: '10px',
+          backgroundColor: '#f5f2ec',
+          border: '1px solid #e7e5e4',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '10px',
+          flexWrap: 'wrap',
+        }}
+      >
+        <div style={{ fontSize: '12.5px', color: '#44403c', lineHeight: 1.35 }}>
+          <strong style={{ color: '#1c1917' }}>Pay today: {formatNgn(isMonthly ? setupFee : outrightPrice)}</strong>
+          <span style={{ display: 'block', fontSize: '11.5px', color: '#78716c', marginTop: '1px' }}>
+            {isMonthly
+              ? `Then ${formatNgn(monthlyPrice)}/mo once your website goes live`
+              : 'One-time payment — zero recurring monthly fees'}
+          </span>
+        </div>
+      </div>
+
       {/* Action Buttons */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '16px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '9px', marginTop: '12px' }}>
         <Link
           href={`/checkout?template=${templateSlug}&plan=${selectedPlan}`}
           className="primary-button"
@@ -223,12 +253,11 @@ export default function DualPricingSelector({
             textDecoration: 'none',
             fontWeight: 700,
             fontSize: '14.5px',
-            borderRadius: '100px',
-            backgroundColor: '#111827',
+            borderRadius: '10px',
+            backgroundColor: '#1c1917',
             color: '#ffffff',
-            boxShadow: '0 4px 14px rgba(0, 0, 0, 0.15)',
             textAlign: 'center',
-            padding: '10px 16px',
+            padding: '11px 16px',
             boxSizing: 'border-box',
             border: 'none',
             cursor: 'pointer',
@@ -238,12 +267,10 @@ export default function DualPricingSelector({
             e.currentTarget.style.backgroundColor = '#9a6843';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#111827';
+            e.currentTarget.style.backgroundColor = '#1c1917';
           }}
         >
-          {selectedPlan === 'monthly'
-            ? `Pay & Start Build (${formatNgn(setupFee)} setup fee)`
-            : `Pay & Start Build (${formatNgn(outrightPrice)} outright)`}
+          Start My Build &rarr;
         </Link>
 
         <button
@@ -257,28 +284,28 @@ export default function DualPricingSelector({
             justifyContent: 'center',
             alignItems: 'center',
             width: '100%',
-            minHeight: '44px',
+            minHeight: '42px',
             textDecoration: 'none',
             fontWeight: 600,
-            fontSize: '14px',
-            borderRadius: '100px',
-            border: '1px solid #e5e7eb',
+            fontSize: '13.5px',
+            borderRadius: '10px',
+            border: '1px solid #d6d3d1',
             backgroundColor: '#ffffff',
-            color: '#111827',
+            color: '#1c1917',
             cursor: 'pointer',
             boxSizing: 'border-box',
             transition: 'background-color 0.15s ease, border-color 0.15s ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#f9fafb';
-            e.currentTarget.style.borderColor = '#d1d5db';
+            e.currentTarget.style.backgroundColor = '#fafaf9';
+            e.currentTarget.style.borderColor = '#a8a29e';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = '#ffffff';
-            e.currentTarget.style.borderColor = '#e5e7eb';
+            e.currentTarget.style.borderColor = '#d6d3d1';
           }}
         >
-          <span>Request a Free Brand Demo</span>
+          Request a Free Brand Demo
         </button>
       </div>
 

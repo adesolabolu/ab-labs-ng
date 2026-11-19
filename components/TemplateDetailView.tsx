@@ -23,6 +23,7 @@ export default function TemplateDetailView({
   const [template, setTemplate] = useState<Template>(initialTemplate);
   const [liveRelated, setLiveRelated] = useState<Template[]>(relatedTemplates);
   const [activeTab, setActiveTab] = useState<'overview' | 'launch'>('overview');
+  const [showFullDesc, setShowFullDesc] = useState(false);
 
   React.useEffect(() => {
     setTemplate(initialTemplate);
@@ -84,57 +85,100 @@ export default function TemplateDetailView({
                     fallbackImage={template.image}
                     templateName={template.name}
                   />
+                  <p
+                    style={{
+                      marginTop: '10px',
+                      fontSize: '12.5px',
+                      color: '#78716c',
+                      textAlign: 'center',
+                    }}
+                  >
+                    Sample layout — we customize the colors, logo, copy, and industry details for your brand.
+                  </p>
                 </div>
 
                 {/* 30% Column: Purchase & Customization Sidebar */}
-                <div className="product-studio-sidebar">
+                <div className="product-studio-sidebar pd-sticky-sidebar">
+                  <style>{`
+                    @media (min-width: 992px) {
+                      .pd-sticky-sidebar {
+                        position: sticky;
+                        top: 96px;
+                        align-self: start;
+                      }
+                    }
+                    .pd-desc-clamped {
+                      display: -webkit-box;
+                      -webkit-line-clamp: 2;
+                      -webkit-box-orient: vertical;
+                      overflow: hidden;
+                    }
+                    .pd-checklist {
+                      display: grid;
+                      grid-template-columns: repeat(2, minmax(0, 1fr));
+                      gap: 10px 12px;
+                      margin-top: 18px;
+                      padding-top: 16px;
+                      border-top: 1px solid #e7e5e4;
+                    }
+                    @media (max-width: 480px) {
+                      .pd-checklist {
+                        grid-template-columns: minmax(0, 1fr);
+                        padding-bottom: 56px;
+                      }
+                    }
+                    .pd-check-item {
+                      display: flex;
+                      align-items: center;
+                      gap: 8px;
+                      font-size: 12.5px;
+                      font-weight: 500;
+                      color: #44403c;
+                      line-height: 1.35;
+                    }
+                  `}</style>
                   <div fade-in="true" className="pd-info" style={{ width: '100%', maxWidth: '100%' }}>
                     {/* Category Label */}
                     <div className="site-dyn-list">
                       <div role="list" className="site-dyn-items">
                         <div role="listitem" className="site-dyn-item">
-                          <p className="pd-cat">{template.categoryLabel}</p>
+                          <p className="pd-cat" style={{ marginBottom: '2px' }}>{template.categoryLabel}</p>
                         </div>
                       </div>
                     </div>
 
                     {/* Template Title */}
-                    <h2 className="pd-name" style={{ fontSize: '28px', lineHeight: '1.25', marginTop: '4px' }}>
+                    <h2 className="pd-name" style={{ fontSize: '26px', lineHeight: '1.2', marginTop: '2px', marginBottom: '8px' }}>
                       {template.name}
                     </h2>
 
-                    {/* Adaptation Notice (Not locked to single industry) */}
-                    <div
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        padding: '6px 12px',
-                        backgroundColor: '#f0fdf4',
-                        border: '1px solid #bbf7d0',
-                        borderRadius: '8px',
-                        marginTop: '12px',
-                      }}
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="m9 12 2 2 4-4"></path>
-                      </svg>
-                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#166534' }}>
-                        Adapts to Any Business - {template.categoryLabel} theme is sample only
-                      </span>
+                    {/* Compact Clamped Description with Read More */}
+                    <div>
+                      <p
+                        className={`pd-desc ${!showFullDesc ? 'pd-desc-clamped' : ''}`}
+                        style={{ margin: 0, fontSize: '13.5px', lineHeight: '1.5', color: '#57534e' }}
+                      >
+                        {template.description}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setShowFullDesc((prev) => !prev)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          padding: 0,
+                          marginTop: '4px',
+                          fontSize: '12px',
+                          fontWeight: 600,
+                          color: '#9a6843',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {showFullDesc ? 'Show less' : 'Read more'}
+                      </button>
                     </div>
 
-                    {/* Description */}
-                    <p
-                      className="pd-desc"
-                      style={{ marginTop: '10px', fontSize: '14px', lineHeight: '1.55', color: '#4b5563' }}
-                    >
-                      {template.description}{' '}
-                      <strong style={{ color: '#111827' }}>Fully customized for your specific brand and industry.</strong>
-                    </p>
-
-                    {/* Dual Pricing Selector: Monthly or Outright */}
+                    {/* Dual Pricing Selector: Monthly or Outright (Both Always Visible) */}
                     <DualPricingSelector
                       templateName={template.name}
                       templateSlug={template.slug}
@@ -147,49 +191,31 @@ export default function TemplateDetailView({
                       whatsappNumber="2349036193817"
                     />
 
-                    {/* Value & Delivery Trust Items */}
-                    <div className="pd-trust" style={{ marginTop: '26px' }}>
-                      <div className="pd-trust-it">
-                        <div className="product-icon site-embed">
-                          <svg fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-                            <rect x="1" y="3" width="15" height="13"></rect>
-                            <path d="M16 8h4l3 3v5h-7V8z"></path>
-                            <circle cx="5.5" cy="18.5" r="2.5"></circle>
-                            <circle cx="18.5" cy="18.5" r="2.5"></circle>
-                          </svg>
-                        </div>
-                        <div>
-                          <p className="pd-trust-it-b">
-                            <strong>1-Year Custom Domain Included </strong>(.com.ng, .online, .store, .site &amp; more) + SSL
-                          </p>
-                        </div>
+                    {/* Clean Compact Checklist */}
+                    <div className="pd-checklist">
+                      <div className="pd-check-item">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span>1-year domain &amp; SSL</span>
                       </div>
-
-                      <div className="pd-trust-it">
-                        <div className="product-icon site-embed">
-                          <svg fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                          </svg>
-                        </div>
-                        <div>
-                          <p className="pd-trust-it-b">
-                            <strong>Personalized business email </strong>&amp; direct WhatsApp routing
-                          </p>
-                        </div>
+                      <div className="pd-check-item">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span>Live in under 36 hours</span>
                       </div>
-
-                      <div className="pd-trust-it">
-                        <div className="product-icon site-embed">
-                          <svg fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-                            <polyline points="23 4 23 10 17 10"></polyline>
-                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-                          </svg>
-                        </div>
-                        <div>
-                          <p className="pd-trust-it-b">
-                            <strong>Live in &lt; 36 hours </strong>fully customized for your brand
-                          </p>
-                        </div>
+                      <div className="pd-check-item">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span>Business email &amp; WhatsApp</span>
+                      </div>
+                      <div className="pd-check-item">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span>Customized to your brand</span>
                       </div>
                     </div>
                   </div>
