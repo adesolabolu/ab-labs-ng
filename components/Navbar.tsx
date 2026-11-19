@@ -94,6 +94,11 @@ export default function Navbar() {
                           </Link>
                         </li>
                         <li>
+                          <Link href="/resources" data-umami-event="Navbar - Clicked Resources" className={`hdr-nav-a ${pathname.startsWith('/resources') ? 'is-current' : ''}`}>
+                            <span>Resources</span>
+                          </Link>
+                        </li>
+                        <li>
                           <Link href="/blog" data-umami-event="Navbar - Clicked Guides & Blog" className={`hdr-nav-a ${pathname.startsWith('/blog') ? 'is-current' : ''}`}>
                             <span>Guides &amp; Blog</span>
                           </Link>
@@ -431,6 +436,28 @@ export default function Navbar() {
                   >
                     <span>Templates &amp; Shop</span>
                     <span style={{ fontSize: '16px', color: pathname.startsWith('/shop') ? '#9a6843' : '#a8a29e' }}>→</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/resources"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    data-umami-event="Mobile Drawer - Clicked Resources"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '14px 16px',
+                      fontSize: '16px',
+                      fontWeight: pathname.startsWith('/resources') ? 700 : 500,
+                      color: pathname.startsWith('/resources') ? '#9a6843' : '#292524',
+                      backgroundColor: pathname.startsWith('/resources') ? 'rgba(154, 104, 67, 0.1)' : 'transparent',
+                      borderRadius: '10px',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <span>Resources</span>
+                    <span style={{ fontSize: '16px', color: pathname.startsWith('/resources') ? '#9a6843' : '#a8a29e' }}>→</span>
                   </Link>
                 </li>
                 <li>
