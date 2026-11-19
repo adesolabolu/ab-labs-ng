@@ -13,15 +13,7 @@ function formatShortNgn(value: number): string {
   return `₦${value.toLocaleString()}`;
 }
 
-export const PRICE_RANGES = [
-  { id: 'all', label: 'All Budgets', min: 0, max: Infinity },
-  { id: 'under-75k', label: 'Under ₦75,000', min: 0, max: 75000 },
-  { id: '75k-150k', label: '₦75,000 – ₦150,000', min: 75000, max: 150000 },
-  { id: '150k-plus', label: 'Above ₦150,000', min: 150000, max: Infinity },
-] as const;
-
-export type PriceRangeId = (typeof PRICE_RANGES)[number]['id'];
-export type SortOption = 'featured' | 'price-low' | 'price-high' | 'monthly-low';
+export type PricingSortOption = 'default' | 'monthly-low' | 'monthly-high';
 
 interface ShopCatalogProps {
   /** Catalog with any admin price overrides already applied. */
@@ -36,8 +28,7 @@ export default function ShopCatalog({ templates }: ShopCatalogProps) {
   const [liveTemplates, setLiveTemplates] = useState<Template[]>(templates);
   const [activeCategory, setActiveCategory] = useState<string>(initialCategory);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [priceRange, setPriceRange] = useState<PriceRangeId>('all');
-  const [sortBy, setSortBy] = useState<SortOption>('featured');
+  const [pricingSort, setPricingSort] = useState<PricingSortOption>('default');
 
   useEffect(() => {
     let active = true;
@@ -62,38 +53,32 @@ export default function ShopCatalog({ templates }: ShopCatalogProps) {
   }, [searchParams]);
 
   const filteredTemplates = useMemo(() => {
-    const selectedRange = PRICE_RANGES.find((r) => r.id === priceRange) || PRICE_RANGES[0];
-
     return liveTemplates
       .filter((tpl) => {
         const matchesCategory = activeCategory === 'all' || tpl.category === activeCategory;
-        const effectivePrice = tpl.outrightNgn || tpl.priceNgn || 0;
-        const matchesPrice = effectivePrice >= selectedRange.min && effectivePrice <= selectedRange.max;
         const matchesSearch =
           tpl.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           tpl.tagline.toLowerCase().includes(searchQuery.toLowerCase()) ||
           tpl.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
           tpl.stack.some((s) => s.toLowerCase().includes(searchQuery.toLowerCase()));
 
-        return matchesCategory && matchesPrice && matchesSearch;
+        return matchesCategory && matchesSearch;
       })
       .sort((a, b) => {
-        const priceA = a.outrightNgn || a.priceNgn || 0;
-        const priceB = b.outrightNgn || b.priceNgn || 0;
-        if (sortBy === 'price-low') return priceA - priceB;
-        if (sortBy === 'price-high') return priceB - priceA;
-        if (sortBy === 'monthly-low') return (a.monthlyNgn || 5000) - (b.monthlyNgn || 5000);
-        return 0; // featured default order
+        const monthlyA = a.monthlyNgn || 5000;
+        const monthlyB = b.monthlyNgn || 5000;
+        if (pricingSort === 'monthly-low') return monthlyA - monthlyB;
+        if (pricingSort === 'monthly-high') return monthlyB - monthlyA;
+        return 0;
       });
-  }, [liveTemplates, activeCategory, searchQuery, priceRange, sortBy]);
+  }, [liveTemplates, activeCategory, searchQuery, pricingSort]);
 
-  const hasActiveFilters = activeCategory !== 'all' || searchQuery.trim() !== '' || priceRange !== 'all' || sortBy !== 'featured';
+  const hasActiveFilters = activeCategory !== 'all' || searchQuery.trim() !== '' || pricingSort !== 'default';
 
   const handleResetFilters = () => {
     setActiveCategory('all');
     setSearchQuery('');
-    setPriceRange('all');
-    setSortBy('featured');
+    setPricingSort('default');
   };
 
   return (
@@ -156,42 +141,41 @@ export default function ShopCatalog({ templates }: ShopCatalogProps) {
           </div>
 
           <div className="abfilter-select-group">
-            {/* Price Range Filter ("This to that") */}
-            <div className="abfilter-price-filter">
-              <label htmlFor="price-range-select" className="sr-only">
-                Filter by price range
+            {/* Mobile-only Category Dropdown */}
+            <div className="abfilter-category-mobile">
+              <label htmlFor="category-mobile-select" className="sr-only">
+                Filter templates by category
               </label>
               <select
-                id="price-range-select"
-                value={priceRange}
-                data-umami-event="Shop - Changed Price Range"
-                onChange={(e) => setPriceRange(e.target.value as PriceRangeId)}
-                aria-label="Filter templates by budget"
+                id="category-mobile-select"
+                value={activeCategory}
+                data-umami-event="Shop - Selected Category Mobile"
+                onChange={(e) => setActiveCategory(e.target.value)}
+                aria-label="Filter templates by category"
               >
-                {PRICE_RANGES.map((range) => (
-                  <option key={range.id} value={range.id}>
-                    {range.label}
+                {CATEGORIES.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.label} ({cat.count})
                   </option>
                 ))}
               </select>
             </div>
 
-            {/* Price Sorting (Low to High, High to Low) */}
+            {/* Single Monthly Pricing Filter (Low to High, High to Low) */}
             <div className="abfilter-sort">
-              <label htmlFor="sort-by-select" className="sr-only">
-                Sort templates
+              <label htmlFor="pricing-sort-select" className="sr-only">
+                Pricing
               </label>
               <select
-                id="sort-by-select"
-                value={sortBy}
-                data-umami-event="Shop - Changed Sort Order"
-                onChange={(e) => setSortBy(e.target.value as SortOption)}
-                aria-label="Sort templates"
+                id="pricing-sort-select"
+                value={pricingSort}
+                data-umami-event="Shop - Changed Pricing Sort"
+                onChange={(e) => setPricingSort(e.target.value as PricingSortOption)}
+                aria-label="Pricing"
               >
-                <option value="featured">Featured order</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="monthly-low">Monthly Plan: Low to High</option>
+                <option value="default">Pricing</option>
+                <option value="monthly-low">Low to High</option>
+                <option value="monthly-high">High to Low</option>
               </select>
             </div>
           </div>
@@ -205,8 +189,8 @@ export default function ShopCatalog({ templates }: ShopCatalogProps) {
             {activeCategory !== 'all' && (
               <> in <strong>{CATEGORIES.find((c) => c.id === activeCategory)?.label}</strong></>
             )}
-            {priceRange !== 'all' && (
-              <> · <strong>{PRICE_RANGES.find((r) => r.id === priceRange)?.label}</strong></>
+            {pricingSort !== 'default' && (
+              <> · <strong>{pricingSort === 'monthly-low' ? 'Low to High' : 'High to Low'}</strong></>
             )}
             {searchQuery && (
               <> matching <strong>&ldquo;{searchQuery}&rdquo;</strong></>
@@ -229,7 +213,7 @@ export default function ShopCatalog({ templates }: ShopCatalogProps) {
       {filteredTemplates.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '60px 20px', background: '#fafafa', borderRadius: '16px', margin: '20px 0', border: '1px solid #eaeaea' }}>
           <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#1c1917', marginBottom: '8px' }}>No matching templates found</h3>
-          <p style={{ color: '#78716c', fontSize: '14px', marginBottom: '16px' }}>Try clearing your search query or choosing another budget/category.</p>
+          <p style={{ color: '#78716c', fontSize: '14px', marginBottom: '16px' }}>Try clearing your search query or choosing another category.</p>
           <button
             onClick={handleResetFilters}
             style={{

@@ -13869,12 +13869,13 @@ html.site-mod-js:not(.ab-labs-ready) .abtm {
   flex: 1;
 }
 
-.abfilter-price-filter {
+.abfilter-category-mobile {
+  display: none;
   position: relative;
   flex: 1;
 }
 
-.abfilter-price-filter select,
+.abfilter-category-mobile select,
 .abfilter-sort select {
   appearance: none;
   -webkit-appearance: none;
@@ -13896,7 +13897,7 @@ html.site-mod-js:not(.ab-labs-ready) .abtm {
   transition: border-color 0.16s, box-shadow 0.16s;
 }
 
-.abfilter-price-filter select:focus,
+.abfilter-category-mobile select:focus,
 .abfilter-sort select:focus {
   border-color: #9a6843;
   box-shadow: 0 0 0 3px rgba(154, 104, 67, 0.14);
@@ -14116,36 +14117,17 @@ html.site-mod-js:not(.ab-labs-ready) .abtm {
     margin-bottom: 20px !important;
   }
 
-  /* Horizontal swipeable category pills track */
+  /* Replace scrollable category pills with native dropdown on mobile */
   .abfilter-pills {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-    margin: 0 -12px 6px !important;
-    padding: 0 12px 8px !important;
-    gap: 8px !important;
-  }
-
-  .abfilter-pills::-webkit-scrollbar {
     display: none !important;
-  }
-
-  .abfilter-pill {
-    flex-shrink: 0 !important;
-    white-space: nowrap !important;
-    height: 34px !important;
-    padding: 0 12px !important;
-    font-size: 12.5px !important;
   }
 
   .abfilter-controls {
     display: flex !important;
     flex-direction: column !important;
     gap: 8px !important;
-    margin-top: 8px !important;
-    padding-top: 10px !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
   }
 
   .abfilter-search {
@@ -14160,13 +14142,18 @@ html.site-mod-js:not(.ab-labs-ready) .abtm {
     width: 100% !important;
   }
 
-  .abfilter-price-filter,
+  .abfilter-category-mobile {
+    display: block !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
   .abfilter-sort {
     flex: 1 !important;
     min-width: 0 !important;
   }
 
-  .abfilter-price-filter select,
+  .abfilter-category-mobile select,
   .abfilter-sort select {
     width: 100% !important;
     height: 38px !important;
