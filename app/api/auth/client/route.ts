@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     if (clients.length === 0) {
       return NextResponse.json({
         success: false,
-        error: 'No client profile found for this email. Please make sure you enter the email used during checkout.',
+        error: 'No account found for this email. Please check your email or sign up.',
       }, { status: 404 });
     }
 
@@ -89,7 +89,7 @@ export async function POST(req: Request) {
     if (!isValid) {
       return NextResponse.json({
         success: false,
-        error: 'Incorrect password. Check your welcome email or click "Send 1-Click Login Link" below.',
+        error: 'Incorrect password. Please try again or click "Forgot password?" above.',
       }, { status: 401 });
     }
 

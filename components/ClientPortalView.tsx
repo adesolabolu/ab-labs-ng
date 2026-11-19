@@ -727,6 +727,32 @@ export default function ClientPortalView({ client, projects, template }: ClientP
             {/* TAB 1: OVERVIEW */}
             {activeTab === 'overview' && (
               <>
+                {!activeProject.template_slug && Number(activeProject.build_phase || 0) === 0 ? (
+                  <div className="portal-card">
+                    <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1c1917', margin: '0 0 8px' }}>
+                      No Website Project Yet
+                    </h2>
+                    <p style={{ fontSize: '14px', color: '#57534e', margin: '0 0 18px', lineHeight: 1.55 }}>
+                      Your account is ready! Pick a template from our shop and we will customize and launch it on your domain in under 36 hours.
+                    </p>
+                    <Link
+                      href="/shop"
+                      style={{
+                        display: 'inline-block',
+                        padding: '11px 18px',
+                        borderRadius: '10px',
+                        backgroundColor: '#1c1917',
+                        color: '#ffffff',
+                        fontSize: '13.5px',
+                        fontWeight: 700,
+                        textDecoration: 'none',
+                      }}
+                    >
+                      Browse Website Templates &rarr;
+                    </Link>
+                  </div>
+                ) : (
+                  <>
                 <div className="portal-card">
                   <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1c1917', margin: '0 0 14px' }}>
                     Your Build Progress
@@ -799,6 +825,8 @@ export default function ClientPortalView({ client, projects, template }: ClientP
                     </div>
                   </div>
                 </div>
+                  </>
+                )}
 
                 <div className="portal-card" style={{ backgroundColor: '#f0fdf4', borderColor: '#bbf7d0' }}>
                   <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#166534', margin: '0 0 6px' }}>
