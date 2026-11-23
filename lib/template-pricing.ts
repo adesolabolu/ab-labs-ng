@@ -195,7 +195,28 @@ export async function getTemplatesFromDb(): Promise<TemplateWithPricing[]> {
       return TEMPLATES.map((t) => ({ ...t, pricingOverride: false }));
     }
 
-    return rows.map(rowToTemplate);
+    const orderMap = new Map<string, number>();
+    TEMPLATES.forEach((t, idx) => {
+      orderMap.set(t.slug, idx);
+      orderMap.set(t.id, idx);
+    });
+
+    const mapped = rows.map(rowToTemplate);
+    const existingSlugs = new Set(mapped.map((m) => m.slug));
+
+    for (const tpl of TEMPLATES) {
+      if (!existingSlugs.has(tpl.slug)) {
+        mapped.push({ ...tpl, pricingOverride: false });
+      }
+    }
+
+    mapped.sort((a, b) => {
+      const idxA = orderMap.get(a.slug) ?? orderMap.get(a.id) ?? 9999;
+      const idxB = orderMap.get(b.slug) ?? orderMap.get(b.id) ?? 9999;
+      return idxA - idxB;
+    });
+
+    return mapped;
   } catch (error) {
     console.error('Error fetching templates from Neon DB, falling back to static TEMPLATES:', error);
     return TEMPLATES.map((t) => ({ ...t, pricingOverride: false }));

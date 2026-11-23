@@ -182,7 +182,7 @@ export default function ShopCatalog({ templates }: ShopCatalogProps) {
         </div>
 
         {/* Filter Meta & Active Reset */}
-        <div className="abfilter-meta">
+        <div className={`abfilter-meta${hasActiveFilters ? ' is-active' : ''}`}>
           <span>
             <strong>{filteredTemplates.length}</strong>{' '}
             {filteredTemplates.length === 1 ? 'design' : 'designs'}

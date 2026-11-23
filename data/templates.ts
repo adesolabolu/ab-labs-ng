@@ -26,6 +26,41 @@ export interface Template {
 
 export const TEMPLATES: Template[] = [
   {
+    id: 'elysian-estates',
+    slug: 'elysian-estates',
+    name: 'Elysian Estates',
+    tagline: 'Ultra-Luxury Real Estate, Trophy Estates & Private Advisory',
+    category: 'real-estate',
+    categoryLabel: 'Ultra-Luxury Real Estate & Advisory',
+    priceNgn: 40000,
+    priceUsd: 28,
+    monthlyNgn: 4500,
+    setupFeeNgn: 13500,
+    outrightNgn: 40000,
+    standardMonthlyNgn: 9000,
+    standardSetupFeeNgn: 27000,
+    standardOutrightNgn: 80000,
+    rating: 5.0,
+    reviews: 94,
+    badge: 'Luxury Estates',
+    badgeColor: '#059669',
+    image: '/assets/templates/elysian-estates.jpg',
+    description: 'Ultra-luxury real estate portfolio and private advisory platform built for trophy residences, waterfront sanctuaries, and off-market property acquisitions across Ikoyi, Banana Island, and Maitama.',
+    stack: [
+      'Exclusive Property Portfolio',
+      'Private Advisory Intake',
+      'Direct WhatsApp Concierge',
+      'Fast 1-Sec Load'
+    ],
+    features: [
+      'Trophy Estate Showcases',
+      'Private Agent Directory',
+      'Discreet Viewing Booking',
+      '100% Mobile Ready'
+    ],
+    demoUrl: 'https://elysian-estates-seven.vercel.app',
+  },
+  {
     id: 'paws-whiskers-boutique',
     slug: 'paws-whiskers-boutique',
     name: 'Paws & Whiskers Nigeria',
@@ -772,9 +807,9 @@ export const TEMPLATES: Template[] = [
 ];
 
 export const CATEGORIES = [
-  { id: 'all', label: 'All Templates', count: 25 },
+  { id: 'all', label: 'All Templates', count: 26 },
   { id: 'ecommerce', label: 'E-Commerce & Retail', count: 4 },
-  { id: 'real-estate', label: 'Real Estate & Properties', count: 3 },
+  { id: 'real-estate', label: 'Real Estate & Properties', count: 4 },
   { id: 'corporate', label: 'Corporate & Professional', count: 11 },
   { id: 'saas', label: 'Tech Startups & Apps', count: 2 },
   { id: 'hospitality', label: 'Hotels & Dining', count: 5 }

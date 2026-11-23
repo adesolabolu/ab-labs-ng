@@ -24,7 +24,7 @@ export default async function ShopPage() {
         <Navbar />
         
         <div className="main-wrapper">
-          <section className="section-breadcrumb">
+          <section className="section-breadcrumb section-breadcrumb--shop">
             <div className="site-blockcontainer container-large site-container">
               <div className="page-heading-block align-center">
                 <div className="page-title-block">
@@ -43,7 +43,7 @@ export default async function ShopPage() {
             </div>
           </section>
 
-          <section className="section-shop-catalog" style={{ padding: '40px 0 80px' }}>
+          <section className="section-shop-catalog">
             <div className="site-blockcontainer container-large site-container">
               <Suspense fallback={<div style={{ textAlign: 'center', padding: '60px' }}>Loading templates...</div>}>
                 <ShopCatalog templates={templates} />
