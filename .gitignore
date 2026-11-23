@@ -49,3 +49,7 @@ AGENTS.md
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Marketing & Generated Social Assets
+carousel-slides/
+
