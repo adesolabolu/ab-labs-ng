@@ -57,11 +57,8 @@ export default function WhatsAppFab() {
       {/* Speech Bubble / Message Box */}
       {isBubbleVisible && (
         <div className="whatsapp-bubble" role="dialog" aria-label="Custom website inquiry">
-          <div className="whatsapp-bubble-header">
-            <div className="whatsapp-bubble-badge">
-              <span className="whatsapp-bubble-pulse"></span>
-              <span>Bespoke Digital Build</span>
-            </div>
+          <div className="whatsapp-bubble-top">
+            <p className="whatsapp-bubble-title">Looking for something custom?</p>
             <button
               type="button"
               onClick={handleDismiss}
@@ -69,7 +66,7 @@ export default function WhatsAppFab() {
               aria-label="Dismiss message"
               title="Dismiss"
             >
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18" />
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
@@ -77,19 +74,18 @@ export default function WhatsAppFab() {
           </div>
 
           <a
-            href={whatsappLink("Hi aB Labs, I'm looking for a custom website build tailored for my brand.")}
+            href={whatsappLink("Hi aB Labs, I'm looking for a custom website build.")}
             target="_blank"
             rel="noopener noreferrer"
             className="whatsapp-bubble-link"
             data-umami-event="WhatsApp Bubble - Clicked Custom Inquiry"
           >
-            <p className="whatsapp-bubble-title">Looking for something custom?</p>
             <p className="whatsapp-bubble-text">
-              Have a specific vision? We engineer high-converting bespoke sites tailored for your brand.
+              Tell us what you need and we will build it for you.
             </p>
             <span className="whatsapp-bubble-btn">
-              <span>Chat with us on WhatsApp</span>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <span>Chat on WhatsApp</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="5" y1="12" x2="19" y2="12" />
                 <polyline points="12 5 19 12 12 19" />
               </svg>

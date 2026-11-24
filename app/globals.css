@@ -14146,15 +14146,15 @@ html.site-mod-js:not(.ab-labs-ready) .abtm {
 
 .whatsapp-bubble {
   position: relative;
-  width: 275px;
+  width: 220px;
   max-width: calc(100vw - 32px);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   background: #ffffff;
   border: 1px solid #e7e5e4;
-  border-radius: 18px;
-  box-shadow: 0 14px 38px -6px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.06);
-  padding: 13px 14px 12px;
-  animation: whatsappBubbleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.04);
+  padding: 10px 12px 10px;
+  animation: whatsappBubbleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   text-align: left;
 }
 
@@ -14171,67 +14171,45 @@ html.site-mod-js:not(.ab-labs-ready) .abtm {
 
 .whatsapp-bubble-arrow {
   position: absolute;
-  bottom: -6px;
-  right: 21px;
-  width: 12px;
-  height: 12px;
+  bottom: -5px;
+  right: 22px;
+  width: 10px;
+  height: 10px;
   background: #ffffff;
   border-right: 1px solid #e7e5e4;
   border-bottom: 1px solid #e7e5e4;
   transform: rotate(45deg);
 }
 
-.whatsapp-bubble-header {
+.whatsapp-bubble-top {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.whatsapp-bubble-badge {
-  display: inline-flex;
-  align-items: center;
   gap: 6px;
-  font-size: 11px;
+  margin-bottom: 3px;
+}
+
+.whatsapp-bubble-title {
+  font-size: 13px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #059669;
-}
-
-.whatsapp-bubble-pulse {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background-color: #10b981;
-  display: inline-block;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.7);
-  animation: pulseDot 2s infinite ease-in-out;
-}
-
-@keyframes pulseDot {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.35);
-    opacity: 0.75;
-  }
+  color: #1c1917;
+  line-height: 1.25;
+  margin: 0;
 }
 
 .whatsapp-bubble-close {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   border: none;
   background: #f5f5f4;
   color: #78716c;
   cursor: pointer;
   padding: 0;
+  flex-shrink: 0;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
@@ -14246,35 +14224,27 @@ html.site-mod-js:not(.ab-labs-ready) .abtm {
   color: inherit;
 }
 
-.whatsapp-bubble-title {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #1c1917;
-  line-height: 1.3;
-  margin: 0 0 4px 0;
-}
-
 .whatsapp-bubble-text {
-  font-size: 12px;
-  line-height: 1.45;
+  font-size: 11.5px;
+  line-height: 1.35;
   color: #57534e;
-  margin: 0 0 10px 0;
+  margin: 0 0 8px 0;
 }
 
 .whatsapp-bubble-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 5px;
   width: 100%;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 999px;
   background-color: #25d366;
   color: #ffffff;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
   text-decoration: none;
-  box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
+  box-shadow: 0 2px 6px rgba(37, 211, 102, 0.25);
   transition: background-color 0.18s ease, transform 0.18s ease;
 }
 
@@ -14295,22 +14265,27 @@ html.site-mod-js:not(.ab-labs-ready) .abtm {
   }
 
   .whatsapp-bubble {
-    width: 250px;
-    margin-bottom: 10px;
-    padding: 11px 12px 10px;
+    width: 200px;
+    margin-bottom: 8px;
+    padding: 9px 11px 9px;
   }
 
   .whatsapp-bubble-arrow {
-    right: 19px;
+    right: 20px;
   }
 
   .whatsapp-bubble-title {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .whatsapp-bubble-text {
-    font-size: 11.5px;
-    margin-bottom: 8px;
+    font-size: 11px;
+    margin-bottom: 7px;
+  }
+
+  .whatsapp-bubble-btn {
+    font-size: 11px;
+    padding: 5px 8px;
   }
 }
 
@@ -14319,7 +14294,6 @@ html.site-mod-js:not(.ab-labs-ready) .abtm {
   .whatsapp-fab:hover,
   .whatsapp-fab:active,
   .whatsapp-bubble,
-  .whatsapp-bubble-pulse,
   .whatsapp-bubble-btn {
     animation: none;
     transition: none;
