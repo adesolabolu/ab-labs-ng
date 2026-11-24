@@ -152,6 +152,16 @@ export default function TemplateDetailView({
                       {template.name}
                     </h2>
 
+                    {/* Mobile Template Cover Mockup (Visible only on mobile screens < 992px) */}
+                    <div className="pd-mobile-cover">
+                      <img
+                        src={template.image}
+                        alt={template.name}
+                        className="pd-mobile-cover-img"
+                        loading="eager"
+                      />
+                    </div>
+
                     {/* Compact Clamped Description with Read More */}
                     <div>
                       <p
